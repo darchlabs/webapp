@@ -2,15 +2,15 @@ import { Avatar, Button, Flex, Heading, HStack, Show, Text } from "@chakra-ui/re
 import { Link, useLocation } from "@remix-run/react";
 import NotificationIcon from "../../components/icon/notification";
 
-export default function DashboardHeader() {
+export default function DashboardHeader({ title }: { title: string }) {
   const { pathname } = useLocation();
   const showCreateSync = pathname.indexOf("create") >= 0 ? true : false;
   console.log("here in dashboard", showCreateSync, pathname);
 
   return (
-    <HStack pt={"40px"} w={"full"} justifyContent={"space-between"}>
+    <HStack pt={"40px"} mb={"40px"} w={"full"} justifyContent={"space-between"}>
       <Heading color={"#252733"} fontSize={"24px"}>
-        Syncronizers
+        {title}
       </Heading>
 
       <HStack spacing={"20px"}>

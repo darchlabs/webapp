@@ -1,11 +1,8 @@
-import { HStack, VStack } from "@chakra-ui/react";
-import Sidebar from "../../components/sidebar";
+import { HStack } from "@chakra-ui/react";
 import SynchronizerTable from "../../components/synchronizer-table/table";
 import HeaderDashboard from "../../components/header/dashboard";
-// import CreateSynchronizer from "../../components/create-synchronizer";
 
 import type { ListEventsResponse } from "../../pkg/synchronizer/requests";
-import { redis } from "~/pkg/redis/redis.server";
 
 import { Outlet, useLoaderData } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
@@ -17,20 +14,23 @@ export const loader: LoaderFunction = async () => {
   return json(data as ListEventsResponse);
 };
 
+export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+  return <>here in error section</>;
+}
+
 export default function App() {
   const items = useLoaderData<ListEventsResponse>();
 
   return (
-    <HStack alignItems={"start"} spacing={"0px"}>
-      <Sidebar />
-      <VStack as={"section"} bg={"#F7F8FC"} minW={0} w={"full"} h={"calc(100vh)"} pl={"30px"} pr={"30px"}>
-        <HeaderDashboard />
-        <Outlet />
+    <>
+      <HeaderDashboard title={"Synchronizers"} />
+      
+      <Outlet />
 
-        <HStack justifyContent={"center"} w={"full"} pt={"20px"}>
-          <SynchronizerTable items={items.data} cronjob={items.meta.cronjob} />
-        </HStack>
-      </VStack>
-    </HStack>
+      <HStack justifyContent={"center"} w={"full"} pt={"20px"}>
+        <SynchronizerTable items={items.data} cronjob={items.meta.cronjob} />
+      </HStack>
+    </>
   );
 }

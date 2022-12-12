@@ -14,6 +14,7 @@ import {
   Stack,
   Button,
   Badge,
+  Heading,
 } from "@chakra-ui/react";
 
 import { RiFilter2Fill, RiSortAsc, RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
@@ -36,7 +37,7 @@ function getColorSchemeByStatus(status: CronjobStatus): string {
   return "gray";
 }
 
-export default function SynchronizerTable({ items, cronjob }: { items: Synchronizer[]; cronjob: Cronjob }) {
+function TableWithData({ items, cronjob }: { items: Synchronizer[]; cronjob: Cronjob }) {
   return (
     <VStack
       w={"full"}
@@ -133,4 +134,38 @@ export default function SynchronizerTable({ items, cronjob }: { items: Synchroni
       </TableContainer>
     </VStack>
   );
+}
+
+function EmptyTable() {
+  return (
+    <VStack
+      w={"full"}
+      maxW={"1000px"}
+      alignItems={"center"}
+      bg={"white"}
+      border={"1px solid #DFE0EB"}
+      borderRadius={"8px"}
+      p={8}
+      spacing={5}
+    >
+      <Heading as="h2" size="lg" textAlign={"center"}>
+        Start by creating a Synchronizer
+      </Heading>
+      <Text fontSize="md" textAlign={"center"}>
+        DarchLabs offers several products to synchronizers events or transactions on smart contracts.
+      </Text>
+      <Text fontSize="md" textAlign={"center"}>
+        With us you can implement synchronizers that will allow you to read the information from a smart contract and
+        save it in an off-chain database for later use. In this way you can make more complex queries and in less time.
+      </Text>
+
+      <Button size={"sm"} colorScheme={"pink"}>
+        CREATE SYNCHRONIZER
+      </Button>
+    </VStack>
+  );
+}
+
+export default function SynchronizerTable({ items, cronjob }: { items: Synchronizer[]; cronjob: Cronjob }) {
+  return !items.length ? EmptyTable() : TableWithData({ items, cronjob });
 }

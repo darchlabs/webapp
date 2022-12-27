@@ -2,10 +2,10 @@ import { Avatar, Button, Flex, Heading, HStack, Show, Text } from "@chakra-ui/re
 import { Link, useLocation } from "@remix-run/react";
 import NotificationIcon from "../../components/icon/notification";
 
-export default function DashboardHeader({ title }: { title: string }) {
+export default function DashboardHeader({ title, linkTo }: { title: string, linkTo: string }) {
   const { pathname } = useLocation();
-  const showCreateSync = pathname.indexOf("create") >= 0 ? true : false;
-  console.log("here in dashboard", showCreateSync, pathname);
+  console.log("here in dashboard", pathname);
+  const toPath = `/admin${linkTo}`;
 
   return (
     <HStack pt={"40px"} mb={"40px"} w={"full"} justifyContent={"space-between"}>
@@ -14,17 +14,17 @@ export default function DashboardHeader({ title }: { title: string }) {
       </Heading>
 
       <HStack spacing={"20px"}>
-        {!showCreateSync ? (
+        {linkTo ? (
           <>
             <Show above="md">
-              <Link to="/admin/synchronizers/create/network">
+              <Link to={toPath}>
                 <Button size={"sm"} colorScheme={"pink"}>
-                  CREATE SYNCHRONIZER
+                  CREATE NEW
                 </Button>
               </Link>
             </Show>
             <Show below="md">
-              <Link to="/admin/synchronizers/create/network">
+              <Link to={toPath}>
                 <Button size={"sm"} colorScheme={"pink"}>
                   CREATE
                 </Button>

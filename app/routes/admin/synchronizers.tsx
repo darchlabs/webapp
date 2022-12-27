@@ -24,7 +24,7 @@ export default function App() {
 
   return (
     <>
-      <HeaderDashboard title={"Synchronizers"} />
+      <HeaderDashboard title={"Synchronizers"} linkTo={"/synchronizers/create/network"}/>
       
       <Outlet />
 

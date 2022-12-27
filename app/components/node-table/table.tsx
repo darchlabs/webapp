@@ -18,26 +18,11 @@ import {
 } from "@chakra-ui/react";
 
 import { RiFilter2Fill, RiSortAsc, RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
-import type { Cronjob, CronjobStatus } from "../../types";
-import type { Synchronizer } from "../../pkg/synchronizer/types";
-import TableItem from "./table-item";
+import { useLocation, Link } from "@remix-run/react";
+import NodeItem from "./node-item";
+import type { Node } from "../../pkg/node/types";
 
-function getColorSchemeByStatus(status: CronjobStatus): string {
-  switch (status) {
-    case "running":
-      return "green";
-    case "sync":
-      return "yellow";
-    case "error":
-    case "stopped":
-    case "stopping":
-      return "red";
-  }
-
-  return "gray";
-}
-
-function TableWithData({ items, cronjob }: { items: Synchronizer[]; cronjob: Cronjob }) {
+function TableWithData({ nodeList }: { nodeList: Node[] }) {
   return (
     <VStack
       w={"full"}
@@ -50,21 +35,8 @@ function TableWithData({ items, cronjob }: { items: Synchronizer[]; cronjob: Cro
       <HStack w={"full"} p={"32px"} justifyContent={"space-between"} alignItems="start">
         <VStack alignItems={"start"} spacing={1}>
           <Text fontWeight={"bold"} fontSize={"19px"}>
-            All synchronizers ({items.length})
+            All nodes ({nodeList.length})
           </Text>
-          <VStack alignItems={"start"} spacing={0.5}>
-            <Text as={"span"} fontWeight={"normal"} fontSize={"14px"} color={"gray.400"}>
-              Cronjob: Each {cronjob.seconds} seconds
-            </Text>
-            <HStack justifyContent={"center"}>
-              <Text as={"span"} fontWeight={"normal"} fontSize={"14px"} color={"gray.400"}>
-                Status:
-              </Text>
-              <Badge colorScheme={getColorSchemeByStatus(cronjob.status)} textTransform={"uppercase"}>
-                {cronjob.status}
-              </Badge>
-            </HStack>
-          </VStack>
         </VStack>
 
         <HStack spacing={"24px"}>
@@ -96,15 +68,15 @@ function TableWithData({ items, cronjob }: { items: Synchronizer[]; cronjob: Cro
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th>Event Details</Th>
               <Th>Network</Th>
-              <Th>Last Updated</Th>
+              <Th>Port</Th>
+              <Th>Status</Th>
               <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
-            {items.map((item, index) => (
-              <TableItem key={index} item={item} />
+            {nodeList.map((node, _index) => (
+              <NodeItem key={node.id} item={node} />
             ))}
           </Tbody>
           <TableCaption pt={0} mb={"8px"}>
@@ -119,7 +91,7 @@ function TableWithData({ items, cronjob }: { items: Synchronizer[]; cronjob: Cro
               </HStack>
               <HStack pr={"10px"}>
                 <Text fontSize={"14px"} color={"#9FA2B4"}>
-                  1-{items.length} of {items.length}
+                  1-{nodeList.length} of {nodeList.length}
                 </Text>
               </HStack>
               <HStack>
@@ -149,23 +121,25 @@ function EmptyTable() {
       spacing={5}
     >
       <Heading as="h2" size="lg" textAlign={"center"}>
-        Start by creating a Synchronizer
+        Start by creating a Node
       </Heading>
       <Text fontSize="md" textAlign={"center"}>
-        DarchLabs offers several networks and to run nodes.
+        DarchLabs offers several networks and environments in order to run nodes.
       </Text>
       <Text fontSize="md" textAlign={"center"}>
-        With us you can implement synchronizers that will allow you to read the information from a smart contract and
-        save it in an off-chain database for later use. In this way you can make more complex queries and in less time.
+        With us, you can enable your environments  and easy to run nodes for your project.
       </Text>
 
       <Button size={"sm"} colorScheme={"pink"}>
-        CREATE NODE
+        <Link to={"/admin/nodes/create"}>
+          CREATE NODE
+        </Link>
       </Button>
     </VStack>
   );
 }
 
-export default function SynchronizerTable({ items, cronjob }: { items: Synchronizer[]; cronjob: Cronjob }) {
-  return !items.length ? EmptyTable() : TableWithData({ items, cronjob });
+export default function NodeTable({ nodeList }: { nodeList: Node[] }) {
+  return !nodeList.length ? EmptyTable() : TableWithData({ nodeList });
 }
+

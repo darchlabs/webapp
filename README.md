@@ -2,6 +2,5 @@
 
 ## Commands
 
-- Running in dev environment: `npm run dev`
-- Build to prod environment: `npm run build`
-- Run in prov environment: `npm start`
+- Running dependencies: `make compose-dev`
+- Running in dev environment: `make dev`

@@ -21,6 +21,11 @@ if (process.env.NODE_ENV === "production") {
 }
 
 function getClient() {
+  // if (process.env.NODE_ENV === "development") {
+  //   console.log("alpga");
+  //   return new Job("");
+  // }
+
   const { JOB_API_URL } = process.env;
   invariant(typeof JOB_API_URL === "string", "JOB_API_URL env var not set");
 

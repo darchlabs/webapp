@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   HStack,
   VStack,
@@ -36,6 +37,13 @@ export const loader: LoaderFunction = async () => {
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   return json<loaderData>({ currentJob });
 };
+=======
+import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
+import { Form, Link } from "@remix-run/react";
+import { type ActionArgs, redirect } from "@remix-run/node";
+import { redis } from "~/pkg/redis/redis.server";
+import type { JobsFormData } from "~/pkg/jobs/types";
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
@@ -48,7 +56,11 @@ export const action = async ({ request }: ActionArgs) => {
 
   // check if pressed back button
   if (body.get("_action") === "back") {
+<<<<<<< HEAD
     return redirect("/admin/jobs/create/contract");
+=======
+    return redirect("/admin/jobs/create/cronjob");
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
   }
 
   // get current created form data from redis, create if not exists
@@ -56,15 +68,26 @@ export const action = async ({ request }: ActionArgs) => {
   if (!current) {
     return redirect("/admin/jobs/create/provider");
   }
+<<<<<<< HEAD
+=======
+  console.log("current: ", current);
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
 
   // get provider and network values from form and save in redis
   const checkMethod = body.get("checkMethod");
   const actionMethod = body.get("actionMethod");
 
+<<<<<<< HEAD
+=======
+  console.log("checkMethod: ", checkMethod);
+  console.log("actionMethod: ", actionMethod);
+
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
   current.checkMethod = checkMethod as string;
   current.actionMethod = actionMethod as string;
   await redis.set("createdJobFormData", current);
 
+<<<<<<< HEAD
   // redirect to confirm page
   return redirect(`/admin/jobs/create/cron`);
 };
@@ -108,6 +131,14 @@ export default function StepMethods() {
     (method) => method.stateMutability === "nonpayable"
   );
 
+=======
+  console.log("setted");
+  // redirect to confirm page
+  return redirect(`/admin/jobs/create/privateKey`);
+};
+
+export default function StepAddress() {
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
       <HStack justifyContent={"left"} w={"full"}>
@@ -116,6 +147,7 @@ export default function StepMethods() {
             <Text fontSize={"20px"} color={"ActiveBorder"}>
               Check method
             </Text>
+<<<<<<< HEAD
 
             <Menu closeOnSelect={true}>
               <MenuButton
@@ -173,6 +205,23 @@ export default function StepMethods() {
               </MenuList>
             </Menu>
             <input name="actionMethod" type="hidden" value={actionMethod} />
+=======
+            <Input
+              name="checkMethod"
+              type="text"
+              placeholder="0x..."
+              width={"440px"}
+            />
+            <Text fontSize={"20px"} color={"ActiveBorder"}>
+              Action method
+            </Text>
+            <Input
+              name="actionMethod"
+              type="text"
+              placeholder="0x..."
+              width={"440px"}
+            />
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
             <HStack
               w={"full"}
               justifyContent={"start"}
@@ -185,11 +234,18 @@ export default function StepMethods() {
                 name={"_action"}
                 value={"submit"}
                 type="submit"
+<<<<<<< HEAD
                 disabled={checkMethod === "" || actionMethod === ""}
               >
                 NEXT
               </Button>
               <Link to="/admin/jobs/create/contract">
+=======
+              >
+                NEXT
+              </Button>
+              <Link to="/admin/jobs/cronjob">
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
                 <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
                   BACK
                 </Button>
@@ -209,6 +265,7 @@ export default function StepMethods() {
         </VStack>
       </HStack>
       <HStack justifyContent={"rigth"} w={"full"} paddingBottom={"40px"}>
+<<<<<<< HEAD
         <VStack alignItems={"start"}>
           <Text fontSize={"20px"}>
             Third, select the methods to call in the contract.
@@ -237,6 +294,11 @@ export default function StepMethods() {
             change the state of the it.
           </Text>
         </VStack>
+=======
+        <Text color={"GrayText"} fontSize={"25px"}>
+          Put your check method. Put your action method.
+        </Text>
+>>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
       </HStack>
     </HStack>
   );

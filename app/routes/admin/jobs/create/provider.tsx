@@ -8,9 +8,9 @@ import {
   MenuList,
   Button,
 } from "@chakra-ui/react";
-import { redirect } from "@remix-run/node"; // or cloudflare/deno
+import { redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
-import { useState } from "react";
+import react from "react";
 
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 import Logo from "~/components/icon/logo";
@@ -22,22 +22,28 @@ import type { ListProvidersResponse } from "~/pkg/jobs/requests";
 import { type Network } from "~/types";
 import type { JobsFormData } from "~/pkg/jobs/types";
 
-// type LoaderData = {
-//   providers: ListProvidersResponse;
-//   formData: JobsForm;
-// };
-
 export const loader: LoaderFunction = async () => {
+  // get current created form data from redis, create if not exists
+  let current = (await redis.get("createdJobFormData")) as JobsFormData;
+  if (!current) {
+    console.log("creating ...");
+    current = {
+      providerId: "",
+      network: "none",
+      address: "",
+      abi: "",
+      cronjob: "",
+      checkMethod: "",
+      actionMethod: "",
+      privateKey: "",
+    } as JobsFormData;
+
+    await redis.set("createdJobFormData", current);
+  }
+
+  // Get and return the list of jobs providers from the Jobs api
   const data = await job.ListProviders();
-
-  // // get current created form data from redis, create if not exists
-  // let current = (await redis.get("createdFormData")) as JobsFormData;
-  // if (!current) {
-  //   return redirect("/admin/jobs/create/provider");
-  // }
-
   return json(data as ListProvidersResponse);
-  // return json({ providers: data, formData: current } as LoaderData);
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -49,48 +55,33 @@ export const action = async ({ request }: ActionArgs) => {
     return redirect("/admin/jobs");
   }
 
-  const providerId = body.get("provider");
-  console.log("form prov: ", providerId);
-
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdJobFormData")) as JobsFormData;
-  if (!current) {
-    current = {
-      providerId: "",
-      network: "none",
-      address: "",
-      abi: "",
-      cronjob: "",
-      checkMethod: "",
-      actionMethod: "",
-      privateKey: "",
-    };
-  }
-
   console.log("current: ", current);
 
-  // get provider and network values from form and save in redis
-  current.providerId = `${providerId}`;
-  current.network = body.get("network") as Network;
+  // get provider and network values from form, then format and save them in redis
+  current.providerId = `${body.get("provider")}`;
+  current.network = `${body.get("network")}`.toLowerCase() as Network;
   await redis.set("createdJobFormData", current);
 
-  console.log("prov, net, :", `${body.get("provider")}`, body.get("network"));
-
   // redirect to address page
-  return redirect(`/admin/jobs/create/address`);
+  return redirect(`/admin/jobs/create/contract`);
 };
 
 export default function StepProvider() {
   const { data } = useLoaderData<ListProvidersResponse>();
 
-  let [providerId, setProviderId] = useState("");
-  let [network, setNetwork] = useState("");
+  let [providerId, setProviderId] = react.useState("");
+  let [network, setNetwork] = react.useState("none");
+
+  let provider = data.find((item) => item.id === providerId);
 
   function onProviderClick(providerId: string) {
     setProviderId(providerId);
   }
+
   function onNetworkClick(network: Network) {
-    setNetwork(network);
+    setNetwork(network[0].toUpperCase() + network.substring(1));
   }
 
   return (
@@ -107,7 +98,7 @@ export default function StepProvider() {
                 as={Button}
                 rightIcon={<PolygoSelectIcon />}
               >
-                Select a provider
+                {provider ? provider.name : "Select a provider"}
               </MenuButton>
               <MenuList>
                 {data.map((item) => {
@@ -142,7 +133,7 @@ export default function StepProvider() {
             </Text>
             <Menu closeOnSelect={true}>
               <MenuButton as={Button} rightIcon={<PolygoSelectIcon />}>
-                Select a network
+                {network === "none" ? "Select a network" : network}
               </MenuButton>
               <MenuList>
                 {data.map((item) =>
@@ -154,7 +145,7 @@ export default function StepProvider() {
                           onNetworkClick(network);
                         }}
                       >
-                        {network}
+                        {network[0].toUpperCase() + network.substring(1)}
                       </MenuItem>
                     );
                   })
@@ -174,6 +165,7 @@ export default function StepProvider() {
                 name={"_action"}
                 value={"submit"}
                 type="submit"
+                disabled={providerId === "" || network === "none"}
               >
                 NEXT
               </Button>

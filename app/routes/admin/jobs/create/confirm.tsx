@@ -7,13 +7,27 @@ import {
   type LoaderFunction,
 } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
-import type { JobsFormData, JobsRequest } from "~/pkg/jobs/types";
+import type {
+  Job,
+  JobsFormData,
+  JobsRequest,
+  Provider,
+} from "~/pkg/jobs/types";
 import { v4 as id } from "uuid";
 import { job } from "~/pkg/jobs/jobs.server";
+import { cronMap } from "./cron";
+import JobsTable from "~/components/jobs-table/table";
+
+type loaderData = {
+  data: JobsFormData;
+  providers: Provider[];
+};
 
 export const loader: LoaderFunction = async () => {
-  const currentJob = await redis.get("createdJobFormData");
-  return json(currentJob as JobsFormData);
+  const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  const providers = await job.ListProviders();
+
+  return json({ data: currentJob, providers: providers.data });
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -29,33 +43,47 @@ export const action = async ({ request }: ActionArgs) => {
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!current) {
-    return redirect("/admin/jobs/create/network");
+    return redirect("/admin/jobs/create/provider");
   }
 
   // Make the request for creating the job with the data
   const bodyRequest = current as JobsRequest;
+  // Clean the from after getting it
+  await redis.del("createdJobFormData");
 
   //TODO(nb): Validate the values are right
-
   bodyRequest.type = "cronjob";
   bodyRequest.name = id();
-  // TODO(nb): use node url from nodes
+  // TODO(nb): use node url from nodes or env
   bodyRequest.nodeUrl =
     "https://eth-goerli.g.alchemy.com/v2/6618jw7mOb14pcAn6K9YdHyx09njK1vU";
 
   const res = await job.CreateJob(bodyRequest);
-  console.log("done");
   console.log("res: ", res);
+  if (res.meta.statusCode === 200) {
+    return redirect("/admin/jobs");
+  }
 
-  //TODO(nb): Delete the redis register after making the request?
-  await redis.del("createdJobFormData");
-
+  // TODO(nb): it has to render the failed (but not created) job in the table and don't redirect
+  // <JobsTable items={[bodyRequest as Job]} />;
   return redirect("/admin/jobs");
 };
 
 export default function StepConfirm() {
-  const data = useLoaderData() as JobsFormData;
+  const { data, providers } = useLoaderData() as loaderData;
   console.log("data: ", data);
+
+  function getProvider(providerId: string): string {
+    let providerName = "";
+    providers.map((provider) => {
+      if (provider.id === providerId) {
+        providerName = provider.name;
+      }
+      return providerName;
+    });
+    return providerName;
+  }
+
   return (
     <Form method="post">
       <Flex
@@ -82,21 +110,40 @@ export default function StepConfirm() {
           >
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
-                Network
+                Provider:
               </Text>
-              : Ethereum
+              {" " + getProvider(data.providerId)}
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
-                Address
+                Network:
               </Text>
-              : {"addr"}
+              {" " + data.network}
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
-                Event name
+                Address:
               </Text>
-              : {"abi.name"}
+              {" " + data.address}
+            </Text>
+            <Text fontWeight={"semibold"}>
+              <Text as={"span"} fontWeight={"bold"}>
+                Cron:
+              </Text>
+              {" " +
+                (cronMap[data.cronjob] ? cronMap[data.cronjob] : data.cronjob)}
+            </Text>
+            <Text fontWeight={"semibold"}>
+              <Text as={"span"} fontWeight={"bold"}>
+                Check method:
+              </Text>
+              {" " + data.checkMethod}
+            </Text>
+            <Text fontWeight={"semibold"}>
+              <Text as={"span"} fontWeight={"bold"}>
+                Action method:
+              </Text>
+              {" " + data.actionMethod}
             </Text>
           </VStack>
         </VStack>
@@ -126,7 +173,7 @@ export default function StepConfirm() {
         >
           CREATE
         </Button>
-        <Link to={"/admin/jobs/create/privateKey"}>
+        <Link to={"/admin/jobs/create/account"}>
           <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
             BACK
           </Button>

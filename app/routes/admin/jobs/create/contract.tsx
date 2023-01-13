@@ -1,13 +1,9 @@
 import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
 import { Form, Link } from "@remix-run/react";
-import {
-  type ActionArgs,
-  redirect,
-  json,
-  type LoaderFunction,
-} from "@remix-run/node";
+import { type ActionArgs, redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
+import react from "react";
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
@@ -15,39 +11,38 @@ export const action = async ({ request }: ActionArgs) => {
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
     await redis.del("createdJobFormData");
-    return redirect("/admin/jobs");
-  }
-
-  // check if pressed back button
-  if (body.get("_action") === "back") {
-    return redirect("/admin/jobs/create/provider");
+    return redirect("/admin/jobs/create");
   }
 
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdJobFormData")) as JobsFormData;
-  console.log("current: ", current);
   if (!current) {
     return redirect("/admin/jobs/create/provider");
   }
-  console.log("current: ", current);
 
+  // TODO(nb): validate the contract exists
   // get provider and network values from form and save in redis
-  const address = body.get("address");
-  const abi = body.get("abi");
-
-  console.log("address: ", address);
-  console.log("abi: ", abi);
-
-  current.address = address as string;
-  current.abi = abi as string;
+  current.address = `${body.get("address")}`;
+  current.abi = `${body.get("abi")}`;
   await redis.set("createdJobFormData", current);
 
-  console.log("setted");
   // redirect to cronjob page
-  return redirect(`/admin/jobs/create/cronjob`);
+  return redirect(`/admin/jobs/create/cron`);
 };
 
 export default function StepAddress() {
+  let [address, setAddress] = react.useState("");
+  let [abi, setAbi] = react.useState("");
+
+  // TODO(nb): validate the formats inserted are correct in these functions
+  function onInputAddress(address: string) {
+    setAddress(address);
+  }
+
+  function onInputAbi(abi: string) {
+    setAbi(abi);
+  }
+
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
       <HStack justifyContent={"left"} w={"full"}>
@@ -61,6 +56,9 @@ export default function StepAddress() {
               type="text"
               placeholder="0x..."
               width={"440px"}
+              onChange={(event) => {
+                onInputAddress(event.target.value);
+              }}
             />
             <Text fontSize={"20px"} color={"ActiveBorder"}>
               Contract ABI
@@ -70,6 +68,9 @@ export default function StepAddress() {
               type="text"
               placeholder="`['abi: ...]`"
               width={"440px"}
+              onChange={(event) => {
+                onInputAbi(event.target.value);
+              }}
             />
             <HStack
               w={"full"}
@@ -83,10 +84,11 @@ export default function StepAddress() {
                 name={"_action"}
                 value={"submit"}
                 type="submit"
+                disabled={address === "" || abi === ""}
               >
                 NEXT
               </Button>
-              <Link to="/admin/jobs/provider">
+              <Link to="/admin/jobs/create/provider">
                 <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
                   BACK
                 </Button>

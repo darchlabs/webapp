@@ -3,6 +3,7 @@ import { Form, Link } from "@remix-run/react";
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
+import react from "react";
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
@@ -26,8 +27,13 @@ export const action = async ({ request }: ActionArgs) => {
   return redirect("/admin/jobs/create/confirm");
 };
 
-export default function StepCron() {
-  // TODO(nb): put the cronjob as item list
+export default function StepAccount() {
+  let [privateKey, setPrivateKey] = react.useState("");
+
+  function onInputPrivateKey(privateKey: string) {
+    setPrivateKey(privateKey);
+  }
+
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
       <Form method="post">
@@ -41,6 +47,9 @@ export default function StepCron() {
               type="text"
               placeholder="Private key"
               width={"440px"}
+              onChange={(event) => {
+                onInputPrivateKey(event.target.value);
+              }}
             />
           </VStack>
         </HStack>
@@ -57,10 +66,11 @@ export default function StepCron() {
             name={"_action"}
             value={"submit"}
             type="submit"
+            disabled={privateKey === ""}
           >
             NEXT
           </Button>
-          <Link to="/admin/jobs/methods">
+          <Link to="/admin/jobs/create/methods">
             <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
               BACK
             </Button>

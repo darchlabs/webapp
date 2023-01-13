@@ -1,5 +1,9 @@
 import fetch from "@remix-run/web-fetch";
-import type { ListProvidersResponse, ListJobsResponse } from "./requests";
+import type {
+  ListProvidersResponse,
+  ListJobsResponse,
+  CreateJobResponse,
+} from "./requests";
 import { type JobsRequest } from "./types";
 
 export default class Jobs {
@@ -43,7 +47,7 @@ export default class Jobs {
     }
   }
 
-  public async CreateJob(req: JobsRequest): Promise<any> {
+  public async CreateJob(req: JobsRequest): Promise<CreateJobResponse> {
     try {
       const url = `${this.URL}/api/v1/jobs`;
       const res = await fetch(url, {
@@ -54,7 +58,7 @@ export default class Jobs {
         body: JSON.stringify({ job: req }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as CreateJobResponse;
       return data;
     } catch (err: any) {
       throw err;

@@ -13,3 +13,10 @@ export type ListProvidersResponse = {
     statusCode: number;
   };
 };
+
+export type CreateJobResponse = {
+  data: Job;
+  meta: {
+    statusCode: number;
+  };
+};

@@ -3,15 +3,13 @@ import { HStack, VStack, Text } from "@chakra-ui/react";
 import type { Step } from "../../../components/create-node/steps";
 import StepsComponent from "../../../components/create-node/steps";
 import { Outlet, useLocation } from "@remix-run/react";
-import type { LoaderFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
 
 enum StepEnum {
   Provider,
-  Network,
-  Address,
+  Contract,
   Cron,
   Methods,
+  Account,
   Confirm,
 }
 
@@ -20,10 +18,7 @@ const steps: Step[] = [
     text: "Providers",
   },
   {
-    text: "Networks",
-  },
-  {
-    text: "Address",
+    text: "Contract",
   },
   {
     text: "Cron",
@@ -32,15 +27,12 @@ const steps: Step[] = [
     text: "Methods",
   },
   {
+    text: "Account",
+  },
+  {
     text: "Confirm",
   },
 ];
-
-export const loader: LoaderFunction = async () => {
-  // get current created form data from redis, create if not exists
-
-  return json({});
-};
 
 export default function Create() {
   const { pathname } = useLocation();

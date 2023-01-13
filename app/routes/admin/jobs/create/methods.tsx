@@ -1,8 +1,39 @@
-import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
-import { Form, Link } from "@remix-run/react";
-import { type ActionArgs, redirect } from "@remix-run/node";
+import {
+  HStack,
+  VStack,
+  Text,
+  Input,
+  Button,
+  MenuButton,
+  Menu,
+  MenuList,
+  MenuItem,
+} from "@chakra-ui/react";
+import { Form, Link, useLoaderData } from "@remix-run/react";
+import {
+  type ActionArgs,
+  redirect,
+  json,
+  type LoaderFunction,
+} from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
+import react from "react";
+import { ethers } from "ethers";
+import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
+
+type abiMethod = {
+  inputs: [];
+  name: string;
+  outputs: [[Object]];
+  stateMutability: string;
+  type: string;
+};
+
+export const loader: LoaderFunction = async () => {
+  const body = await redis.get("createdJobFormData");
+  return json(body as JobsFormData);
+};
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
@@ -23,25 +54,55 @@ export const action = async ({ request }: ActionArgs) => {
   if (!current) {
     return redirect("/admin/jobs/create/provider");
   }
-  console.log("current: ", current);
 
   // get provider and network values from form and save in redis
   const checkMethod = body.get("checkMethod");
   const actionMethod = body.get("actionMethod");
 
-  console.log("checkMethod: ", checkMethod);
-  console.log("actionMethod: ", actionMethod);
-
   current.checkMethod = checkMethod as string;
   current.actionMethod = actionMethod as string;
   await redis.set("createdJobFormData", current);
 
-  console.log("setted");
   // redirect to confirm page
-  return redirect(`/admin/jobs/create/privateKey`);
+  return redirect(`/admin/jobs/create/account`);
 };
 
-export default function StepAddress() {
+export default function StepMethods() {
+  const body = useLoaderData() as JobsFormData;
+
+  // const contractInterface = new ethers.utils.Interface(body.abi);
+  // const methods = contractInterface.functions;
+  let abi;
+  try {
+    abi = JSON.parse(body.abi);
+  } catch (error) {
+    console.log("err parsing abi: ", error);
+  }
+
+  const methods = abi.filter(
+    (i: { type: string }) => i.type === "function"
+  ) as abiMethod[];
+  console.log("methods: ", methods);
+
+  const viewMethods = methods.filter(
+    (method) => method.stateMutability === "view"
+  );
+  const actionMethods = methods.filter(
+    (method) => method.stateMutability === "nonpayable"
+  );
+
+  let [checkMethod, setCheckMethod] = react.useState("");
+  let [actionMethod, setActionMethod] = react.useState("");
+
+  // TODO(nb): validate the methods exists on the contract abi
+  function onClickCheckMethod(checkMethod: string) {
+    setCheckMethod(checkMethod);
+  }
+
+  function onClickActionMethod(actionMethod: string) {
+    setActionMethod(actionMethod);
+  }
+
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
       <HStack justifyContent={"left"} w={"full"}>
@@ -50,21 +111,59 @@ export default function StepAddress() {
             <Text fontSize={"20px"} color={"ActiveBorder"}>
               Check method
             </Text>
-            <Input
-              name="checkMethod"
-              type="text"
-              placeholder="0x..."
-              width={"440px"}
-            />
+
+            <Menu closeOnSelect={true}>
+              <MenuButton
+                id={"ok"}
+                as={Button}
+                rightIcon={<PolygoSelectIcon />}
+              >
+                {checkMethod ? checkMethod : "Select the check method"}
+              </MenuButton>
+              <MenuList>
+                {viewMethods.map((method) => {
+                  return (
+                    <MenuItem
+                      key={method.name}
+                      onClick={() => {
+                        onClickCheckMethod(method.name);
+                      }}
+                    >
+                      {method.name}
+                    </MenuItem>
+                  );
+                })}
+              </MenuList>
+            </Menu>
+            <input name="checkMethod" type="hidden" value={checkMethod} />
+
             <Text fontSize={"20px"} color={"ActiveBorder"}>
               Action method
             </Text>
-            <Input
-              name="actionMethod"
-              type="text"
-              placeholder="0x..."
-              width={"440px"}
-            />
+            <Menu closeOnSelect={true}>
+              <MenuButton
+                id={"yes"}
+                as={Button}
+                rightIcon={<PolygoSelectIcon />}
+              >
+                {actionMethod ? actionMethod : "Select the action method"}
+              </MenuButton>
+              <MenuList>
+                {actionMethods.map((method) => {
+                  return (
+                    <MenuItem
+                      key={method.name}
+                      onClick={() => {
+                        onClickActionMethod(method.name);
+                      }}
+                    >
+                      {method.name}
+                    </MenuItem>
+                  );
+                })}
+              </MenuList>
+            </Menu>
+            <input name="actionMethod" type="hidden" value={actionMethod} />
             <HStack
               w={"full"}
               justifyContent={"start"}
@@ -77,10 +176,11 @@ export default function StepAddress() {
                 name={"_action"}
                 value={"submit"}
                 type="submit"
+                disabled={checkMethod === "" || actionMethod === ""}
               >
                 NEXT
               </Button>
-              <Link to="/admin/jobs/cronjob">
+              <Link to="/admin/jobs/create/cron">
                 <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
                   BACK
                 </Button>

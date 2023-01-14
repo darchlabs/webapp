@@ -118,7 +118,7 @@ export default function StepMethods() {
                 as={Button}
                 rightIcon={<PolygoSelectIcon />}
               >
-                {checkMethod ? checkMethod : "Select the check method"}
+                {checkMethod ? checkMethod + "()" : "Select the check method"}
               </MenuButton>
               <MenuList>
                 {viewMethods.map((method) => {
@@ -129,7 +129,7 @@ export default function StepMethods() {
                         onClickCheckMethod(method.name);
                       }}
                     >
-                      {method.name}
+                      {method.name + "()"}
                     </MenuItem>
                   );
                 })}
@@ -146,7 +146,9 @@ export default function StepMethods() {
                 as={Button}
                 rightIcon={<PolygoSelectIcon />}
               >
-                {actionMethod ? actionMethod : "Select the action method"}
+                {actionMethod
+                  ? actionMethod + "()"
+                  : "Select the action method"}
               </MenuButton>
               <MenuList>
                 {actionMethods.map((method) => {
@@ -157,7 +159,7 @@ export default function StepMethods() {
                         onClickActionMethod(method.name);
                       }}
                     >
-                      {method.name}
+                      {method.name + "()"}
                     </MenuItem>
                   );
                 })}

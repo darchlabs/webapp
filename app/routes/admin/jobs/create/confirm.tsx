@@ -137,13 +137,13 @@ export default function StepConfirm() {
               <Text as={"span"} fontWeight={"bold"}>
                 Check method:
               </Text>
-              {" " + data.checkMethod}
+              {" " + data.checkMethod + "()"}
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
                 Action method:
               </Text>
-              {" " + data.actionMethod}
+              {" " + data.actionMethod + "()"}
             </Text>
           </VStack>
         </VStack>

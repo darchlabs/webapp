@@ -49,9 +49,9 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export const cronMap = {
-  "* * * * *": "Every minute",
-  "* */15 * * *": "Every 15 minutes",
-  "* */30 * * *": "Every 30 minutes",
+  "0 * * * *": "Every minute",
+  "0 */15 * * *": "Every 15 minutes",
+  "0 */30 * * *": "Every 30 minutes",
   "0 0 * * *": "Every hour",
   "0 0 0 * *": "Every day",
   "0 0 0 0 *": "Every month",
@@ -93,7 +93,7 @@ export default function StepCron() {
           <Input
             type="text"
             name="customCron"
-            placeholder="* * * * * *"
+            placeholder="* * * * *"
             value={customCron}
             onChange={(event) => {
               onCustomCronChange(event.target.value);

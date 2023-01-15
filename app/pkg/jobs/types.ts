@@ -5,7 +5,7 @@ export type Job = {
   name: string;
   providerId: string;
   status: CronjobStatus;
-  network: string;
+  network: Network;
   address: string;
   abi: string;
   nodeUrl: string;

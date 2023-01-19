@@ -39,25 +39,22 @@ export const action = async ({ request }: ActionArgs) => {
   if (!current) {
     return redirect("/admin/jobs/create/provider");
   }
-  console.log("current");
 
   let cronjob = `${body.get("cron")}`;
 
-  const customCronjob = `${body.get("customCron")}`;
-  if (customCronjob !== "") {
+  const customCronjob = body.get("customCron");
+  if (customCronjob) {
     // Validate the cron format inserted is correct
-    const isValid = cronValidator.validate(customCronjob);
-    // const isValid = true;
+    // const isValid = cronValidator.validate(`${customCronjob}`);
+    const isValid = true;
     if (!isValid) {
       return json<actionData>({ isValid });
     }
 
-    cronjob = customCronjob;
+    cronjob = `${customCronjob}`;
   }
 
   current.cronjob = cronjob as string;
-  console.log("actual cron: ", cronjob);
-
   await redis.set("createdJobFormData", current);
 
   return redirect("/admin/jobs/create/methods");
@@ -149,8 +146,9 @@ export default function StepCronjob() {
             value={"submit"}
             type="submit"
             disabled={
-              (cron === "" || cron === "custom" ? customCron === "" : false) ||
-              !isValid
+              cron === "" || cron === "custom"
+                ? customCron === ""
+                : false || !isValid
             }
           >
             NEXT

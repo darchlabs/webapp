@@ -19,6 +19,7 @@ import { cronMap } from "../utils/cron-utils";
 import JobsTable from "~/components/jobs-table/table";
 import shortAddress from "~/utils/short-address";
 import capitalize from "../utils/capitalize";
+import getProviderName from "../utils/provider-name";
 
 type loaderData = {
   data: JobsFormData;
@@ -35,6 +36,7 @@ export const loader: LoaderFunction = async () => {
 export const action = async ({ request }: ActionArgs) => {
   // parse form data
   const body = await request.formData();
+  console.log("data: ", body);
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
@@ -56,6 +58,7 @@ export const action = async ({ request }: ActionArgs) => {
   //TODO(nb): Validate the values are right
   bodyRequest.type = "cronjob";
   bodyRequest.name = id();
+
   // TODO(nb): use node url from nodes or env
   bodyRequest.nodeUrl =
     "https://eth-goerli.g.alchemy.com/v2/6618jw7mOb14pcAn6K9YdHyx09njK1vU";
@@ -74,17 +77,6 @@ export const action = async ({ request }: ActionArgs) => {
 export default function StepConfirm() {
   const { data, providers } = useLoaderData() as loaderData;
   console.log("data: ", data);
-
-  function getProvider(providerId: string): string {
-    let providerName = "";
-    providers.map((provider) => {
-      if (provider.id === providerId) {
-        providerName = provider.name;
-      }
-      return providerName;
-    });
-    return providerName;
-  }
 
   return (
     <Form method="post">
@@ -114,7 +106,7 @@ export default function StepConfirm() {
               <Text as={"span"} fontWeight={"bold"}>
                 Provider:
               </Text>
-              {" " + getProvider(data.providerId)}
+              {" " + getProviderName(providers, data.providerId)}
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>

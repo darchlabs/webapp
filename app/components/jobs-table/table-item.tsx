@@ -27,6 +27,7 @@ import { BsTrash } from "react-icons/bs";
 import ShortAddress from "../../utils/short-address";
 import { cronMap } from "~/routes/admin/jobs/utils/cron-utils";
 import { getColorSchemeByStatus } from "./table";
+import getProviderName from "~/routes/admin/jobs/utils/provider-name";
 
 function getNetworkAvatar(network: Network) {
   switch (network) {
@@ -62,17 +63,6 @@ export default function TableItem({
 }) {
   const networkAvatar = getNetworkAvatar(network);
 
-  const getProviderName = (id: string): string => {
-    let providerName = "";
-    providers.map((provider) => {
-      if (provider.id === id) {
-        providerName = provider.name;
-      }
-      return providerName;
-    });
-    return providerName;
-  };
-
   const timeDifference = (date: string): string => {
     const difference = Date.now() - new Date(date).getDate();
     return new Date(difference).toDateString();
@@ -103,7 +93,7 @@ export default function TableItem({
             color={"#252733"}
             textTransform={"capitalize"}
           >
-            {getProviderName(providerId)}
+            {getProviderName(providers, providerId)}
           </Text>
           <Text
             fontSize={"14px"}

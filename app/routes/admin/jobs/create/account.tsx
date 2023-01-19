@@ -8,7 +8,7 @@ import { ethers } from "ethers";
 
 type actionData =
   | {
-      message: string;
+      pk: string;
     }
   | undefined;
 
@@ -32,8 +32,7 @@ export const action = async ({ request }: ActionArgs) => {
   try {
     const wallet = new ethers.Wallet(privateKey, prov);
   } catch (err) {
-    const error = new Error(`${err}`);
-    return json(error.message);
+    return json({ pk: privateKey });
   }
 
   current.privateKey = privateKey as string;
@@ -51,6 +50,11 @@ export default function StepAccount() {
   }
 
   const error = useActionData() as actionData;
+
+  let isDisabled = false;
+  if (error?.pk === privateKey) {
+    isDisabled = true;
+  }
 
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
@@ -87,7 +91,7 @@ export default function StepAccount() {
             name={"_action"}
             value={"submit"}
             type="submit"
-            disabled={privateKey === ""}
+            disabled={privateKey === "" || isDisabled}
           >
             NEXT
           </Button>

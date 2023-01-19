@@ -19,7 +19,8 @@ import { cronMap } from "../utils/cron-utils";
 
 type actionData =
   | {
-      isValid: boolean;
+      customCronjob: string;
+      message: string;
     }
   | undefined;
 
@@ -42,16 +43,29 @@ export const action = async ({ request }: ActionArgs) => {
 
   let cronjob = `${body.get("cron")}`;
 
-  const customCronjob = body.get("customCron");
-  if (customCronjob) {
-    // Validate the cron format inserted is correct
-    // const isValid = cronValidator.validate(`${customCronjob}`);
-    const isValid = true;
-    if (!isValid) {
-      return json<actionData>({ isValid });
+  let customCronjob = `${body.get("customCron")}`;
+  if (customCronjob !== "null") {
+    // Check that the cronjob has max 5 '*' fields
+    const fields = customCronjob
+      .split(" ")
+      .reduce((count, c) => count + (c === "*" ? 1 : 0), 0);
+    if (fields > 5) {
+      return json<actionData>({
+        customCronjob,
+        message: "Only 5 '*' fields are accepted",
+      });
     }
 
-    cronjob = `${customCronjob}`;
+    // Validate the cron format inserted is correct
+    const isValid = cronValidator.validate(customCronjob);
+    console.log("isValid: ", isValid);
+
+    // const isValid = true;
+    if (!isValid) {
+      return json<actionData>({ customCronjob, message: "" });
+    }
+
+    cronjob = customCronjob;
   }
 
   current.cronjob = cronjob as string;
@@ -79,10 +93,11 @@ export default function StepCronjob() {
     setCustomCron(customCron);
   }
 
-  let isValid = true;
-  const actionRes = useActionData() as actionData;
-  if (actionRes) {
-    isValid = actionRes.isValid;
+  let isDisabled = false;
+
+  const error = useActionData() as actionData;
+  if (error?.customCronjob === customCron) {
+    isDisabled = true;
   }
 
   return (
@@ -102,6 +117,7 @@ export default function StepCronjob() {
             name="customCron"
             placeholder="* * * * *"
             value={customCron}
+            onInput={() => {}}
             onChange={(event) => {
               onCustomCronChange(event.target.value);
             }}
@@ -129,8 +145,12 @@ export default function StepCronjob() {
           </Menu>
         )}
 
-        <Text color={"red"}>
-          {!isValid ? "The cron format inserted is wrong." : null}
+        <Text color={"red.400"}>
+          {error ? "The cron format inserted is wrong." : null}
+        </Text>
+
+        <Text color={"red.400"}>
+          {error?.message !== "" ? error?.message : null}
         </Text>
 
         <HStack
@@ -146,9 +166,9 @@ export default function StepCronjob() {
             value={"submit"}
             type="submit"
             disabled={
-              cron === "" || cron === "custom"
-                ? customCron === ""
-                : false || !isValid
+              cron === "" ||
+              (cron === "custom" ? customCron === "" : false) ||
+              isDisabled
             }
           >
             NEXT

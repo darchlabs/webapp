@@ -25,7 +25,7 @@ import { RiMore2Fill, RiStopCircleLine } from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
 
 import ShortAddress from "../../utils/short-address";
-import { cronMap } from "~/routes/admin/jobs/create/cron";
+import { cronMap } from "~/routes/admin/jobs/utils/cron-utils";
 import { getColorSchemeByStatus } from "./table";
 
 function getNetworkAvatar(network: Network) {

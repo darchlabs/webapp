@@ -15,8 +15,10 @@ import type {
 } from "~/pkg/jobs/types";
 import { v4 as id } from "uuid";
 import { job } from "~/pkg/jobs/jobs.server";
-import { cronMap } from "./cron";
+import { cronMap } from "../utils/cron-utils";
 import JobsTable from "~/components/jobs-table/table";
+import shortAddress from "~/utils/short-address";
+import capitalize from "../utils/capitalize";
 
 type loaderData = {
   data: JobsFormData;
@@ -118,13 +120,13 @@ export default function StepConfirm() {
               <Text as={"span"} fontWeight={"bold"}>
                 Network:
               </Text>
-              {" " + data.network}
+              {" " + capitalize(data.network)}
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
                 Address:
               </Text>
-              {" " + data.address}
+              {" " + shortAddress(data.address)}
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>

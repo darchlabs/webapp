@@ -21,6 +21,7 @@ import { job } from "~/pkg/jobs/jobs.server";
 import type { ListProvidersResponse } from "~/pkg/jobs/requests";
 import { type Network } from "~/types";
 import type { JobsFormData } from "~/pkg/jobs/types";
+import capitalize from "../utils/capitalize";
 
 export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
@@ -81,7 +82,7 @@ export default function StepProvider() {
   }
 
   function onNetworkClick(network: Network) {
-    setNetwork(network[0].toUpperCase() + network.substring(1));
+    setNetwork(capitalize(network));
   }
 
   return (

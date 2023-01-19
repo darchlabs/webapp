@@ -9,11 +9,19 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import { type ActionArgs, redirect, json } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
+import * as cronValidator from "node-cron";
+import { cronMap } from "../utils/cron-utils";
+
+type actionData =
+  | {
+      isValid: boolean;
+    }
+  | undefined;
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
@@ -35,9 +43,16 @@ export const action = async ({ request }: ActionArgs) => {
 
   let cronjob = `${body.get("cron")}`;
 
-  const customCronjob = body.get("customCron");
-  if (customCronjob) {
-    cronjob = `${customCronjob}`;
+  const customCronjob = `${body.get("customCron")}`;
+  if (customCronjob !== "") {
+    // Validate the cron format inserted is correct
+    const isValid = cronValidator.validate(customCronjob);
+    // const isValid = true;
+    if (!isValid) {
+      return json<actionData>({ isValid });
+    }
+
+    cronjob = customCronjob;
   }
 
   current.cronjob = cronjob as string;
@@ -48,17 +63,7 @@ export const action = async ({ request }: ActionArgs) => {
   return redirect("/admin/jobs/create/methods");
 };
 
-export const cronMap = {
-  "0 * * * *": "Every minute",
-  "0 */15 * * *": "Every 15 minutes",
-  "0 */30 * * *": "Every 30 minutes",
-  "0 0 * * *": "Every hour",
-  "0 0 0 * *": "Every day",
-  "0 0 0 0 *": "Every month",
-  custom: "Custom cron",
-};
-
-export default function StepCron() {
+export default function StepCronjob() {
   const cronMapObject = Object.entries(cronMap);
   console.log("cronMapObject: ", cronMapObject);
 
@@ -73,9 +78,14 @@ export default function StepCron() {
     }
   }
 
-  // TODO(nb): validate cronjob format is right
   function onCustomCronChange(customCron: string) {
     setCustomCron(customCron);
+  }
+
+  let isValid = true;
+  const actionRes = useActionData() as actionData;
+  if (actionRes) {
+    isValid = actionRes.isValid;
   }
 
   return (
@@ -122,6 +132,10 @@ export default function StepCron() {
           </Menu>
         )}
 
+        <Text color={"red"}>
+          {!isValid ? "The cron format inserted is wrong." : null}
+        </Text>
+
         <HStack
           w={"full"}
           justifyContent={"start"}
@@ -135,7 +149,8 @@ export default function StepCron() {
             value={"submit"}
             type="submit"
             disabled={
-              cron === "" || cron === "custom" ? customCron === "" : false
+              (cron === "" || cron === "custom" ? customCron === "" : false) ||
+              !isValid
             }
           >
             NEXT
@@ -165,13 +180,3 @@ export default function StepCron() {
     </HStack>
   );
 }
-
-/* <Input
-              name="cronjob"
-              type="text"
-              placeholder="* * * * * *"
-              width={"440px"}
-              onChange={(event) => {
-                onCronChange(event.target.value);
-              }}
-            /> */

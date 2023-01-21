@@ -5,6 +5,7 @@ import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import { ethers } from "ethers";
+import { getChainId } from "~/utils/chain-info";
 
 type actionData =
   | {
@@ -29,14 +30,32 @@ export const action = async ({ request }: ActionArgs) => {
     return redirect("/admin/jobs/create/provider");
   }
 
-  const network = `${body.get("network")}`;
+  // Get inputs
   const contractAddress = `${body.get("address")}`;
   const contractAbi = `${body.get("abi")}`;
 
+  // Get the network chain id and instance the client provider with it
+  const network = current.network;
+  const chainId = getChainId(network);
+  const provider = ethers.getDefaultProvider(chainId);
+
+  // Check if the address exists on the network
+  const code = await provider.getCode(contractAddress);
+  if (code === "0x") {
+    return json<actionData>({
+      message: `The address is not deployed on the ${network} network`,
+      address: contractAddress,
+      abi: contractAbi,
+    });
+  }
+
   try {
-    // TODO(nb): get network by its id
-    const prov = ethers.getDefaultProvider(5);
-    new ethers.Contract(contractAddress, contractAbi, prov);
+    // Validate the contract abi format is correct by instancing it
+    const contract = new ethers.Contract(
+      contractAddress,
+      contractAbi,
+      provider
+    );
   } catch (err) {
     const error = new Error(`${err}`);
     return json<actionData>({
@@ -56,10 +75,10 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function StepAddress() {
+  // Define the input variables and their state react hook
   let [address, setAddress] = react.useState("");
   let [abi, setAbi] = react.useState("");
 
-  // TODO(nb): validate the formats inserted are correct in these functions
   function onInputAddress(address: string) {
     setAddress(address);
   }
@@ -68,11 +87,11 @@ export default function StepAddress() {
     setAbi(abi);
   }
 
-  const error = useActionData() as actionData;
-  console.log("action data: ", error);
-
-  // Disable NEXT button if the inputs are the same than those which were incorrect
+  // Define is disabled for disabling the NEXT button
   let isDisabled = false;
+
+  // Check if the inputs are the same than thoshe which were bad, in that case, NEXT should be disabled
+  const error = useActionData() as actionData;
   if (error?.abi === abi && error?.address === address) {
     isDisabled = true;
   }

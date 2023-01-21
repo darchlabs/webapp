@@ -22,7 +22,7 @@ import react from "react";
 import { ethers } from "ethers";
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 
-type abiMethod = {
+export type abiMethod = {
   inputs: [];
   name: string;
   outputs: [[Object]];

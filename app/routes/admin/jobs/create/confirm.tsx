@@ -55,22 +55,19 @@ export const action = async ({ request }: ActionArgs) => {
   // Clean the from after getting it
   await redis.del("createdJobFormData");
 
-  //TODO(nb): Validate the values are right
   bodyRequest.type = "cronjob";
   bodyRequest.name = id();
+  // Get the node url of the corresponding network
+  bodyRequest.nodeUrl = job.networkNodesMap.get(`${current.network}`)!;
 
-  // TODO(nb): use node url from nodes or env
-  bodyRequest.nodeUrl =
-    "https://eth-goerli.g.alchemy.com/v2/6618jw7mOb14pcAn6K9YdHyx09njK1vU";
-
+  // Create job
   const res = await job.CreateJob(bodyRequest);
-  console.log("res: ", res);
   if (res.meta.statusCode === 200) {
     return redirect("/admin/jobs");
   }
 
   // TODO(nb): it has to render the failed (but not created) job in the table and don't redirect
-  // <JobsTable items={[bodyRequest as Job]} />;
+  // const { data: providers } = await job.ListProviders();
   return redirect("/admin/jobs");
 };
 

@@ -1,5 +1,5 @@
 import { HStack, VStack, Text, Button, Flex } from "@chakra-ui/react";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import {
   type ActionArgs,
   redirect,
@@ -9,6 +9,7 @@ import {
 import { redis } from "~/pkg/redis/redis.server";
 import type {
   Job,
+  JobsForm,
   JobsFormData,
   JobsRequest,
   Provider,
@@ -16,10 +17,17 @@ import type {
 import { v4 as id } from "uuid";
 import { job } from "~/pkg/jobs/jobs.server";
 import { cronMap } from "../utils/cron-utils";
-import JobsTable from "~/components/jobs-table/table";
 import shortAddress from "~/utils/short-address";
 import capitalize from "../utils/capitalize";
 import getProviderName from "../utils/provider-name";
+import { useState } from "react";
+
+type actionData =
+  | {
+      errorMsg: string;
+      job: JobsForm;
+    }
+  | undefined;
 
 type loaderData = {
   data: JobsFormData;
@@ -52,8 +60,6 @@ export const action = async ({ request }: ActionArgs) => {
 
   // Make the request for creating the job with the data
   const bodyRequest = current as JobsRequest;
-  // Clean the from after getting it
-  await redis.del("createdJobFormData");
 
   bodyRequest.type = "cronjob";
   bodyRequest.name = id();
@@ -62,18 +68,34 @@ export const action = async ({ request }: ActionArgs) => {
 
   // Create job
   const res = await job.CreateJob(bodyRequest);
-  if (res.meta.statusCode === 200) {
+  console.log("res.meta.statusCode: ", res.meta);
+  if (res.meta === 200) {
+    // Clean the from after getting it
+    await redis.del("createdJobFormData");
     return redirect("/admin/jobs");
   }
 
-  // TODO(nb): it has to render the failed (but not created) job in the table and don't redirect
-  // const { data: providers } = await job.ListProviders();
-  return redirect("/admin/jobs");
+  if (typeof res.data === "string") {
+    const jobForm = (await redis.get("createdJobFormData")) as JobsFormData;
+    return json<actionData>({ errorMsg: res.data, job: jobForm });
+  }
 };
 
 export default function StepConfirm() {
   const { data, providers } = useLoaderData() as loaderData;
   console.log("data: ", data);
+
+  const actionData = useActionData() as actionData;
+
+  let isDisabled = false;
+  let error = "";
+  if (actionData) {
+    error = actionData.errorMsg;
+
+    if (`${data}` == `${actionData.job}`) {
+      isDisabled = true;
+    }
+  }
 
   return (
     <Form method="post">
@@ -137,6 +159,9 @@ export default function StepConfirm() {
               {" " + data.actionMethod + "()"}
             </Text>
           </VStack>
+          <HStack>
+            {error !== "" ? <Text color={"red.400"}>{error}</Text> : null}
+          </HStack>
         </VStack>
 
         <VStack w={["full", "full", "58%"]} alignItems={"start"}>
@@ -154,13 +179,12 @@ export default function StepConfirm() {
 
       <HStack w={"full"} justifyContent={"start"} pt={"12px"} spacing={"10px"}>
         <Button
-          //   isLoading={fetchLoading}
-          //   disabled={fetchLoading}
           size={"sm"}
           colorScheme={"pink"}
           name="_action"
           value="submit"
           type="submit"
+          isDisabled={isDisabled}
         >
           CREATE
         </Button>
@@ -170,7 +194,6 @@ export default function StepConfirm() {
           </Button>
         </Link>
         <Button
-          //   disabled={fetchLoading}
           size={"sm"}
           colorScheme={"pink"}
           variant={"ghost"}

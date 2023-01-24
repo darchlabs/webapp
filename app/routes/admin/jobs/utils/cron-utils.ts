@@ -17,6 +17,3 @@ export const cronMap = {
   "0 0 0 0 *": "Every month",
   custom: "Custom cron",
 } as cronjob;
-
-// class cronMapInstance
-// export const cronMapInstance = new

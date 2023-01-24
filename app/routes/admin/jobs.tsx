@@ -10,7 +10,6 @@ import type {
   ListJobsResponse,
   ListProvidersResponse,
 } from "~/pkg/jobs/requests";
-import { Job } from "~/pkg/jobs/types";
 
 type loaderData = {
   jobs: ListJobsResponse;
@@ -31,6 +30,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
 
 export default function App() {
   const { jobs, providers } = useLoaderData<loaderData>();
+
   return (
     <>
       <HeaderDashboard title={"Jobs"} linkTo={`/jobs/create/provider`} />

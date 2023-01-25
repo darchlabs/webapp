@@ -1,10 +1,24 @@
 import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
-import { Form, Link, useActionData } from "@remix-run/react";
-import { type ActionArgs, redirect, json } from "@remix-run/node";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  type ActionArgs,
+  redirect,
+  json,
+  type LoaderFunction,
+} from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import { ethers } from "ethers";
+
+type loaderData = {
+  currentJob: JobsFormData;
+};
+
+export const loader: LoaderFunction = async () => {
+  const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  return json<loaderData>({ currentJob });
+};
 
 type actionData =
   | {
@@ -43,7 +57,10 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function StepAccount() {
-  let [privateKey, setPrivateKey] = react.useState("");
+  const { currentJob } = useLoaderData() as loaderData;
+  const currentPk = currentJob.privateKey ? currentJob.privateKey : "";
+
+  let [privateKey, setPrivateKey] = react.useState(currentPk);
 
   function onInputPrivateKey(privateKey: string) {
     setPrivateKey(privateKey);
@@ -69,6 +86,7 @@ export default function StepAccount() {
               type="text"
               placeholder="Private key"
               width={"440px"}
+              defaultValue={privateKey}
               onChange={(event) => {
                 onInputPrivateKey(event.target.value);
               }}
@@ -95,7 +113,7 @@ export default function StepAccount() {
           >
             NEXT
           </Button>
-          <Link to="/admin/jobs/create/methods">
+          <Link to="/admin/jobs/create/cron">
             <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
               BACK
             </Button>

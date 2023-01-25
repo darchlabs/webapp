@@ -18,17 +18,21 @@ import { useLoaderData, Form } from "@remix-run/react";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { job } from "~/pkg/jobs/jobs.server";
-import type { ListProvidersResponse } from "~/pkg/jobs/requests";
 import { type Network } from "~/types";
-import type { JobsFormData } from "~/pkg/jobs/types";
+import type { JobsFormData, Provider } from "~/pkg/jobs/types";
 import capitalize from "../utils/capitalize";
+
+type loaderData = {
+  providers: Provider[];
+  currentJob: JobsFormData;
+};
 
 export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdJobFormData")) as JobsFormData;
-  if (!current) {
+  let currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  if (!currentJob) {
     console.log("creating ...");
-    current = {
+    currentJob = {
       providerId: "",
       network: "none",
       address: "",
@@ -39,12 +43,12 @@ export const loader: LoaderFunction = async () => {
       privateKey: "",
     } as JobsFormData;
 
-    await redis.set("createdJobFormData", current);
+    await redis.set("createdJobFormData", currentJob);
   }
 
   // Get and return the list of jobs providers from the Jobs api
-  const data = await job.ListProviders();
-  return json(data as ListProvidersResponse);
+  const providers = await job.ListProviders();
+  return json<loaderData>({ providers: providers.data, currentJob });
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -70,12 +74,17 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function StepProvider() {
-  const { data } = useLoaderData<ListProvidersResponse>();
+  const { providers, currentJob } = useLoaderData<loaderData>();
+  let currentProviderId = currentJob.providerId ? currentJob.providerId : "";
+  let currentNetwork =
+    currentJob.network !== "none" ? `${currentJob.network}` : "";
 
-  let [providerId, setProviderId] = react.useState("");
-  let [network, setNetwork] = react.useState("none");
+  let [providerId, setProviderId] = react.useState(currentProviderId);
+  let [network, setNetwork] = react.useState(currentNetwork);
 
-  let provider = data.find((item) => item.id === providerId);
+  console.log("netwrok: ", network);
+
+  let provider = providers.find((item) => item.id === providerId);
 
   function onProviderClick(providerId: string) {
     setProviderId(providerId);
@@ -102,7 +111,7 @@ export default function StepProvider() {
                 {provider ? provider.name : "Select a provider"}
               </MenuButton>
               <MenuList>
-                {data.map((item) => {
+                {providers.map((item) => {
                   let isDisabled: boolean;
                   // TODO: update logo based on the provider id
                   return (
@@ -134,14 +143,15 @@ export default function StepProvider() {
             </Text>
             <Menu closeOnSelect={true}>
               <MenuButton as={Button} rightIcon={<PolygoSelectIcon />}>
-                {network === "none" ? "Select a network" : network}
+                {network !== "" ? network : "Select a network"}
               </MenuButton>
               <MenuList>
-                {data.map((item) =>
+                {providers.map((item) =>
                   item.networks.map((network) => {
                     return (
                       <MenuItem
                         key={network}
+                        defaultValue={network}
                         onClick={() => {
                           onNetworkClick(network);
                         }}

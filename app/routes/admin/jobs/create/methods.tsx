@@ -30,9 +30,13 @@ export type abiMethod = {
   type: string;
 };
 
+type loaderData = {
+  currentJob: JobsFormData;
+};
+
 export const loader: LoaderFunction = async () => {
-  const body = await redis.get("createdJobFormData");
-  return json(body as JobsFormData);
+  const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  return json<loaderData>({ currentJob });
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -46,7 +50,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   // check if pressed back button
   if (body.get("_action") === "back") {
-    return redirect("/admin/jobs/create/cronjob");
+    return redirect("/admin/jobs/create/contract");
   }
 
   // get current created form data from redis, create if not exists
@@ -64,17 +68,32 @@ export const action = async ({ request }: ActionArgs) => {
   await redis.set("createdJobFormData", current);
 
   // redirect to confirm page
-  return redirect(`/admin/jobs/create/account`);
+  return redirect(`/admin/jobs/create/cron`);
 };
 
 export default function StepMethods() {
-  const body = useLoaderData() as JobsFormData;
+  const { currentJob } = useLoaderData() as loaderData;
 
-  // const contractInterface = new ethers.utils.Interface(body.abi);
-  // const methods = contractInterface.functions;
+  let currentCheckMethod = currentJob.checkMethod ? currentJob.checkMethod : "";
+  let currentActionMethod = currentJob.actionMethod
+    ? currentJob.actionMethod
+    : "";
+
+  let [checkMethod, setCheckMethod] = react.useState(currentCheckMethod);
+  let [actionMethod, setActionMethod] = react.useState(currentActionMethod);
+
+  function onClickCheckMethod(checkMethod: string) {
+    setCheckMethod(checkMethod);
+  }
+
+  function onClickActionMethod(actionMethod: string) {
+    setActionMethod(actionMethod);
+  }
+
+  // Get the view and perform methods
   let abi;
   try {
-    abi = JSON.parse(body.abi);
+    abi = JSON.parse(currentJob.abi);
   } catch (error) {
     console.log("err parsing abi: ", error);
   }
@@ -90,18 +109,6 @@ export default function StepMethods() {
   const actionMethods = methods.filter(
     (method) => method.stateMutability === "nonpayable"
   );
-
-  let [checkMethod, setCheckMethod] = react.useState("");
-  let [actionMethod, setActionMethod] = react.useState("");
-
-  // TODO(nb): validate the methods exists on the contract abi
-  function onClickCheckMethod(checkMethod: string) {
-    setCheckMethod(checkMethod);
-  }
-
-  function onClickActionMethod(actionMethod: string) {
-    setActionMethod(actionMethod);
-  }
 
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
@@ -125,6 +132,7 @@ export default function StepMethods() {
                   return (
                     <MenuItem
                       key={method.name}
+                      defaultValue={checkMethod}
                       onClick={() => {
                         onClickCheckMethod(method.name);
                       }}
@@ -155,6 +163,7 @@ export default function StepMethods() {
                   return (
                     <MenuItem
                       key={method.name}
+                      defaultValue={actionMethod}
                       onClick={() => {
                         onClickActionMethod(method.name);
                       }}
@@ -182,7 +191,7 @@ export default function StepMethods() {
               >
                 NEXT
               </Button>
-              <Link to="/admin/jobs/create/cron">
+              <Link to="/admin/jobs/create/contract">
                 <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
                   BACK
                 </Button>

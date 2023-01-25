@@ -8,7 +8,6 @@ import {
 } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type {
-  Job,
   JobsForm,
   JobsFormData,
   JobsRequest,
@@ -20,12 +19,13 @@ import { cronMap } from "../utils/cron-utils";
 import shortAddress from "~/utils/short-address";
 import capitalize from "../utils/capitalize";
 import getProviderName from "../utils/provider-name";
-import { useState } from "react";
+import { errorsMsgMap, errorsRedirectMap } from "../utils/errors";
 
 type actionData =
   | {
-      errorMsg: string;
+      errorMsg: string | undefined;
       job: JobsForm;
+      redirectPath: string | undefined;
     }
   | undefined;
 
@@ -76,8 +76,12 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   if (typeof res.data === "string") {
-    const jobForm = (await redis.get("createdJobFormData")) as JobsFormData;
-    return json<actionData>({ errorMsg: res.data, job: jobForm });
+    const redirectPath = errorsRedirectMap.get(res.data);
+    const errorMsg = errorsMsgMap.has(res.data)
+      ? errorsMsgMap.get(res.data)
+      : res.data;
+    const job = (await redis.get("createdJobFormData")) as JobsFormData;
+    return json<actionData>({ errorMsg, job, redirectPath });
   }
 };
 
@@ -87,13 +91,19 @@ export default function StepConfirm() {
 
   const actionData = useActionData() as actionData;
 
-  let isDisabled = false;
+  let nextDisabled = false;
   let error = "";
-  if (actionData) {
+  let redirect = "";
+
+  if (actionData?.errorMsg) {
     error = actionData.errorMsg;
 
+    if (actionData.redirectPath) {
+      redirect = actionData.redirectPath;
+    }
+
     if (`${data}` == `${actionData.job}`) {
-      isDisabled = true;
+      nextDisabled = true;
     }
   }
 
@@ -144,7 +154,9 @@ export default function StepConfirm() {
                 Cron:
               </Text>
               {" " +
-                (cronMap[data.cronjob] ? cronMap[data.cronjob] : data.cronjob)}
+                (cronMap.has(data.cronjob)
+                  ? cronMap.get(data.cronjob)
+                  : data.cronjob)}
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
@@ -159,9 +171,6 @@ export default function StepConfirm() {
               {" " + data.actionMethod + "()"}
             </Text>
           </VStack>
-          <HStack>
-            {error !== "" ? <Text color={"red.400"}>{error}</Text> : null}
-          </HStack>
         </VStack>
 
         <VStack w={["full", "full", "58%"]} alignItems={"start"}>
@@ -174,6 +183,21 @@ export default function StepConfirm() {
             afterwards, so if you want to make changes, you'll need to delete it
             first and then create a new one.
           </Text>
+
+          <HStack>
+            {error !== "" ? (
+              <Text colorScheme={"blackAlpha"} color={"red"}>
+                {error}
+              </Text>
+            ) : null}
+            {redirect ? (
+              <Link to={redirect}>
+                <Button size={"sm"} colorScheme={"pink"}>
+                  Change
+                </Button>
+              </Link>
+            ) : null}
+          </HStack>
         </VStack>
       </Flex>
 
@@ -184,7 +208,7 @@ export default function StepConfirm() {
           name="_action"
           value="submit"
           type="submit"
-          isDisabled={isDisabled}
+          isDisabled={nextDisabled}
         >
           CREATE
         </Button>

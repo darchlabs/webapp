@@ -115,7 +115,7 @@ export default function TableItem({
             {type}
           </Text>
           <Text fontSize={"14px"} color={"#C5C7CD"}>
-            {cronMap[cronjob] ? cronMap[cronjob] : cronjob}
+            {cronMap.has(cronjob) ? cronMap.get(cronjob) : cronjob}
           </Text>
         </VStack>
       </Td>

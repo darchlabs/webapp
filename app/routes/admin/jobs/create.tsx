@@ -21,10 +21,10 @@ const steps: Step[] = [
     text: "Contract",
   },
   {
-    text: "Cron",
+    text: "Methods",
   },
   {
-    text: "Methods",
+    text: "Cron",
   },
   {
     text: "Account",

@@ -2,7 +2,6 @@ import {
   HStack,
   VStack,
   Text,
-  Input,
   Button,
   MenuButton,
   Menu,
@@ -19,7 +18,6 @@ import {
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
-import { ethers } from "ethers";
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 
 export type abiMethod = {

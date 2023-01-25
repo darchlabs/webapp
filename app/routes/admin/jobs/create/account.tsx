@@ -44,7 +44,7 @@ export const action = async ({ request }: ActionArgs) => {
   const prov = ethers.getDefaultProvider(5);
 
   try {
-    const wallet = new ethers.Wallet(privateKey, prov);
+    new ethers.Wallet(privateKey, prov);
   } catch (err) {
     return json({ pk: privateKey });
   }

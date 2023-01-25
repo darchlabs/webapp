@@ -65,11 +65,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     // Validate the contract abi format is correct by instancing it
-    const contract = new ethers.Contract(
-      contractAddress,
-      contractAbi,
-      provider
-    );
+    new ethers.Contract(contractAddress, contractAbi, provider);
   } catch (err) {
     const error = new Error(`${err}`);
     return json<actionData>({

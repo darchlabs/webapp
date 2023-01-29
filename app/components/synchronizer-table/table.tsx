@@ -160,7 +160,7 @@ function EmptyTable() {
       </Text>
 
       <Button size={"sm"} colorScheme={"pink"}>
-        CREATE NODE
+        CREATE SYNCHRONIZER
       </Button>
     </VStack>
   );

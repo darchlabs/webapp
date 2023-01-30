@@ -6,3 +6,13 @@ export type GetNodesStatusResponse = {
     nodes: Node[];
   };
 };
+
+export type PostNewNodeResponse = {
+  data: {
+    id: string;
+    name: string;
+    chain: string;
+    port: number;
+    status: string;
+  }
+};

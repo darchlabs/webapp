@@ -1,7 +1,9 @@
 export type Node = {
     id: string;
+    name: string;
     chain: string;
     port: string;
+    fromBlockNumber: number;
     status: string;
 };
 

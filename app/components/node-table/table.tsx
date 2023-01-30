@@ -70,7 +70,9 @@ function TableWithData({ nodeList }: { nodeList: Node[] }) {
           <Thead>
             <Tr>
               <Th>Network</Th>
+              <Th>Node id</Th>
               <Th>Port</Th>
+              <Th>Origin</Th>
               <Th>Status</Th>
               <Th></Th>
             </Tr>

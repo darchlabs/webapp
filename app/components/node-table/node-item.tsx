@@ -49,11 +49,10 @@ function getColorSchemeByStatus(status: string) {
   return "gray";
 }
 
-export default function NodeItem({
-    item: { id, chain, port, status },
-}: {item: Node}) {
+export default function NodeItem({item: { id, chain, port, status, name, fromBlockNumber }}: {item: Node}) {
     const networkAvatar = getNetworkAvatar(chain);
     const colorBadge = getColorSchemeByStatus(status);
+    const shortId = id.substring(0, 8);
     
     return (
         <Tr>
@@ -67,14 +66,35 @@ export default function NodeItem({
                                 {/*insert name here also when name is available*/}
                                 {chain}
                             </Text>
+                            <Text fontWeight={"small"} fontSize={"12px"} color={"#718096"}>
+                                {/*insert name here also when name is available*/}
+                                {name}
+                            </Text>
                         </VStack>
                     </HStack>
                 </HStack>
             </Td>
+
+            <Td>
+                <HStack spacing={"25px"}>
+                    <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+                        {shortId}...
+                    </Text>
+                </HStack>
+            </Td>
+
             <Td>
                 <HStack spacing={"25px"}>
                     <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
                         {port}
+                    </Text>
+                </HStack>
+            </Td>
+
+            <Td>
+                <HStack spacing={"25px"}>
+                    <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+                        {fromBlockNumber}
                     </Text>
                 </HStack>
             </Td>

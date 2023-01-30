@@ -1,9 +1,9 @@
-import { HStack, VStack, Text, Input, Show, Flex, Button } from "@chakra-ui/react";
+import { HStack, VStack, Text, Input, Show, Flex, Button, NumberIncrementStepper } from "@chakra-ui/react";
 import { redirect } from "@remix-run/node";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { redis } from "~/pkg/redis/redis.server";
 import type { NodeFormData } from "~/pkg/node/types";
 import { utils } from "ethers";
@@ -25,18 +25,16 @@ export async function action({ request }: ActionArgs) {
   }
 
   // get network value from form and save in redis
-  const blockNumber = body.get("blockNumber");
-  current.fromBlockNumber = (blockNumber | 0) as Number;
+  current.fromBlockNumber = Number(body.get("blockNumber"));
   await redis.set("createdNodeFormData", current);
 
-  // redirect to abi page
+  // redirect to confirm page
   return redirect("/admin/nodes/create/confirm");
 }
 
 export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdNodeFormData")) as NodeFormData;
-  console.log("------- ------- -------->", current)
   if (!current) {
     return redirect("/admin/nodes/create/network");
   }
@@ -49,15 +47,24 @@ export default function StepBlockNumber() {
 
   const [fetchLoading, setFetchLoading] = useState(false);
   const [blockNumber, setBlockNumber] = useState(formData.fromBlockNumber);
+  const [ready, setReady] = useState(false);
 
-  // TODO (mt): update validation and make it work with button NEXT
-  function shouldDisableNextButton(bn: string): Boolean | undefined {
-    console.log("=======> ", bn)
-    if (Number.isNaN(bn)) {
-      return false;
+  function handleOnChange(ev: React.ChangeEvent<HTMLInputElement>) {
+    if (Number.isNaN(ev.target.value)) {
+      return setBlockNumber(-1);
     }
-    return true;
+
+    const fromBlockNumber = Number(ev.target.value)
+    return setBlockNumber(fromBlockNumber);
   }
+
+  React.useEffect(() => {
+    if(blockNumber && !Number.isNaN(blockNumber) && blockNumber > 0) {
+      return setReady(true);
+    }
+  
+    return setReady(false);
+  }, [blockNumber]);
 
   return (
     <Form method="post">
@@ -80,9 +87,9 @@ export default function StepBlockNumber() {
           </HStack>
 
           <Input
-            name="address"
+            name="blockNumber"
             value={blockNumber}
-            onChange={(ev) => setBlockNumber(ev.target.value)}
+            onChange={(ev) => handleOnChange(ev)}
             fontSize={"12px"}
             size={"md"}
             placeholder="1000..."
@@ -112,7 +119,7 @@ export default function StepBlockNumber() {
       <HStack w={"full"} justifyContent={"start"} pt={"12px"} spacing={"10px"}>
         <Button
           isLoading={fetchLoading}
-          disabled={false}
+          disabled={!ready}
           size={"sm"}
           colorScheme={"pink"}
           name="_action"

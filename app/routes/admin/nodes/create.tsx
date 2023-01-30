@@ -4,6 +4,7 @@ import StepsComponent from "../../../components/create-node/steps";
 import type { NodeFormData } from "../../../pkg/node/types";
 import { Outlet, useLocation } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
+import { redis } from "~/pkg/redis/redis.server";
 import { json } from "@remix-run/node";
 
 enum StepEnum {
@@ -25,13 +26,27 @@ const steps: Step[] = [
 ];
 
 export const loader: LoaderFunction = async () => {
+  console.log("inside create")
   // get current created form data from redis, create if not exists
+  let current = (await redis.get("createdNodeFormData")) as NodeFormData;
+  if (!current) {
+  console.log("inside create 1")
+    current = {
+      network: "none",
+      fromBlockNumber: 0,
+    } as NodeFormData;
+
+    await redis.set("createdNodeFormData", current);
+  }
+  console.log("inside create 2")
 
   return json({});
 };
 
 export default function Create() {
   const { pathname } = useLocation();
+
+  console.log("-------> inside create component")
 
   const [, , , , step] = pathname.split("/");
   const index = Object.values(StepEnum).indexOf(step);

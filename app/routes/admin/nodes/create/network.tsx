@@ -43,36 +43,36 @@ export async function action({ request }: ActionArgs) {
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
-    await redis.del("createdFormData");
+    await redis.del("createdNodeFormData");
     return redirect("/admin/nodes");
   }
 
   // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdFormData")) as NodeFormData;
+  const current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
     return redirect("/admin/nodes/create/network");
   }
 
   // get network value from form and save in redis
   current.network = body.get("network") as Network;
-  await redis.set("createdFormData", current);
+  await redis.set("createdNodeFormData", current);
 
   // redirect to address page
-  return redirect("/admin/synchronizers/create/address");
+  return redirect("/admin/nodes/create/blocknumber");
 }
 
 export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdFormData")) as SynchronizerFormData;
+  let current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
-    return redirect("/admin/synchronizers/create/network");
+    return redirect("/admin/nodes/create/network")
   }
 
-  return json(current);
+  return json({});
 };
 
 export default function StepNetwork() {
-  const formData = useLoaderData<SynchronizerFormData>();
+  const formData = useLoaderData<NodeFormData>();
 
   const [fetchLoading, setFetchLoading] = useState(false);
   const [network, setNetwork] = useState(formData.network);

@@ -10,4 +10,9 @@ type _nodeFormData = {
     fromBlockNumber: number;
 };
 
+export type NodeBase = {
+    network: string;
+    fromBlockNumber: number;
+};
+
 export type NodeFormData = _nodeFormData & {};

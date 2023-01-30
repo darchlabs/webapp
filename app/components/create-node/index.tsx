@@ -27,6 +27,12 @@ const steps: Step[] = [
   },
 ];
 
+const stepIndex: Record<number, StepEnum> = {
+  0: StepEnum.Network,
+  1: StepEnum.BlockNumber,
+  2: StepEnum.Confirm,
+}
+
 export default function Create({ setShowCreateNode }: any) {
   const [currentStep, setCurrentStep] = useState(StepEnum.Network);
   const [network, setNetwork] = useState("none" as Network);
@@ -67,6 +73,7 @@ export default function Create({ setShowCreateNode }: any) {
       }
       case StepEnum.BlockNumber: {
         valid = Number.isInteger(blockNumber) ? true : false;
+        console.log("blockNumber", blockNumber, valid)
         break;
       }
       case StepEnum.Confirm: {
@@ -96,7 +103,7 @@ export default function Create({ setShowCreateNode }: any) {
       section = StepNetwork(network, setNetwork);
       break;
     case StepEnum.BlockNumber:
-      section = StepBlockNumber(network, setBlockNumber);
+      section = StepBlockNumber(blockNumber, setBlockNumber);
       break;
     case StepEnum.Confirm:
       section = StepConfirm(formData, confirm)

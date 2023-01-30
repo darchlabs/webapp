@@ -21,6 +21,7 @@ import { RiFilter2Fill, RiSortAsc, RiArrowLeftSLine, RiArrowRightSLine } from "r
 import { useLocation, Link } from "@remix-run/react";
 import NodeItem from "./node-item";
 import type { Node } from "../../pkg/node/types";
+import { MdNotListedLocation } from "react-icons/md";
 
 function TableWithData({ nodeList }: { nodeList: Node[] }) {
   return (
@@ -108,7 +109,11 @@ function TableWithData({ nodeList }: { nodeList: Node[] }) {
   );
 }
 
-function EmptyTable() {
+function EmptyTable(shouldShow: boolean = true) {
+  if (!shouldShow) {
+    return null;
+  }
+
   return (
     <VStack
       w={"full"}
@@ -131,7 +136,7 @@ function EmptyTable() {
       </Text>
 
       <Button size={"sm"} colorScheme={"pink"}>
-        <Link to={"/admin/nodes/create"}>
+        <Link to={"/admin/nodes/create/network"}>
           CREATE NODE
         </Link>
       </Button>

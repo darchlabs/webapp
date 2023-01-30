@@ -3,8 +3,9 @@ import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link, useLoaderData, Form } from "@remix-run/react";
 import { useState } from "react";
-import { redis } from "~/pkg/redis/redis.server";
-import type { NodeBase, NodeFormData } from "../../../../pkg/node/types";
+import { redis } from "../../../../pkg/redis/redis.server";
+import type { NodeFormData } from "../../../../pkg/node/types";
+import { node } from "../../../../pkg/node/node.server";
 
 export async function action({ request }: ActionArgs) {
   // parse form data
@@ -12,19 +13,25 @@ export async function action({ request }: ActionArgs) {
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
-    await redis.del("createdFormData");
+    await redis.del("createdNodeFormData");
     return redirect("/admin/nodes");
   }
 
   // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdFormData")) as NodeFormData;
+  let current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
     return redirect("/admin/nodes/create/network");
   }
 
   // get block number
-  current.fromBlockNumber = body.get("blockNumber") as number;
-  await redis.set("createdFormData", current);
+  current.fromBlockNumber = Number(body.get("blockNumber"));
+  await redis.set("createdNodeFormData", current);
+  console.log("-==-===--===--===-=-=-=-=-=-=- ", node.PostNewNode)
+  console.log("-==-===--===--===-=-=-=-=-=-=- ", node.GetStatus)
+  await node.PostNewNode(current.network, current.fromBlockNumber);
+  setTimeout(() => { redis.del("createdNodeFormData") }, 1000);
+
+
 
   // redirect to abi page
   return redirect("/admin/nodes");
@@ -32,7 +39,7 @@ export async function action({ request }: ActionArgs) {
 
 export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
-  const current = (await redis.get("createdFormData")) as NodeFormData;
+  const current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
     return redirect("/admin/nodes/create/network");
   }

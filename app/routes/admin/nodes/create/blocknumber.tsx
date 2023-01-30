@@ -10,43 +10,54 @@ import { utils } from "ethers";
 
 export async function action({ request }: ActionArgs) {
   // parse form data
-  const body = await request.formData();
+  const body  = await request.formData();
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
-    await redis.del("createdFormData");
-    return redirect("/admin/synchronizers");
+    await redis.del("createdNodeFormData");
+    return redirect("/admin/nodes");
   }
 
   // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdFormData")) as NodeFormData;
+  let current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
-    return redirect("/admin/synchronizers/create/network");
+    return redirect("/admin/nodes/create/network");
   }
 
   // get network value from form and save in redis
-  current.address = body.get("address") as string;
-  await redis.set("createdFormData", current);
+  const blockNumber = body.get("blockNumber");
+  current.fromBlockNumber = (blockNumber | 0) as Number;
+  await redis.set("createdNodeFormData", current);
 
   // redirect to abi page
-  return redirect("/admin/synchronizers/create/abi");
+  return redirect("/admin/nodes/create/confirm");
 }
 
 export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdFormData")) as NodeFormData;
+  let current = (await redis.get("createdNodeFormData")) as NodeFormData;
+  console.log("------- ------- -------->", current)
   if (!current) {
-    return redirect("/admin/synchronizers/create/network");
+    return redirect("/admin/nodes/create/network");
   }
 
   return json(current);
 };
 
-export default function StepAddress() {
+export default function StepBlockNumber() {
   const formData = useLoaderData<NodeFormData>();
 
   const [fetchLoading, setFetchLoading] = useState(false);
-  const [address, setAddress] = useState(formData.address);
+  const [blockNumber, setBlockNumber] = useState(formData.fromBlockNumber);
+
+  // TODO (mt): update validation and make it work with button NEXT
+  function shouldDisableNextButton(bn: string): Boolean | undefined {
+    console.log("=======> ", bn)
+    if (Number.isNaN(bn)) {
+      return false;
+    }
+    return true;
+  }
 
   return (
     <Form method="post">
@@ -64,20 +75,17 @@ export default function StepAddress() {
         >
           <HStack justifyContent={"start"} mb={"2px"}>
             <Text fontWeight={"semibold"} fontSize={"16px"} color={"#9FA2B4"}>
-              Contract address
-            </Text>
-            <Text fontWeight={"normal"} fontSize={"14px"} color={"#ED64A6"} borderBottom={"1px dotted #ED64A6"}>
-              My addresses
+              Block number.
             </Text>
           </HStack>
 
           <Input
             name="address"
-            value={address}
-            onChange={(ev) => setAddress(ev.target.value)}
+            value={blockNumber}
+            onChange={(ev) => setBlockNumber(ev.target.value)}
             fontSize={"12px"}
             size={"md"}
-            placeholder="0x..."
+            placeholder="1000..."
           ></Input>
         </VStack>
 
@@ -95,15 +103,7 @@ export default function StepAddress() {
               <Text as="span" fontWeight={"bold"} borderBottom={"1px dotted #9FA2B4"}>
                 Hint
               </Text>
-              : if you have associated a wallet, you can make use of{" "}
-              <Text as="span" fontWeight={"bold"} color={"#ED64A6"}>
-                aliases
-              </Text>{" "}
-              to make it easier to work with contract addresses. See{" "}
-              <Text as="span" fontWeight={"bold"}>
-                Addreses
-              </Text>{" "}
-              sidebar option.
+              : you can fork mainnet from your interest block in order to avoid big amounts extra data.
             </Text>
           </Show>
         </VStack>
@@ -112,7 +112,7 @@ export default function StepAddress() {
       <HStack w={"full"} justifyContent={"start"} pt={"12px"} spacing={"10px"}>
         <Button
           isLoading={fetchLoading}
-          disabled={!utils.isAddress(address) || fetchLoading}
+          disabled={false}
           size={"sm"}
           colorScheme={"pink"}
           name="_action"
@@ -121,7 +121,7 @@ export default function StepAddress() {
         >
           NEXT
         </Button>
-        <Link to={"/admin/synchronizers/create/network"}>
+        <Link to={"/admin/nodes/create/network"}>
           <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
             BACK
           </Button>

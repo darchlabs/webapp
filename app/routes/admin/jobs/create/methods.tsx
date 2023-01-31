@@ -209,9 +209,34 @@ export default function StepMethods() {
         </VStack>
       </HStack>
       <HStack justifyContent={"rigth"} w={"full"} paddingBottom={"40px"}>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your check method. Put your action method.
-        </Text>
+        <VStack alignItems={"start"}>
+          <Text fontSize={"20px"}>
+            Third, select the methods to call in the contract.
+          </Text>
+          <Text
+            as="span"
+            fontWeight={"bold"}
+            borderBottom={"1px dotted #9FA2B4"}
+          >
+            Check method:
+          </Text>
+          <Text color={"GrayText"} fontSize={"18px"}>
+            It's a method responsible of checking if the contract needs a call
+            to the action method.
+          </Text>
+          <Text
+            as="span"
+            fontWeight={"bold"}
+            borderBottom={"1px dotted #9FA2B4"}
+          >
+            Action method:
+          </Text>
+          <Text color={"GrayText"} fontSize={"18px"}>
+            It's a method responsible of doing the action inside the contract.
+            Performing this method will spend gas because the execution will
+            change the state of the it.
+          </Text>
+        </VStack>
       </HStack>
     </HStack>
   );

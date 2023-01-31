@@ -8,6 +8,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Show,
 } from "@chakra-ui/react";
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import type { LoaderFunction, ActionArgs } from "@remix-run/node";
@@ -210,10 +211,41 @@ export default function StepCronjob() {
           </Button>
         </HStack>
       </Form>
-      <HStack>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your Cronjob.
-        </Text>
+      <HStack w={"full"}>
+        <VStack alignItems={"start"}>
+          <Text>
+            <Text fontSize={"20px"}>Fourth, select or insert the cron.</Text>
+            <Text color={"GrayText"} fontSize={"18px"}>
+              The cron is responsible of defining the invterval for triggering
+              the contract methods calls.
+            </Text>
+          </Text>
+          <Show above="md">
+            <Text
+              fontWeight={"normal"}
+              fontSize={"14px"}
+              color={"gray.500"}
+              pt={"15px"}
+            >
+              <Text
+                as="span"
+                fontWeight={"bold"}
+                borderBottom={"1px dotted #9FA2B4"}
+              >
+                Hint:{" "}
+              </Text>
+              For understanding more about cron, see the{" "}
+              <Text as="span" fontWeight={"bold"} color={"#ED64A6"}>
+                crontab.guru
+              </Text>{" "}
+              for getting more examples or see the{" "}
+              <Text as="span" fontWeight={"bold"} color={"#ED64A6"}>
+                official
+              </Text>{" "}
+              definition.
+            </Text>
+          </Show>
+        </VStack>
       </HStack>
     </HStack>
   );

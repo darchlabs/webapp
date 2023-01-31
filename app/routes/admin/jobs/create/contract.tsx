@@ -183,9 +183,10 @@ export default function StepAddress() {
           </Form>
         </VStack>
       </HStack>
-      <HStack justifyContent={"rigth"} w={"full"} paddingBottom={"40px"}>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your address. Put your ABI.
+
+      <HStack justifyContent={"rigth"} w={"full"} alignItems={"start"}>
+        <Text fontSize={"20px"}>
+          Second, insert the address and the ABI of the contract.
         </Text>
       </HStack>
     </HStack>

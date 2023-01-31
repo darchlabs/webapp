@@ -7,6 +7,7 @@ import {
   MenuItem,
   MenuList,
   Button,
+  Show,
 } from "@chakra-ui/react";
 import { redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
@@ -195,10 +196,40 @@ export default function StepProvider() {
         </VStack>
       </HStack>
       <HStack justifyContent={"rigth"} w={"full"} paddingBottom={"40px"}>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          First, select the jobs provider. Then choose the network in which it
-          will operate, based on those that it supports.
-        </Text>
+        <VStack alignItems={"start"}>
+          <Text>
+            <Text fontSize={"20px"}>
+              First, select the jobs provider. Then, choose the network in which
+              it will operate, based on those that it supports.
+            </Text>
+            <Text color={"GrayText"} fontSize={"18px"}>
+              The contract must already be deployed on the provider's choosen
+              network.
+            </Text>
+          </Text>
+          <Show above="md">
+            <Text
+              fontWeight={"normal"}
+              fontSize={"14px"}
+              color={"gray.500"}
+              pt={"15px"}
+            >
+              <Text
+                as="span"
+                fontWeight={"bold"}
+                borderBottom={"1px dotted #9FA2B4"}
+              >
+                Hint
+              </Text>
+              : Check our roadmap to know the next networks we will support for
+              providers{" "}
+              <Text as="span" fontWeight={"bold"} color={"#ED64A6"}>
+                Roadmap
+              </Text>{" "}
+              to know the following networks.
+            </Text>
+          </Show>
+        </VStack>
       </HStack>
     </HStack>
   );

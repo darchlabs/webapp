@@ -7,8 +7,8 @@ import { Outlet, useLocation } from "@remix-run/react";
 enum StepEnum {
   Provider,
   Contract,
-  Cron,
   Methods,
+  Cron,
   Account,
   Confirm,
 }
@@ -21,10 +21,10 @@ const steps: Step[] = [
     text: "Contract",
   },
   {
-    text: "Cron",
+    text: "Methods",
   },
   {
-    text: "Methods",
+    text: "Cron",
   },
   {
     text: "Account",

@@ -25,10 +25,9 @@ import {
 } from "react-icons/ri";
 import type { CronjobStatus } from "../../types";
 import TableItem from "./table-item";
-import { type Job } from "~/pkg/jobs/types";
-import { Indexed } from "ethers/lib/utils";
+import { Provider, type Job } from "~/pkg/jobs/types";
 
-function getColorSchemeByStatus(status: CronjobStatus): string {
+export function getColorSchemeByStatus(status: CronjobStatus): string {
   switch (status) {
     case "running":
       return "green";
@@ -43,11 +42,11 @@ function getColorSchemeByStatus(status: CronjobStatus): string {
   return "gray";
 }
 
-function TableWithData({ items }: { items: Job[] }) {
+function TableWithData({ items }: { items: Job[] }, providers: Provider[]) {
   return (
     <VStack
       w={"full"}
-      maxW={"1000px"}
+      maxW={"1080px"}
       alignItems={"start"}
       bg={"white"}
       border={"1px solid #DFE0EB"}
@@ -63,34 +62,6 @@ function TableWithData({ items }: { items: Job[] }) {
           <Text fontWeight={"bold"} fontSize={"19px"}>
             All jobs ({items.length})
           </Text>
-          <VStack alignItems={"start"} spacing={0.5}>
-            <Text
-              as={"span"}
-              fontWeight={"normal"}
-              fontSize={"14px"}
-              color={"gray.400"}
-            >
-              Cronjob: Each {items[0].cronjob} seconds
-            </Text>
-            <HStack justifyContent={"center"}>
-              <Text
-                as={"span"}
-                fontWeight={"normal"}
-                fontSize={"14px"}
-                color={"gray.400"}
-              >
-                Status:
-              </Text>
-              <Badge
-                colorScheme={getColorSchemeByStatus(
-                  items[0].status as CronjobStatus
-                )}
-                textTransform={"uppercase"}
-              >
-                {items[0].status}
-              </Badge>
-            </HStack>
-          </VStack>
         </VStack>
 
         <HStack spacing={"24px"}>
@@ -126,16 +97,16 @@ function TableWithData({ items }: { items: Job[] }) {
             <Tr>
               <Th>Jobs Details</Th>
               <Th>Provider</Th>
-              <Th>Network</Th>
-              <Th>Cronjob</Th>
+              <Th>Event</Th>
               <Th>Methods</Th>
               <Th>Last Updated</Th>
+              <Th>Status</Th>
               <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
             {items.map((item, index) => (
-              <TableItem key={index} item={item} />
+              <TableItem key={index} item={item} providers={providers} />
             ))}
           </Tbody>
           <TableCaption pt={0} mb={"8px"}>
@@ -199,23 +170,12 @@ function EmptyTable() {
   );
 }
 
-export default function JobsTable({ items }: { items: Job[] }) {
-  return !items.length ? EmptyTable() : TableWithData({ items });
-}
-{
-  /* <Tr>
-<Th key={"address"}>Jobs Details</Th>
-<Th key={"provider"}>Provider</Th>
-<Th key={"network"}>Network</Th>
-<Th key={"cronjob"}>Cronjob</Th>
-<Th key={"methods"}>Methods</Th>
-<Th key={"lastUpdated"}>Last Updated</Th>
-<Th></Th>
-</Tr>
-</Thead>
-<Tbody>
-{items.map((item, index) => (
-<TableItem key={"provider"} item={item.providerId} />
-))}
-</Tbody> */
+export default function JobsTable({
+  items,
+  providers,
+}: {
+  items: Job[];
+  providers: Provider[];
+}) {
+  return !items.length ? EmptyTable() : TableWithData({ items }, providers);
 }

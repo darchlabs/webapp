@@ -9,7 +9,7 @@ import {
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 import { getChainId } from "~/utils/chain-info";
 
 type loaderData = {
@@ -53,6 +53,14 @@ export const action = async ({ request }: ActionArgs) => {
   const chainId = getChainId(network);
   const provider = ethers.getDefaultProvider(chainId);
 
+  // Check the address format is valid
+  if (!utils.isAddress(contractAddress)) {
+    return json<actionData>({
+      message: `The address format is invalid`,
+      address: contractAddress,
+      abi: contractAbi,
+    });
+  }
   // Check if the address exists on the network
   const code = await provider.getCode(contractAddress);
   if (code === "0x") {

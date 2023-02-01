@@ -122,7 +122,7 @@ export default function StepConfirm() {
           alignItems={["start", "start", "stretch"]}
         >
           <Text fontWeight={"bold"} fontSize={"16px"} color={"gray.600"}>
-            Jobs info
+            Job info
           </Text>
 
           <VStack
@@ -174,14 +174,14 @@ export default function StepConfirm() {
         </VStack>
 
         <VStack w={["full", "full", "58%"]} alignItems={"start"}>
-          <Text fontWeight={"bold"} fontSize={"16px"} color={"gray.600"}>
-            Confirm information before to create syncronizer
+          <Text fontWeight={"bold"} fontSize={"20px"} color={"gray.600"}>
+            Confirm information before to create job
           </Text>
 
-          <Text fontWeight={"normal"} fontSize={"14px"} color={"gray.500"}>
-            Remember you can't change information about the synchronizer
-            afterwards, so if you want to make changes, you'll need to delete it
-            first and then create a new one.
+          <Text fontWeight={"normal"} fontSize={"18px"} color={"gray.500"}>
+            Make sure the contract works correctly so that the calls to the
+            methods don't fail. If you wish, you can later modify the job
+            parameters.
           </Text>
 
           <HStack>

@@ -1,4 +1,4 @@
-import { ChainIds, GetNetworkNodesUrl } from "~/utils/chain-info";
+import { GetNetworkNodesUrl } from "~/utils/chain-info";
 import Job from "./jobs";
 import invariant from "tiny-invariant";
 

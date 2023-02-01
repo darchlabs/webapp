@@ -44,7 +44,7 @@ export const action = async ({ request }: ActionArgs) => {
   const prov = ethers.getDefaultProvider(5);
 
   try {
-    const wallet = new ethers.Wallet(privateKey, prov);
+    new ethers.Wallet(privateKey, prov);
   } catch (err) {
     return json({ pk: privateKey });
   }
@@ -131,9 +131,30 @@ export default function StepAccount() {
         </HStack>
       </Form>
       <HStack>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your private key.
-        </Text>
+        <VStack alignItems={"start"}>
+          <Text fontSize={"20px"}>
+            Fifth, insert the private key of your account.
+          </Text>
+          <Text color={"GrayText"} fontSize={"18px"}>
+            The account will be responsible of executing the transaction over
+            the{" "}
+            <Text as="span" fontWeight={"bold"} color={"#ED64A6"}>
+              action method.
+            </Text>
+          </Text>
+
+          <Text color={"GrayText"} fontSize={"14px"}>
+            <Text
+              as="span"
+              fontWeight={"bold"}
+              borderBottom={"1px dotted #9FA2B4"}
+            >
+              Hint:{" "}
+            </Text>
+            Make sure you have enough gas in the selected network in order to
+            complete the tx correctly. Otherwise, it will fail.
+          </Text>
+        </VStack>
       </HStack>
     </HStack>
   );

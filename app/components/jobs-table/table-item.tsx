@@ -5,13 +5,23 @@ import {
   VStack,
   HStack,
   Text,
-  // Badge,
   Icon,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   Badge,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  Button,
+  usePopover,
+  Box,
+  PopoverArrow,
+  PopoverCloseButton,
+  Flex,
 } from "@chakra-ui/react";
 
 import type { Network } from "../../types";
@@ -25,8 +35,10 @@ import { RiMore2Fill, RiStopCircleLine } from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
 
 import ShortAddress from "../../utils/short-address";
-import { cronMap } from "~/routes/admin/jobs/create/cron";
+import { cronMap } from "~/routes/admin/jobs/utils/cron-utils";
 import { getColorSchemeByStatus } from "./table";
+import getProviderName from "~/routes/admin/jobs/utils/provider-name";
+import { useState } from "react";
 
 function getNetworkAvatar(network: Network) {
   switch (network) {
@@ -54,6 +66,7 @@ export default function TableItem({
     createdAt,
     updatedAt,
     status,
+    logs,
   },
   providers,
 }: {
@@ -61,17 +74,6 @@ export default function TableItem({
   providers: Provider[];
 }) {
   const networkAvatar = getNetworkAvatar(network);
-
-  const getProviderName = (id: string): string => {
-    let providerName = "";
-    providers.map((provider) => {
-      if (provider.id === id) {
-        providerName = provider.name;
-      }
-      return providerName;
-    });
-    return providerName;
-  };
 
   const timeDifference = (date: string): string => {
     const difference = Date.now() - new Date(date).getDate();
@@ -103,7 +105,7 @@ export default function TableItem({
             color={"#252733"}
             textTransform={"capitalize"}
           >
-            {getProviderName(providerId)}
+            {getProviderName(providers, providerId)}
           </Text>
           <Text
             fontSize={"14px"}
@@ -125,7 +127,7 @@ export default function TableItem({
             {type}
           </Text>
           <Text fontSize={"14px"} color={"#C5C7CD"}>
-            {cronMap[cronjob] ? cronMap[cronjob] : cronjob}
+            {cronMap.has(cronjob) ? cronMap.get(cronjob) : cronjob}
           </Text>
         </VStack>
       </Td>
@@ -153,12 +155,43 @@ export default function TableItem({
       </Td>
       <Td>
         <VStack>
-          <Badge
-            colorScheme={getColorSchemeByStatus(status)}
-            textTransform={"uppercase"}
-          >
-            {status}
-          </Badge>
+          {status !== "running" ? (
+            <Popover placement="auto">
+              <PopoverTrigger>
+                <Button colorScheme={getColorSchemeByStatus(status)}>
+                  <Badge
+                    colorScheme={`${getColorSchemeByStatus(status)}.400`}
+                    textTransform={"uppercase"}
+                  >
+                    {status}
+                  </Badge>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverHeader fontWeight="semibold">
+                  Last Job Log
+                </PopoverHeader>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverBody boxSize={"auto"}>
+                  {logs ? (
+                    <Flex>
+                      <Text>{logs[logs.length - 1]}</Text>
+                    </Flex>
+                  ) : (
+                    "There are no logs"
+                  )}
+                </PopoverBody>
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <Badge
+              textTransform={"uppercase"}
+              colorScheme={getColorSchemeByStatus(status)}
+            >
+              {status}
+            </Badge>
+          )}
         </VStack>
       </Td>
       <Td>

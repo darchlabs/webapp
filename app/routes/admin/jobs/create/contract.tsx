@@ -1,9 +1,33 @@
 import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
-import { Form, Link } from "@remix-run/react";
-import { type ActionArgs, redirect } from "@remix-run/node";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  type ActionArgs,
+  redirect,
+  json,
+  type LoaderFunction,
+} from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
+import { ethers } from "ethers";
+import { getChainId } from "~/utils/chain-info";
+
+type loaderData = {
+  currentJob: JobsFormData;
+};
+
+export const loader: LoaderFunction = async () => {
+  const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  return json<loaderData>({ currentJob });
+};
+
+type actionData =
+  | {
+      message: string;
+      address: string;
+      abi: string;
+    }
+  | undefined;
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
@@ -20,27 +44,70 @@ export const action = async ({ request }: ActionArgs) => {
     return redirect("/admin/jobs/create/provider");
   }
 
-  // TODO(nb): validate the contract exists
+  // Get inputs
+  const contractAddress = `${body.get("address")}`;
+  const contractAbi = `${body.get("abi")}`;
+
+  // Get the network chain id and instance the client provider with it
+  const network = current.network;
+  const chainId = getChainId(network);
+  const provider = ethers.getDefaultProvider(chainId);
+
+  // Check if the address exists on the network
+  const code = await provider.getCode(contractAddress);
+  if (code === "0x") {
+    return json<actionData>({
+      message: `The address is not deployed on the ${network} network`,
+      address: contractAddress,
+      abi: contractAbi,
+    });
+  }
+
+  try {
+    // Validate the contract abi format is correct by instancing it
+    new ethers.Contract(contractAddress, contractAbi, provider);
+  } catch (err) {
+    const error = new Error(`${err}`);
+    return json<actionData>({
+      message: error.message,
+      address: contractAddress,
+      abi: contractAbi,
+    });
+  }
+
   // get provider and network values from form and save in redis
-  current.address = `${body.get("address")}`;
-  current.abi = `${body.get("abi")}`;
+  current.address = contractAddress;
+  current.abi = contractAbi;
   await redis.set("createdJobFormData", current);
 
   // redirect to cronjob page
-  return redirect(`/admin/jobs/create/cron`);
+  return redirect(`/admin/jobs/create/methods`);
 };
 
 export default function StepAddress() {
-  let [address, setAddress] = react.useState("");
-  let [abi, setAbi] = react.useState("");
+  const { currentJob } = useLoaderData() as loaderData;
+  const currentAddress = currentJob.address ? currentJob.address : "";
+  const currentAbi = currentJob.abi ? currentJob.abi : "";
 
-  // TODO(nb): validate the formats inserted are correct in these functions
+  // Define the input variables and their state react hook
+  let [address, setAddress] = react.useState(currentAddress);
+  let [abi, setAbi] = react.useState(currentAbi);
+
   function onInputAddress(address: string) {
     setAddress(address);
   }
 
   function onInputAbi(abi: string) {
     setAbi(abi);
+  }
+
+  // Define is disabled for disabling the NEXT button
+  let isDisabled = false;
+
+  // Check if the inputs are the same than thoshe which were bad, in that case, NEXT should be disabled
+  const error = useActionData() as actionData;
+  if (error?.abi === abi && error?.address === address) {
+    isDisabled = true;
   }
 
   return (
@@ -56,6 +123,7 @@ export default function StepAddress() {
               type="text"
               placeholder="0x..."
               width={"440px"}
+              defaultValue={currentAddress}
               onChange={(event) => {
                 onInputAddress(event.target.value);
               }}
@@ -68,10 +136,18 @@ export default function StepAddress() {
               type="text"
               placeholder="`['abi: ...]`"
               width={"440px"}
+              defaultValue={currentAbi}
               onChange={(event) => {
                 onInputAbi(event.target.value);
               }}
             />
+            <HStack>
+              {error ? (
+                <Text color={"red.400"}>
+                  The contract doesn't exist for the given address and abi.
+                </Text>
+              ) : null}
+            </HStack>
             <HStack
               w={"full"}
               justifyContent={"start"}
@@ -84,7 +160,7 @@ export default function StepAddress() {
                 name={"_action"}
                 value={"submit"}
                 type="submit"
-                disabled={address === "" || abi === ""}
+                disabled={address === "" || abi === "" || isDisabled}
               >
                 NEXT
               </Button>
@@ -107,9 +183,10 @@ export default function StepAddress() {
           </Form>
         </VStack>
       </HStack>
-      <HStack justifyContent={"rigth"} w={"full"} paddingBottom={"40px"}>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your address. Put your ABI.
+
+      <HStack justifyContent={"rigth"} w={"full"} alignItems={"start"}>
+        <Text fontSize={"20px"}>
+          Second, insert the address and the ABI of the contract.
         </Text>
       </HStack>
     </HStack>

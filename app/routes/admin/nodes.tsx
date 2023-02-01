@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <>
-      <HeaderDashboard title={"Nodes"} linkTo={"/nodes"}/>
+      <HeaderDashboard title={"Nodes"} linkTo={"/nodes/create/network"}/>
       
       <Outlet />
 

@@ -1,5 +1,9 @@
+import { GetNetworkNodesUrl } from "~/utils/chain-info";
 import Job from "./jobs";
 import invariant from "tiny-invariant";
+
+// TODO(nb): Make this file only getting the env values from `.env.jobs`?/
+// Or it should get from `.env`?
 
 let job: Job;
 
@@ -20,7 +24,9 @@ function getClient() {
   const { JOB_API_URL } = process.env;
   invariant(typeof JOB_API_URL === "string", "JOB_API_URL env var not set");
 
-  const client = new Job(JOB_API_URL);
+  const networkNodesMap = GetNetworkNodesUrl();
+
+  const client = new Job(JOB_API_URL, networkNodesMap);
 
   return client;
 }

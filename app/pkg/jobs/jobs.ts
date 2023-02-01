@@ -4,13 +4,15 @@ import type {
   ListJobsResponse,
   CreateJobResponse,
 } from "./requests";
-import { type JobsRequest } from "./types";
+import type { JobsRequest } from "./types";
 
 export default class Jobs {
   private URL: string;
+  public networkNodesMap: Map<string, string>;
 
-  constructor(URL: string) {
+  constructor(URL: string, netNodesMap: Map<string, string>) {
     this.URL = URL;
+    this.networkNodesMap = netNodesMap;
   }
 
   public async ListJobs(): Promise<ListJobsResponse> {

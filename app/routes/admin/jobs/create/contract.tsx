@@ -1,11 +1,25 @@
 import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
-import { Form, Link, useActionData } from "@remix-run/react";
-import { type ActionArgs, redirect, json } from "@remix-run/node";
+import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  type ActionArgs,
+  redirect,
+  json,
+  type LoaderFunction,
+} from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import { ethers } from "ethers";
 import { getChainId } from "~/utils/chain-info";
+
+type loaderData = {
+  currentJob: JobsFormData;
+};
+
+export const loader: LoaderFunction = async () => {
+  const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  return json<loaderData>({ currentJob });
+};
 
 type actionData =
   | {
@@ -51,11 +65,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   try {
     // Validate the contract abi format is correct by instancing it
-    const contract = new ethers.Contract(
-      contractAddress,
-      contractAbi,
-      provider
-    );
+    new ethers.Contract(contractAddress, contractAbi, provider);
   } catch (err) {
     const error = new Error(`${err}`);
     return json<actionData>({
@@ -71,13 +81,17 @@ export const action = async ({ request }: ActionArgs) => {
   await redis.set("createdJobFormData", current);
 
   // redirect to cronjob page
-  return redirect(`/admin/jobs/create/cron`);
+  return redirect(`/admin/jobs/create/methods`);
 };
 
 export default function StepAddress() {
+  const { currentJob } = useLoaderData() as loaderData;
+  const currentAddress = currentJob.address ? currentJob.address : "";
+  const currentAbi = currentJob.abi ? currentJob.abi : "";
+
   // Define the input variables and their state react hook
-  let [address, setAddress] = react.useState("");
-  let [abi, setAbi] = react.useState("");
+  let [address, setAddress] = react.useState(currentAddress);
+  let [abi, setAbi] = react.useState(currentAbi);
 
   function onInputAddress(address: string) {
     setAddress(address);
@@ -109,6 +123,7 @@ export default function StepAddress() {
               type="text"
               placeholder="0x..."
               width={"440px"}
+              defaultValue={currentAddress}
               onChange={(event) => {
                 onInputAddress(event.target.value);
               }}
@@ -121,6 +136,7 @@ export default function StepAddress() {
               type="text"
               placeholder="`['abi: ...]`"
               width={"440px"}
+              defaultValue={currentAbi}
               onChange={(event) => {
                 onInputAbi(event.target.value);
               }}
@@ -167,9 +183,10 @@ export default function StepAddress() {
           </Form>
         </VStack>
       </HStack>
-      <HStack justifyContent={"rigth"} w={"full"} paddingBottom={"40px"}>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your address. Put your ABI.
+
+      <HStack justifyContent={"rigth"} w={"full"} alignItems={"start"}>
+        <Text fontSize={"20px"}>
+          Second, insert the address and the ABI of the contract.
         </Text>
       </HStack>
     </HStack>

@@ -2,7 +2,6 @@ import {
   HStack,
   VStack,
   Text,
-  Input,
   Button,
   MenuButton,
   Menu,
@@ -19,7 +18,6 @@ import {
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
-import { ethers } from "ethers";
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 
 export type abiMethod = {
@@ -30,9 +28,13 @@ export type abiMethod = {
   type: string;
 };
 
+type loaderData = {
+  currentJob: JobsFormData;
+};
+
 export const loader: LoaderFunction = async () => {
-  const body = await redis.get("createdJobFormData");
-  return json(body as JobsFormData);
+  const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  return json<loaderData>({ currentJob });
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -46,7 +48,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   // check if pressed back button
   if (body.get("_action") === "back") {
-    return redirect("/admin/jobs/create/cronjob");
+    return redirect("/admin/jobs/create/contract");
   }
 
   // get current created form data from redis, create if not exists
@@ -64,17 +66,32 @@ export const action = async ({ request }: ActionArgs) => {
   await redis.set("createdJobFormData", current);
 
   // redirect to confirm page
-  return redirect(`/admin/jobs/create/account`);
+  return redirect(`/admin/jobs/create/cron`);
 };
 
 export default function StepMethods() {
-  const body = useLoaderData() as JobsFormData;
+  const { currentJob } = useLoaderData() as loaderData;
 
-  // const contractInterface = new ethers.utils.Interface(body.abi);
-  // const methods = contractInterface.functions;
+  let currentCheckMethod = currentJob.checkMethod ? currentJob.checkMethod : "";
+  let currentActionMethod = currentJob.actionMethod
+    ? currentJob.actionMethod
+    : "";
+
+  let [checkMethod, setCheckMethod] = react.useState(currentCheckMethod);
+  let [actionMethod, setActionMethod] = react.useState(currentActionMethod);
+
+  function onClickCheckMethod(checkMethod: string) {
+    setCheckMethod(checkMethod);
+  }
+
+  function onClickActionMethod(actionMethod: string) {
+    setActionMethod(actionMethod);
+  }
+
+  // Get the view and perform methods
   let abi;
   try {
-    abi = JSON.parse(body.abi);
+    abi = JSON.parse(currentJob.abi);
   } catch (error) {
     console.log("err parsing abi: ", error);
   }
@@ -90,18 +107,6 @@ export default function StepMethods() {
   const actionMethods = methods.filter(
     (method) => method.stateMutability === "nonpayable"
   );
-
-  let [checkMethod, setCheckMethod] = react.useState("");
-  let [actionMethod, setActionMethod] = react.useState("");
-
-  // TODO(nb): validate the methods exists on the contract abi
-  function onClickCheckMethod(checkMethod: string) {
-    setCheckMethod(checkMethod);
-  }
-
-  function onClickActionMethod(actionMethod: string) {
-    setActionMethod(actionMethod);
-  }
 
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
@@ -125,6 +130,7 @@ export default function StepMethods() {
                   return (
                     <MenuItem
                       key={method.name}
+                      defaultValue={checkMethod}
                       onClick={() => {
                         onClickCheckMethod(method.name);
                       }}
@@ -155,6 +161,7 @@ export default function StepMethods() {
                   return (
                     <MenuItem
                       key={method.name}
+                      defaultValue={actionMethod}
                       onClick={() => {
                         onClickActionMethod(method.name);
                       }}
@@ -182,7 +189,7 @@ export default function StepMethods() {
               >
                 NEXT
               </Button>
-              <Link to="/admin/jobs/create/cron">
+              <Link to="/admin/jobs/create/contract">
                 <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
                   BACK
                 </Button>
@@ -202,9 +209,34 @@ export default function StepMethods() {
         </VStack>
       </HStack>
       <HStack justifyContent={"rigth"} w={"full"} paddingBottom={"40px"}>
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your check method. Put your action method.
-        </Text>
+        <VStack alignItems={"start"}>
+          <Text fontSize={"20px"}>
+            Third, select the methods to call in the contract.
+          </Text>
+          <Text
+            as="span"
+            fontWeight={"bold"}
+            borderBottom={"1px dotted #9FA2B4"}
+          >
+            Check method:
+          </Text>
+          <Text color={"GrayText"} fontSize={"18px"}>
+            It's a method responsible of checking if the contract needs a call
+            to the action method.
+          </Text>
+          <Text
+            as="span"
+            fontWeight={"bold"}
+            borderBottom={"1px dotted #9FA2B4"}
+          >
+            Action method:
+          </Text>
+          <Text color={"GrayText"} fontSize={"18px"}>
+            It's a method responsible of doing the action inside the contract.
+            Performing this method will spend gas because the execution will
+            change the state of the it.
+          </Text>
+        </VStack>
       </HStack>
     </HStack>
   );

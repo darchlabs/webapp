@@ -16,7 +16,7 @@ export default class Node {
                 headers: {
                     "content-type": "application/json",
                 },
-                body: JSON.stringify({ network, fromBlockNumber }),
+                body: JSON.stringify({network, fromBlockNumber}),
             });
 
             const data = (await res.json()) as PostNewNodeResponse;

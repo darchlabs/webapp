@@ -1,14 +1,14 @@
 import { HStack, VStack, Text, Button, Flex } from "@chakra-ui/react";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData, Form } from "@remix-run/react";
-import { useState } from "react";
+import { Link, useLoaderData, Form, useTransition } from "@remix-run/react";
 import { redis } from "../../../../pkg/redis/redis.server";
 import type { NodeFormData } from "../../../../pkg/node/types";
 import { node } from "../../../../pkg/node/node.server";
 
 export async function action({ request }: ActionArgs) {
   // parse form data
+  console.log('-------> calling action functioon')
   const body = await request.formData();
 
   // check if pressed cancel button
@@ -24,12 +24,13 @@ export async function action({ request }: ActionArgs) {
   }
 
   // get block number
-  current.fromBlockNumber = Number(body.get("blockNumber"));
   await redis.set("createdNodeFormData", current);
-  console.log("-==-===--===--===-=-=-=-=-=-=- ", node.PostNewNode)
-  console.log("-==-===--===--===-=-=-=-=-=-=- ", node.GetStatus)
   await node.PostNewNode(current.network, current.fromBlockNumber);
-  setTimeout(() => { redis.del("createdNodeFormData") }, 1000);
+  await async function() {
+    await redis.del("createdNodeFormData");
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    return;
+  }();
 
 
 
@@ -47,10 +48,17 @@ export const loader: LoaderFunction = async () => {
   return json(current);
 };
 
+
 export default function StepConfirm() {
   const { network, fromBlockNumber } = useLoaderData<NodeFormData>();
-  const [fetchLoading, setFetchLoading] = useState(false);
+  // const [fetchLoading, setFetchLoading] = useState(false);
 
+  const transition = useTransition();
+  const fetchLoading = transition.submission?.formData.get("_action") === "submit";
+  // function handleOnClickCreate() {
+  //   setFetchLoading(true);
+  // }
+  
   return (
     <Form method="post">
       <Flex
@@ -110,7 +118,12 @@ export default function StepConfirm() {
           CREATE
         </Button>
         <Link to={"/admin/nodes/create/blocknumber"}>
-          <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
+          <Button
+            disabled={fetchLoading}
+            size={"sm"}
+            colorScheme={"pink"}
+            variant={"outline"}
+          >
             BACK
           </Button>
         </Link>

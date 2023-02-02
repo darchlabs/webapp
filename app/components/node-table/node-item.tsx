@@ -12,8 +12,12 @@ import {
   MenuList,
   MenuItem,
   color,
+  Button,
+  useClipboard,
 } from "@chakra-ui/react";
+import { CopyIcon } from "@chakra-ui/icons";
 import type { Node } from "../../pkg/node/types";
+import { StatusIcon } from "../status-icon/status-icon";
 import { BsTrash } from "react-icons/bs";
 import PolygonAvatar from "../icon/polygon-avatar";
 import EthereumAvatar from "../icon/ethereum-avatar";
@@ -37,13 +41,13 @@ function getNetworkAvatar(network: string) {
 function getColorSchemeByStatus(status: string) {
   switch (status) {
     case "running":
-      return <>🟢</>;
+      return "green";
     case "sync":
-      return <>🟡</>;
+      return "yellow";
     case "error":
     case "stopped":
     case "stopping":
-      return <>🔴</>;
+      return "red";
   }
 
   return "gray";
@@ -52,6 +56,7 @@ function getColorSchemeByStatus(status: string) {
 export default function NodeItem({item: { id, chain, port, status, name, fromBlockNumber }}: {item: Node}) {
     const networkAvatar = getNetworkAvatar(chain);
     const colorBadge = getColorSchemeByStatus(status);
+    const { onCopy } = useClipboard(id);
     const shortId = id.substring(0, 8);
     
     return (
@@ -76,10 +81,13 @@ export default function NodeItem({item: { id, chain, port, status, name, fromBlo
             </Td>
 
             <Td>
-                <HStack spacing={"25px"}>
+                <HStack spacing={"12.5px"}>
                     <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
                         {shortId}...
                     </Text>
+                    <Button onClick={onCopy} size={"small"}>
+                        <CopyIcon boxSize={5} color={"#C5C7CD"} />
+                    </Button>
                 </HStack>
             </Td>
 
@@ -102,12 +110,7 @@ export default function NodeItem({item: { id, chain, port, status, name, fromBlo
             <Td>
                 <HStack>
                     <HStack alignItems={"start"}>
-                        <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-                            {status}
-                        </Text>
-                        <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-                            {colorBadge}
-                        </Text>
+                        <StatusIcon status={status} color={colorBadge} />
                     </HStack>
 
                     <Menu>

@@ -8,7 +8,6 @@ import { node } from "../../../../pkg/node/node.server";
 
 export async function action({ request }: ActionArgs) {
   // parse form data
-  console.log('-------> calling action functioon')
   const body = await request.formData();
 
   // check if pressed cancel button

@@ -3,10 +3,10 @@ import NodeTable from "../../components/node-table/table";
 import HeaderDashboard from "../../components/header/dashboard";
 
 import { Outlet, useLoaderData } from "@remix-run/react";
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { node } from "../../pkg/node/node.server";
-
 
 export const loader: LoaderFunction = async () => {
   const response = await node.GetStatus();
@@ -14,7 +14,7 @@ export const loader: LoaderFunction = async () => {
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return <>here in nodes error section</>;
+  return <>Oops, there is an error in nodes section</>;
 }
 
 export default function App() {

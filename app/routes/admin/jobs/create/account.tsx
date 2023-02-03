@@ -1,5 +1,4 @@
 import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
-<<<<<<< HEAD
 import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
 import {
   type ActionArgs,
@@ -26,12 +25,6 @@ type actionData =
       pk: string;
     }
   | undefined;
-=======
-import { Form, Link } from "@remix-run/react";
-import { type ActionArgs, redirect } from "@remix-run/node";
-import { redis } from "~/pkg/redis/redis.server";
-import type { JobsFormData } from "~/pkg/jobs/types";
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
@@ -47,7 +40,6 @@ export const action = async ({ request }: ActionArgs) => {
   }
   console.log("current");
 
-<<<<<<< HEAD
   const privateKey = `${body.get("privateKey")}`;
   const prov = ethers.getDefaultProvider(5);
 
@@ -57,9 +49,6 @@ export const action = async ({ request }: ActionArgs) => {
     return json({ pk: privateKey });
   }
 
-=======
-  const privateKey = body.get("privateKey");
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
   current.privateKey = privateKey as string;
 
   await redis.set("createdJobFormData", current);
@@ -67,7 +56,6 @@ export const action = async ({ request }: ActionArgs) => {
   return redirect("/admin/jobs/create/confirm");
 };
 
-<<<<<<< HEAD
 export default function StepAccount() {
   const { currentJob } = useLoaderData() as loaderData;
   const currentPk = currentJob.privateKey ? currentJob.privateKey : "";
@@ -85,10 +73,6 @@ export default function StepAccount() {
     isDisabled = true;
   }
 
-=======
-export default function StepCron() {
-  // TODO(nb): put the cronjob as item list
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
       <Form method="post">
@@ -102,7 +86,6 @@ export default function StepCron() {
               type="text"
               placeholder="Private key"
               width={"440px"}
-<<<<<<< HEAD
               defaultValue={privateKey}
               onChange={(event) => {
                 onInputPrivateKey(event.target.value);
@@ -113,11 +96,6 @@ export default function StepCron() {
         <Text color={"red.400"}>
           {error ? "There is no address at the given private key" : null}
         </Text>
-=======
-            />
-          </VStack>
-        </HStack>
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
 
         <HStack
           w={"full"}
@@ -131,18 +109,11 @@ export default function StepCron() {
             name={"_action"}
             value={"submit"}
             type="submit"
-<<<<<<< HEAD
             disabled={privateKey === "" || isDisabled}
           >
             NEXT
           </Button>
           <Link to="/admin/jobs/create/cron">
-=======
-          >
-            NEXT
-          </Button>
-          <Link to="/admin/jobs/methods">
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
             <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
               BACK
             </Button>
@@ -160,7 +131,6 @@ export default function StepCron() {
         </HStack>
       </Form>
       <HStack>
-<<<<<<< HEAD
         <VStack alignItems={"start"}>
           <Text fontSize={"20px"}>
             Fifth, insert the private key of your account.
@@ -185,11 +155,6 @@ export default function StepCron() {
             complete the tx correctly. Otherwise, it will fail.
           </Text>
         </VStack>
-=======
-        <Text color={"GrayText"} fontSize={"25px"}>
-          Put your private key.
-        </Text>
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
       </HStack>
     </HStack>
   );

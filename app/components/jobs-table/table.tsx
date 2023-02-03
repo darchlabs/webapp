@@ -25,16 +25,9 @@ import {
 } from "react-icons/ri";
 import type { CronjobStatus } from "../../types";
 import TableItem from "./table-item";
-<<<<<<< HEAD
 import { Provider, type Job } from "~/pkg/jobs/types";
 
 export function getColorSchemeByStatus(status: CronjobStatus): string {
-=======
-import { type Job } from "~/pkg/jobs/types";
-import { Indexed } from "ethers/lib/utils";
-
-function getColorSchemeByStatus(status: CronjobStatus): string {
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
   switch (status) {
     case "running":
       return "green";
@@ -49,19 +42,11 @@ function getColorSchemeByStatus(status: CronjobStatus): string {
   return "gray";
 }
 
-<<<<<<< HEAD
 function TableWithData({ items }: { items: Job[] }, providers: Provider[]) {
   return (
     <VStack
       w={"full"}
       maxW={"1080px"}
-=======
-function TableWithData({ items }: { items: Job[] }) {
-  return (
-    <VStack
-      w={"full"}
-      maxW={"1000px"}
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
       alignItems={"start"}
       bg={"white"}
       border={"1px solid #DFE0EB"}
@@ -77,37 +62,6 @@ function TableWithData({ items }: { items: Job[] }) {
           <Text fontWeight={"bold"} fontSize={"19px"}>
             All jobs ({items.length})
           </Text>
-<<<<<<< HEAD
-=======
-          <VStack alignItems={"start"} spacing={0.5}>
-            <Text
-              as={"span"}
-              fontWeight={"normal"}
-              fontSize={"14px"}
-              color={"gray.400"}
-            >
-              Cronjob: Each {items[0].cronjob} seconds
-            </Text>
-            <HStack justifyContent={"center"}>
-              <Text
-                as={"span"}
-                fontWeight={"normal"}
-                fontSize={"14px"}
-                color={"gray.400"}
-              >
-                Status:
-              </Text>
-              <Badge
-                colorScheme={getColorSchemeByStatus(
-                  items[0].status as CronjobStatus
-                )}
-                textTransform={"uppercase"}
-              >
-                {items[0].status}
-              </Badge>
-            </HStack>
-          </VStack>
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
         </VStack>
 
         <HStack spacing={"24px"}>
@@ -143,27 +97,16 @@ function TableWithData({ items }: { items: Job[] }) {
             <Tr>
               <Th>Jobs Details</Th>
               <Th>Provider</Th>
-<<<<<<< HEAD
               <Th>Event</Th>
               <Th>Methods</Th>
               <Th>Last Updated</Th>
               <Th>Status</Th>
-=======
-              <Th>Network</Th>
-              <Th>Cronjob</Th>
-              <Th>Methods</Th>
-              <Th>Last Updated</Th>
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
               <Th></Th>
             </Tr>
           </Thead>
           <Tbody>
             {items.map((item, index) => (
-<<<<<<< HEAD
               <TableItem key={index} item={item} providers={providers} />
-=======
-              <TableItem key={index} item={item} />
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
             ))}
           </Tbody>
           <TableCaption pt={0} mb={"8px"}>
@@ -227,7 +170,6 @@ function EmptyTable() {
   );
 }
 
-<<<<<<< HEAD
 export default function JobsTable({
   items,
   providers,
@@ -236,25 +178,4 @@ export default function JobsTable({
   providers: Provider[];
 }) {
   return !items.length ? EmptyTable() : TableWithData({ items }, providers);
-=======
-export default function JobsTable({ items }: { items: Job[] }) {
-  return !items.length ? EmptyTable() : TableWithData({ items });
-}
-{
-  /* <Tr>
-<Th key={"address"}>Jobs Details</Th>
-<Th key={"provider"}>Provider</Th>
-<Th key={"network"}>Network</Th>
-<Th key={"cronjob"}>Cronjob</Th>
-<Th key={"methods"}>Methods</Th>
-<Th key={"lastUpdated"}>Last Updated</Th>
-<Th></Th>
-</Tr>
-</Thead>
-<Tbody>
-{items.map((item, index) => (
-<TableItem key={"provider"} item={item.providerId} />
-))}
-</Tbody> */
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
 }

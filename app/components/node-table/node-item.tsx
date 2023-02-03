@@ -1,3 +1,4 @@
+import React from "react";
 import {
   IconButton,
   Tr,
@@ -25,6 +26,7 @@ import BaseAvatar from "../icon/base-avatar";
 import AvalancheAvatar from "../icon/avalanche-avatar";
 import { RiMore2Fill, RiStopCircleLine } from "react-icons/ri";
 import { useLoaderData } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
 
 function getNetworkAvatar(network: string) {
   switch (network) {
@@ -54,12 +56,37 @@ function getColorSchemeByStatus(status: string) {
   return "gray";
 }
 
+
 export default function NodeItem({item: { id, chain, port, status, name, fromBlockNumber }, nodesURL }: {item: Node, nodesURL: string}) {
     const networkAvatar = getNetworkAvatar(chain);
     const colorBadge = getColorSchemeByStatus(status);
-    console.log("00000000000 ", nodesURL)
+    const [isFetching, setIsFetching] = React.useState(false);
     const { onCopy } = useClipboard(`${nodesURL}/jsonrpc/${id}`);
     const shortId = id.substring(0, 8);
+    
+    const handleOnclick = () => {
+        const post = async () => {
+            setIsFetching(true)
+            try {
+                const res = await fetch(`${nodesURL}/api/v1/nodes`, {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                      },
+                    // fix api to support nodesId
+                    body: JSON.stringify({ node_id: id }),
+                })
+                window.location.assign("/admin/nodes");
+            } catch (error) {
+                setIsFetching(false);
+                console.log(error)
+            }
+        };
+        
+        post();
+    }
+
+    
     
     return (
         <Tr>
@@ -118,8 +145,8 @@ export default function NodeItem({item: { id, chain, port, status, name, fromBlo
                     <Menu>
                     <MenuButton as={IconButton} variant="ghost" icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />} />
                     <MenuList minW="0" w={"150px"}>
-                        <MenuItem icon={<RiStopCircleLine size={15} />}>Start</MenuItem>
-                        <MenuItem icon={<BsTrash />}>Stop</MenuItem>
+                        <MenuItem icon={<RiStopCircleLine size={15} />}>Stop/Start</MenuItem>
+                        <MenuItem onClick={handleOnclick} icon={<BsTrash />}>Delete</MenuItem>
                     </MenuList>
                     </Menu>
                 </HStack>

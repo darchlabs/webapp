@@ -24,6 +24,7 @@ import EthereumAvatar from "../icon/ethereum-avatar";
 import BaseAvatar from "../icon/base-avatar";
 import AvalancheAvatar from "../icon/avalanche-avatar";
 import { RiMore2Fill, RiStopCircleLine } from "react-icons/ri";
+import { useLoaderData } from "@remix-run/react";
 
 function getNetworkAvatar(network: string) {
   switch (network) {
@@ -53,10 +54,11 @@ function getColorSchemeByStatus(status: string) {
   return "gray";
 }
 
-export default function NodeItem({item: { id, chain, port, status, name, fromBlockNumber }}: {item: Node}) {
+export default function NodeItem({item: { id, chain, port, status, name, fromBlockNumber }, nodesURL }: {item: Node, nodesURL: string}) {
     const networkAvatar = getNetworkAvatar(chain);
     const colorBadge = getColorSchemeByStatus(status);
-    const { onCopy } = useClipboard(id);
+    console.log("00000000000 ", nodesURL)
+    const { onCopy } = useClipboard(`${nodesURL}/jsonrpc/${id}`);
     const shortId = id.substring(0, 8);
     
     return (

@@ -10,7 +10,7 @@ import { node } from "../../pkg/node/node.server";
 
 export const loader: LoaderFunction = async () => {
   const response = await node.GetStatus();
-  return json(response);
+  return json({ response, nodesURL: node.getURL() });
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
@@ -18,7 +18,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function App() {
-  const response = useLoaderData<typeof loader>();
+  const { response, nodesURL} = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -27,7 +27,7 @@ export default function App() {
       <Outlet />
 
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>
-        <NodeTable nodeList={response.nodes} />
+        <NodeTable nodeList={response.nodes} nodesURL={nodesURL} />
       </HStack>
     </>
   );

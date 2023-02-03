@@ -8,6 +8,10 @@ export default class Node {
         this.URL = URL;
     }
 
+    public getURL(): string {
+        return this.URL;
+    }
+
     public async PostNewNode(network: string, fromBlockNumber: number): Promise<PostNewNodeResponse> {
         try {
             const url = `${this.URL}/api/v1/nodes`;

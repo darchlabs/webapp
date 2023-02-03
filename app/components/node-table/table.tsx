@@ -18,12 +18,11 @@ import {
 } from "@chakra-ui/react";
 
 import { RiFilter2Fill, RiSortAsc, RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
-import { useLocation, Link } from "@remix-run/react";
+import { Link } from "@remix-run/react";
 import NodeItem from "./node-item";
 import type { Node } from "../../pkg/node/types";
-import { MdNotListedLocation } from "react-icons/md";
 
-function TableWithData({ nodeList }: { nodeList: Node[] }) {
+function TableWithData({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: string }) {
   return (
     <VStack
       w={"full"}
@@ -70,7 +69,7 @@ function TableWithData({ nodeList }: { nodeList: Node[] }) {
           <Thead>
             <Tr>
               <Th>Network</Th>
-              <Th>Node id</Th>
+              <Th>Node url</Th>
               <Th>Port</Th>
               <Th>Origin</Th>
               <Th>Status</Th>
@@ -79,7 +78,7 @@ function TableWithData({ nodeList }: { nodeList: Node[] }) {
           </Thead>
           <Tbody>
             {nodeList.map((node, _index) => (
-              <NodeItem key={node.id} item={node} />
+              <NodeItem key={node.id} item={node} nodesURL={nodesURL} />
             ))}
           </Tbody>
           <TableCaption pt={0} mb={"8px"}>
@@ -146,7 +145,7 @@ function EmptyTable(shouldShow: boolean = true) {
   );
 }
 
-export default function NodeTable({ nodeList }: { nodeList: Node[] }) {
-  return !nodeList.length ? EmptyTable() : TableWithData({ nodeList });
+export default function NodeTable({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: string }) {
+  return !nodeList.length ? EmptyTable() : TableWithData({ nodeList, nodesURL });
 }
 

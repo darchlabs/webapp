@@ -42,7 +42,12 @@ export function getColorSchemeByStatus(status: CronjobStatus): string {
   return "gray";
 }
 
-function TableWithData({ items }: { items: Job[] }, providers: Provider[]) {
+function TableWithData(
+  { items }: { items: Job[] },
+  providers: Provider[],
+  jobId: string,
+  handlerJobId: (id: string) => void
+) {
   return (
     <VStack
       w={"full"}
@@ -106,7 +111,13 @@ function TableWithData({ items }: { items: Job[] }, providers: Provider[]) {
           </Thead>
           <Tbody>
             {items.map((item, index) => (
-              <TableItem key={index} item={item} providers={providers} />
+              <TableItem
+                key={index}
+                item={item}
+                providers={providers}
+                jobId={jobId}
+                handlerJobId={handlerJobId}
+              />
             ))}
           </Tbody>
           <TableCaption pt={0} mb={"8px"}>
@@ -173,9 +184,15 @@ function EmptyTable() {
 export default function JobsTable({
   items,
   providers,
+  jobId,
+  handlerJobId,
 }: {
   items: Job[];
   providers: Provider[];
+  jobId: string;
+  handlerJobId: (id: string) => void;
 }) {
-  return !items.length ? EmptyTable() : TableWithData({ items }, providers);
+  return !items.length
+    ? EmptyTable()
+    : TableWithData({ items }, providers, jobId, handlerJobId);
 }

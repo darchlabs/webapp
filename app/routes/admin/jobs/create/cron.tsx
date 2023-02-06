@@ -10,7 +10,13 @@ import {
   MenuItem,
   Show,
 } from "@chakra-ui/react";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 import type { LoaderFunction, ActionArgs } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
@@ -25,6 +31,10 @@ type loaderData = {
 
 export const loader: LoaderFunction = async () => {
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  if (!currentJob) {
+    return redirect("/admin/jobs/create/provider");
+  }
+
   return json<loaderData>({ currentJob });
 };
 
@@ -37,6 +47,10 @@ type actionData =
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
+
+  if (body.get("_action") === "back") {
+    return redirect("/admin/jobs/create/methods");
+  }
 
   if (body.get("_action") === "cancel") {
     await redis.del("createdJobFormData");
@@ -110,6 +124,15 @@ export default function StepCronjob() {
     setCustomCron(customCron);
   }
 
+  // Define state for loaders in the buttons
+  const transition = useTransition();
+  const isSubmitting =
+    transition.submission?.formData.get("_action") === "next";
+  const isGoingBack = transition.submission?.formData.get("_action") === "back";
+  const isCanceling =
+    transition.submission?.formData.get("_action") === "cancel";
+
+  // Define disabled state for next button
   let isDisabled = false;
 
   const error = useActionData() as actionData;
@@ -184,21 +207,31 @@ export default function StepCronjob() {
             size={"sm"}
             colorScheme={"pink"}
             name={"_action"}
-            value={"submit"}
+            value={"next"}
             type="submit"
+            isLoading={isSubmitting}
             disabled={
               cron === "" ||
               (cron === "custom" ? customCron === "" : false) ||
-              isDisabled
+              isDisabled ||
+              isCanceling ||
+              isGoingBack
             }
           >
             NEXT
           </Button>
-          <Link to="/admin/jobs/create/methods">
-            <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
-              BACK
-            </Button>
-          </Link>
+          <Button
+            type="submit"
+            name="_action"
+            value="back"
+            size={"sm"}
+            colorScheme={"pink"}
+            variant={"outline"}
+            isLoading={isGoingBack}
+            isDisabled={isSubmitting || isCanceling}
+          >
+            BACK
+          </Button>
           <Button
             name={"_action"}
             value={"cancel"}
@@ -206,6 +239,8 @@ export default function StepCronjob() {
             colorScheme={"pink"}
             variant={"ghost"}
             type="submit"
+            isLoading={isCanceling}
+            isDisabled={isSubmitting || isGoingBack}
           >
             Cancel
           </Button>

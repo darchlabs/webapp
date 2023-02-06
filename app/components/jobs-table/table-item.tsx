@@ -17,8 +17,6 @@ import {
   PopoverHeader,
   PopoverBody,
   Button,
-  usePopover,
-  Box,
   PopoverArrow,
   PopoverCloseButton,
   Flex,
@@ -31,14 +29,17 @@ import EthereumAvatar from "../icon/ethereum-avatar";
 import AvalancheAvatar from "../icon/avalanche-avatar";
 import BaseAvatar from "../icon/base-avatar";
 
-import { RiMore2Fill, RiStopCircleLine } from "react-icons/ri";
+import {
+  RiMore2Fill,
+  RiStopCircleLine,
+  RiPlayCircleFill,
+} from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
 
 import ShortAddress from "../../utils/short-address";
 import { cronMap } from "~/routes/admin/jobs/utils/cron-utils";
 import { getColorSchemeByStatus } from "./table";
 import getProviderName from "~/routes/admin/jobs/utils/provider-name";
-import { useState } from "react";
 
 function getNetworkAvatar(network: Network) {
   switch (network) {
@@ -55,6 +56,7 @@ function getNetworkAvatar(network: Network) {
 
 export default function TableItem({
   item: {
+    id,
     name,
     providerId,
     network,
@@ -69,9 +71,13 @@ export default function TableItem({
     logs,
   },
   providers,
+  jobId,
+  handlerJobId,
 }: {
   item: Job;
   providers: Provider[];
+  jobId: string;
+  handlerJobId: (id: string) => void;
 }) {
   const networkAvatar = getNetworkAvatar(network);
 
@@ -79,6 +85,8 @@ export default function TableItem({
     const difference = Date.now() - new Date(date).getDate();
     return new Date(difference).toDateString();
   };
+
+  const isRunning = status === "running";
 
   return (
     <Tr>
@@ -202,10 +210,45 @@ export default function TableItem({
             icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />}
           />
           <MenuList minW="0" w={"150px"}>
-            <MenuItem icon={<RiStopCircleLine size={15} />}>Stop</MenuItem>
-            <MenuItem icon={<BsTrash />}>Delete</MenuItem>
+            {isRunning ? (
+              <MenuItem
+                type="submit"
+                name="updateStatus"
+                value="stop"
+                icon={<RiStopCircleLine size={15} />}
+                onClick={() => {
+                  handlerJobId(id);
+                }}
+              >
+                Stop
+              </MenuItem>
+            ) : (
+              <MenuItem
+                type="submit"
+                name="updateStatus"
+                value="start"
+                icon={<RiPlayCircleFill size={15} />}
+                onClick={() => {
+                  handlerJobId(id);
+                }}
+              >
+                Start
+              </MenuItem>
+            )}
+            <MenuItem
+              type="submit"
+              name="updateStatus"
+              value="delete"
+              icon={<BsTrash />}
+              onClick={() => {
+                handlerJobId(id);
+              }}
+            >
+              Delete
+            </MenuItem>
           </MenuList>
         </Menu>
+        <input type="hidden" name="jobId" value={jobId} />
       </Td>
     </Tr>
   );

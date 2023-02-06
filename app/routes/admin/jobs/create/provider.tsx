@@ -15,7 +15,7 @@ import react from "react";
 
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 import Logo from "~/components/icon/logo";
-import { useLoaderData, Form } from "@remix-run/react";
+import { useLoaderData, Form, useTransition } from "@remix-run/react";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { job } from "~/pkg/jobs/jobs.server";
@@ -83,8 +83,6 @@ export default function StepProvider() {
   let [providerId, setProviderId] = react.useState(currentProviderId);
   let [network, setNetwork] = react.useState(currentNetwork);
 
-  console.log("netwrok: ", network);
-
   let provider = providers.find((item) => item.id === providerId);
 
   function onProviderClick(providerId: string) {
@@ -94,6 +92,12 @@ export default function StepProvider() {
   function onNetworkClick(network: Network) {
     setNetwork(capitalize(network));
   }
+
+  const transition = useTransition();
+  const isSubmitting =
+    transition.submission?.formData.get("_action") === "next";
+  const isCanceling =
+    transition.submission?.formData.get("_action") === "cancel";
 
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
@@ -175,9 +179,12 @@ export default function StepProvider() {
                 size={"sm"}
                 colorScheme={"pink"}
                 name={"_action"}
-                value={"submit"}
+                value={"next"}
                 type="submit"
-                disabled={providerId === "" || network === "none"}
+                isLoading={isSubmitting}
+                disabled={
+                  providerId === "" || network === "none" || isCanceling
+                }
               >
                 NEXT
               </Button>
@@ -188,6 +195,8 @@ export default function StepProvider() {
                 colorScheme={"pink"}
                 variant={"ghost"}
                 type="submit"
+                isLoading={isCanceling}
+                isDisabled={isSubmitting}
               >
                 Cancel
               </Button>

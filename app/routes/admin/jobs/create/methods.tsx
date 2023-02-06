@@ -8,7 +8,7 @@ import {
   MenuList,
   MenuItem,
 } from "@chakra-ui/react";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useTransition } from "@remix-run/react";
 import {
   type ActionArgs,
   redirect,
@@ -34,11 +34,20 @@ type loaderData = {
 
 export const loader: LoaderFunction = async () => {
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  if (!currentJob) {
+    return redirect("/admin/jobs/create/provider");
+  }
+
   return json<loaderData>({ currentJob });
 };
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
+
+  // check if pressed back button
+  if (body.get("_action") === "cancel") {
+    return redirect("/admin/jobs/create/contract");
+  }
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
@@ -87,6 +96,14 @@ export default function StepMethods() {
   function onClickActionMethod(actionMethod: string) {
     setActionMethod(actionMethod);
   }
+
+  // Define state for loaders in the buttons
+  const transition = useTransition();
+  const isSubmitting =
+    transition.submission?.formData.get("_action") === "next";
+  const isGoingBack = transition.submission?.formData.get("_action") === "back";
+  const isCanceling =
+    transition.submission?.formData.get("_action") === "cancel";
 
   // Get the view and perform methods
   let abi;
@@ -183,17 +200,30 @@ export default function StepMethods() {
                 size={"sm"}
                 colorScheme={"pink"}
                 name={"_action"}
-                value={"submit"}
+                value={"next"}
                 type="submit"
-                disabled={checkMethod === "" || actionMethod === ""}
+                disabled={
+                  checkMethod === "" ||
+                  actionMethod === "" ||
+                  isCanceling ||
+                  isGoingBack
+                }
+                isLoading={isSubmitting}
               >
                 NEXT
               </Button>
-              <Link to="/admin/jobs/create/contract">
-                <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
-                  BACK
-                </Button>
-              </Link>
+              <Button
+                size={"sm"}
+                colorScheme={"pink"}
+                variant={"outline"}
+                type="submit"
+                name="_action"
+                value="back"
+                isLoading={isGoingBack}
+                isDisabled={isCanceling || isSubmitting}
+              >
+                BACK
+              </Button>
               <Button
                 name={"_action"}
                 value={"cancel"}
@@ -201,6 +231,8 @@ export default function StepMethods() {
                 colorScheme={"pink"}
                 variant={"ghost"}
                 type="submit"
+                isLoading={isCanceling}
+                isDisabled={isSubmitting || isSubmitting}
               >
                 Cancel
               </Button>

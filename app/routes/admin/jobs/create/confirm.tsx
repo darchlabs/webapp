@@ -1,5 +1,11 @@
 import { HStack, VStack, Text, Button, Flex } from "@chakra-ui/react";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 import {
   type ActionArgs,
   redirect,
@@ -20,6 +26,7 @@ import shortAddress from "~/utils/short-address";
 import capitalize from "../utils/capitalize";
 import getProviderName from "../utils/provider-name";
 import { errorsMsgMap, errorsRedirectMap } from "../utils/errors";
+import { useState } from "react";
 
 type actionData =
   | {
@@ -45,6 +52,11 @@ export const action = async ({ request }: ActionArgs) => {
   // parse form data
   const body = await request.formData();
   console.log("data: ", body);
+
+  // check if pressed back button
+  if (body.get("_action") === "back") {
+    return redirect("/admin/jobs/create/account");
+  }
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
@@ -91,6 +103,15 @@ export default function StepConfirm() {
 
   const actionData = useActionData() as actionData;
 
+  // Define state for loaders in the buttons
+  const transition = useTransition();
+  const isSubmitting =
+    transition.submission?.formData.get("_action") === "next";
+  const isGoingBack = transition.submission?.formData.get("_action") === "back";
+  const isCanceling =
+    transition.submission?.formData.get("_action") === "cancel";
+
+  // define disabled state for next button and get action data info
   let nextDisabled = false;
   let error = "";
   let redirect = "";
@@ -105,6 +126,11 @@ export default function StepConfirm() {
     if (`${data}` == `${actionData.job}`) {
       nextDisabled = true;
     }
+  }
+
+  let [isRedirecting, setIsRedirecting] = useState(false);
+  function handleIsRedirecting() {
+    setIsRedirecting(true);
   }
 
   return (
@@ -191,8 +217,15 @@ export default function StepConfirm() {
               </Text>
             ) : null}
             {redirect ? (
-              <Link to={redirect}>
-                <Button size={"sm"} colorScheme={"pink"}>
+              <Link to={redirect} onClick={() => handleIsRedirecting()}>
+                <Button
+                  type="submit"
+                  name="_action"
+                  value="change"
+                  size={"sm"}
+                  colorScheme={"pink"}
+                  isLoading={isRedirecting}
+                >
                   Change
                 </Button>
               </Link>
@@ -206,17 +239,25 @@ export default function StepConfirm() {
           size={"sm"}
           colorScheme={"pink"}
           name="_action"
-          value="submit"
+          value="next"
           type="submit"
-          isDisabled={nextDisabled}
+          isLoading={isSubmitting}
+          isDisabled={nextDisabled || isCanceling || isGoingBack}
         >
           CREATE
         </Button>
-        <Link to={"/admin/jobs/create/account"}>
-          <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
-            BACK
-          </Button>
-        </Link>
+        <Button
+          size={"sm"}
+          colorScheme={"pink"}
+          variant={"outline"}
+          name="_action"
+          value="back"
+          type="submit"
+          isLoading={isGoingBack}
+          isDisabled={isCanceling || isSubmitting}
+        >
+          BACK
+        </Button>
         <Button
           size={"sm"}
           colorScheme={"pink"}
@@ -224,6 +265,8 @@ export default function StepConfirm() {
           type="submit"
           name="_action"
           value="cancel"
+          isLoading={isCanceling}
+          isDisabled={isGoingBack || isSubmitting}
         >
           Cancel
         </Button>

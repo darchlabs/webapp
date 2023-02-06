@@ -1,5 +1,11 @@
 import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useTransition,
+} from "@remix-run/react";
 import {
   type ActionArgs,
   redirect,
@@ -28,6 +34,10 @@ type actionData =
 
 export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
+
+  if (body.get("_action") === "back") {
+    return redirect("/admin/jobs/create/cron");
+  }
 
   if (body.get("_action") === "cancel") {
     await redis.del("createdJobFormData");
@@ -66,6 +76,15 @@ export default function StepAccount() {
     setPrivateKey(privateKey);
   }
 
+  // Define state for loaders in the buttons
+  const transition = useTransition();
+  const isSubmitting =
+    transition.submission?.formData.get("_action") === "next";
+  const isGoingBack = transition.submission?.formData.get("_action") === "back";
+  const isCanceling =
+    transition.submission?.formData.get("_action") === "cancel";
+
+  // define disabled state for next button
   const error = useActionData() as actionData;
 
   let isDisabled = false;
@@ -107,17 +126,27 @@ export default function StepAccount() {
             size={"sm"}
             colorScheme={"pink"}
             name={"_action"}
-            value={"submit"}
+            value={"next"}
             type="submit"
-            disabled={privateKey === "" || isDisabled}
+            disabled={
+              privateKey === "" || isDisabled || isGoingBack || isCanceling
+            }
+            isLoading={isSubmitting}
           >
             NEXT
           </Button>
-          <Link to="/admin/jobs/create/cron">
-            <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
-              BACK
-            </Button>
-          </Link>
+          <Button
+            type="submit"
+            name="_action"
+            value="back"
+            size={"sm"}
+            colorScheme={"pink"}
+            variant={"outline"}
+            isLoading={isGoingBack}
+            isDisabled={isSubmitting || isCanceling}
+          >
+            BACK
+          </Button>
           <Button
             name={"_action"}
             value={"cancel"}
@@ -125,6 +154,8 @@ export default function StepAccount() {
             colorScheme={"pink"}
             variant={"ghost"}
             type="submit"
+            isLoading={isCanceling}
+            isDisabled={isSubmitting || isGoingBack}
           >
             Cancel
           </Button>

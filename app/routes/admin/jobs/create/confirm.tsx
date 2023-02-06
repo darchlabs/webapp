@@ -43,6 +43,10 @@ type loaderData = {
 
 export const loader: LoaderFunction = async () => {
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
+  if (!currentJob) {
+    return redirect("/admin/jobs/create/provider");
+  }
+
   const providers = await job.ListProviders();
 
   return json({ data: currentJob, providers: providers.data });

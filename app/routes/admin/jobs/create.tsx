@@ -1,21 +1,21 @@
 import { HStack, VStack, Text } from "@chakra-ui/react";
 
 import type { Step } from "../../../components/create-node/steps";
-import StepsComponent from "../../../components/create-node/steps";
+import StepsComponent from "../../../components/create-synchronizer/steps";
 import { Outlet, useLocation } from "@remix-run/react";
 
 enum StepEnum {
-  Provider,
-  Contract,
-  Methods,
-  Cron,
-  Account,
-  Confirm,
+  provider,
+  contract,
+  methods,
+  cron,
+  account,
+  confirm,
 }
 
 const steps: Step[] = [
   {
-    text: "Providers",
+    text: "Provider",
   },
   {
     text: "Contract",

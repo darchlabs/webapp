@@ -15,7 +15,9 @@ import {
   Button,
   Badge,
   Heading,
+  Show,
 } from "@chakra-ui/react";
+import { Link } from "@remix-run/react";
 
 import {
   RiFilter2Fill,
@@ -177,6 +179,12 @@ function EmptyTable() {
         transaction automatically in your smart contract. It will be based on a
         cronjob and on the smart contract logic.
       </Text>
+
+      <Link to="/admin/jobs/create/provider">
+        <Button size={"sm"} colorScheme={"pink"}>
+          CREATE JOB
+        </Button>
+      </Link>
     </VStack>
   );
 }

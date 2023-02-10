@@ -19,7 +19,6 @@ import type {
   JobsRequest,
   Provider,
 } from "~/pkg/jobs/types";
-import { v4 as id } from "uuid";
 import { job } from "~/pkg/jobs/jobs.server";
 import { cronMap } from "../utils/cron-utils";
 import shortAddress from "~/utils/short-address";
@@ -41,6 +40,10 @@ type loaderData = {
   providers: Provider[];
 };
 
+type JobsLen = {
+  len: number;
+};
+
 export const loader: LoaderFunction = async () => {
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
@@ -48,6 +51,11 @@ export const loader: LoaderFunction = async () => {
   }
 
   const providers = await job.ListProviders();
+
+  // Get jobs len and save in redis (useful for setting the new job name)
+  const jobs = await job.ListJobs();
+  let jobsLen: JobsLen = { len: jobs.data.length };
+  await redis.set("currentNumberOfJobs", jobsLen);
 
   return json({ data: currentJob, providers: providers.data });
 };
@@ -78,9 +86,14 @@ export const action = async ({ request }: ActionArgs) => {
   const bodyRequest = current as JobsRequest;
 
   bodyRequest.type = "cronjob";
-  bodyRequest.name = id();
   // Get the node url of the corresponding network
   bodyRequest.nodeUrl = job.networkNodesMap.get(`${current.network}`)!;
+
+  // Get jobs len for assigning the new job name number
+  const { len: jobsLen } = (await redis.get("currentNumberOfJobs")) as JobsLen;
+  bodyRequest.name = `Job ${jobsLen + 1}`;
+  // Delete the jobs len from redis because it will be updated
+  await redis.del("currentNumberOfJobs");
 
   // Create job
   const res = await job.CreateJob(bodyRequest);

@@ -13,4 +13,5 @@ export interface ICache {
   setBatch<T extends Cache>(data: T[]): Promise<void>;
   del(key: string): Promise<boolean>;
   flush(): Promise<boolean>;
+  keys(pattern: string): Promise<string[]>;
 }

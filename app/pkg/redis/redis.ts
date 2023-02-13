@@ -120,4 +120,14 @@ export default class implements ICache {
 
     return deleted;
   }
+
+  public async keys(pattern: string): Promise<string[]> {
+    // connect redis client
+    if (!this.client.isReady) {
+      await this.client.connect();
+    }
+
+    const values = await this.client.KEYS(pattern);
+    return values;
+  }
 }

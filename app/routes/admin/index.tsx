@@ -13,9 +13,10 @@ import HeaderDashboard from "../../components/header/dashboard";
 
 import type { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { redis } from "~/pkg/redis/redis.server";
-import getLastAndCurrentDay from "~/utils/get-last-day";
 import StateGraph from "~/components/dashboard/state-graph";
+import getReportGroup from "~/utils/get-report-group";
+import { getHoursPeriodArr } from "~/utils/get-date-period-arr";
+import getServiceInsights from "~/utils/get-service-insigths";
 
 type Report = {
   id: string;
@@ -23,61 +24,20 @@ type Report = {
   createdAt: string;
 };
 
-type GroupReport = {
+export type GroupReport = {
   type: string;
-  services: Report[];
+  reports: Report[];
   createdAt: string;
 };
 
 type loaderData = {
-  // syncReport: Report[];
   jobsGroup: GroupReport[];
+  // syncReport: Report[];
   // nodesReport: Report[];
 };
 
-// UNIX time is in seconds
-const OneHour = 60 * 60; // 60 secs * 60 minutes
-
 export const loader: LoaderFunction = async () => {
-  const jobsPrefix = "group-reports:jobs:";
-  // Get last day and now timestamps in UNIX time
-  let [lastDay, now] = getLastAndCurrentDay();
-
-  // get all reports form redis
-  const jobsKeys = await redis.keys(`${jobsPrefix}*`);
-
-  // filter for only last day reports
-  let lastDayKeys: number[] = [];
-  const a = jobsKeys.filter((key) => {
-    const keyDate = Number(key.substring(jobsPrefix.length));
-    const keyDateLen = keyDate.toString().length;
-
-    now = Number(now.toString().substring(0, keyDateLen));
-    lastDay = Number(lastDay.toString().substring(0, keyDateLen));
-
-    // adding an hiur for assuring we'll get at least 24 reports with an hour of difference
-    if (keyDate >= lastDay + OneHour && keyDate <= now) {
-      lastDayKeys.push(keyDate);
-    }
-    return lastDayKeys;
-  });
-
-  const keysBatch: string[] = [];
-
-  // sort it ascendently
-  let lastKeyAdded = 0;
-  // Filter by those reports that have 1 hour of difference
-  lastDayKeys = lastDayKeys.sort((a, b) => a - b);
-  const be = lastDayKeys.filter((key) => {
-    if (key - lastKeyAdded > OneHour) {
-      keysBatch.push(`${jobsPrefix}${key}`);
-      lastKeyAdded = key;
-    }
-
-    return keysBatch;
-  });
-
-  const jobsGroup = (await redis.getBatch(keysBatch)) as GroupReport[];
+  const jobsGroup = await getReportGroup("jobs");
 
   return { jobsGroup } as loaderData;
 };
@@ -124,51 +84,21 @@ const Card = ({
 
 export default function App() {
   const { jobsGroup } = useLoaderData() as loaderData;
+
+  // get the time period data of 24 hours
+  const hoursArray = getHoursPeriodArr(24);
+
+  // get the jobs insight based on the service status in the given period
+  const jobsInfo = getServiceInsights(jobsGroup, hoursArray.length);
+
   // calc total instances
-  const totalInstances = 0;
-  // syncReport.length + jobsReport.length + nodesReport.length;
+  const totalInstances = 0 + 0 + jobsInfo.totalInstances;
 
-  console.log("---> app: ", jobsGroup.length);
-
-  // get total errors
-  const workingPercentages: number[] = [];
-  const hour: string[] = [];
-
-  jobsGroup.forEach((jobReport) => {
-    console.log("jobsReport: ", jobReport);
-    const jobsReports = jobReport.services;
-    console.log("createadat : ", jobReport.createdAt);
-    const reportHour = new Date(jobReport.createdAt);
-    const totalJobs = jobsReports.length;
-
-    let errors = 0;
-    jobsReports.forEach((job) => {
-      if (job.status === "error" || job.status === "autoStopped") {
-        errors += 1;
-      }
-    });
-
-    const errorsPercentage = (errors * 100) / totalJobs;
-    const runningPercentage = 100 - errorsPercentage;
-
-    workingPercentages.push(runningPercentage);
-    hour.push(reportHour.getHours().toString());
-  });
-
-  console.log("---:> loader: ", workingPercentages);
-  console.log("---:> loader: ", hour);
-
+  // Errors
   const syncErrors = 0;
   const nodesErrors = 0;
+  const totalErrors = syncErrors + jobsInfo.totalErrors + nodesErrors;
 
-  const totalErrors = syncErrors + 0 + nodesErrors;
-
-  const hoursArray: string[] = [];
-  const working: number[] = [];
-  for (let i = 0; i < 25; i++) {
-    hoursArray.push((i % 25).toString().padStart(2, "0"));
-    working.push(i + 60);
-  }
   return (
     <>
       <HeaderDashboard title={"Overview"} linkTo={""} />
@@ -183,7 +113,7 @@ export default function App() {
       >
         <Grid width={"full"} templateColumns="repeat(4, 1fr)" gap={6}>
           <Card title="Synchronizers" num={0} />
-          <Card title="Jobs" num={0} />
+          <Card title="Jobs" num={jobsInfo.totalInstances} />
           <Card title="Nodes" num={0} />
           <Card title="Errors" num={totalErrors} error={true} />
         </Grid>
@@ -206,7 +136,10 @@ export default function App() {
                 Updated a few seconds ago
               </Text>
             </HStack>
-            <StateGraph input={working} labels={hoursArray}></StateGraph>
+            <StateGraph
+              input={jobsInfo.dateWorkingState}
+              labels={hoursArray}
+            ></StateGraph>
           </VStack>
           <VStack
             // bg={"green"}
@@ -239,7 +172,7 @@ export default function App() {
                 Jobs Errors
               </Text>
               <Text fontSize={"24px"} color={"#252733"} fontWeight={"bold"}>
-                {0}
+                {jobsInfo.totalErrors}
               </Text>
             </VStack>
             <VStack alignItems={"center"} spacing={0}>

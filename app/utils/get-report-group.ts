@@ -7,9 +7,9 @@ const OneHour = 60 * 60; // 60 secs * 60 minutes
 
 export default async function getReportGroup(
   service: string
-): Promise<GroupReport[]> {
+): Promise<GroupReport[] | undefined> {
   // Assert the service name is valid
-  if (service !== ("jobs" || "synchronizer || nodes")) {
+  if (service !== "jobs" && service !== "synchronizer" && service !== "nodes") {
     throw new Error("The service name is invalid");
   }
 
@@ -18,6 +18,9 @@ export default async function getReportGroup(
 
   // get all the keys matching that pattern from redis
   const serviceKeys = await redis.keys(`${servicePrefix}*`);
+  if (serviceKeys.length === 0) {
+    return undefined;
+  }
 
   // Get last day and now timestamps in UNIX time
   let [lastDay, now] = getLastAndCurrentDay();

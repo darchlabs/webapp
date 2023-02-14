@@ -26,7 +26,7 @@ export const options = {
     },
     title: {
       display: true,
-      text: "Working Services",
+      text: "Services",
     },
   },
   scales: {

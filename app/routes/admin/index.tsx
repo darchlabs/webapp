@@ -31,15 +31,17 @@ export type GroupReport = {
 };
 
 type loaderData = {
-  jobsGroup: GroupReport[];
-  // syncReport: Report[];
-  // nodesReport: Report[];
+  jobsGroup: GroupReport[] | undefined;
+  syncGroup: GroupReport[] | undefined;
+  nodesGroup: GroupReport[] | undefined;
 };
 
 export const loader: LoaderFunction = async () => {
+  const syncGroup = await getReportGroup("synchronizer");
   const jobsGroup = await getReportGroup("jobs");
+  const nodesGroup = await getReportGroup("nodes");
 
-  return { jobsGroup } as loaderData;
+  return { jobsGroup, syncGroup, nodesGroup } as loaderData;
 };
 
 const Card = ({
@@ -83,21 +85,24 @@ const Card = ({
 };
 
 export default function App() {
-  const { jobsGroup } = useLoaderData() as loaderData;
+  const { syncGroup, jobsGroup, nodesGroup } = useLoaderData() as loaderData;
 
-  // get the time period data of 24 hours
+  // get the time period data of 24 hours and its length
   const hoursArray = getHoursPeriodArr(24);
+  const hoursArrayLen = hoursArray.length;
 
-  // get the jobs insight based on the service status in the given period
-  const jobsInfo = getServiceInsights(jobsGroup, hoursArray.length);
+  // get the services insight based on the service status in the given period
+  const syncInfo = getServiceInsights(syncGroup, hoursArrayLen);
+  const jobsInfo = getServiceInsights(jobsGroup, hoursArrayLen);
+  const nodesInfo = getServiceInsights(nodesGroup, hoursArrayLen);
 
-  // calc total instances
-  const totalInstances = 0 + 0 + jobsInfo.totalInstances;
-
-  // Errors
-  const syncErrors = 0;
-  const nodesErrors = 0;
-  const totalErrors = syncErrors + jobsInfo.totalErrors + nodesErrors;
+  // calc total instances and errors
+  const totalInstances =
+    syncInfo.totalInstances +
+    jobsInfo.totalInstances +
+    nodesInfo.totalInstances;
+  const totalErrors =
+    syncInfo.totalErrors + jobsInfo.totalErrors + nodesInfo.totalErrors;
 
   return (
     <>
@@ -112,9 +117,9 @@ export default function App() {
         // border={"1px solid #DFE0EB"}
       >
         <Grid width={"full"} templateColumns="repeat(4, 1fr)" gap={6}>
-          <Card title="Synchronizers" num={0} />
+          <Card title="Synchronizers" num={syncInfo.totalInstances} />
           <Card title="Jobs" num={jobsInfo.totalInstances} />
-          <Card title="Nodes" num={0} />
+          <Card title="Nodes" num={nodesInfo.totalInstances} />
           <Card title="Errors" num={totalErrors} error={true} />
         </Grid>
 
@@ -164,7 +169,7 @@ export default function App() {
                 Synchronizers Errors
               </Text>
               <Text fontSize={"24px"} color={"#252733"} fontWeight={"bold"}>
-                {syncErrors}
+                {syncInfo.totalErrors}
               </Text>
             </VStack>
             <VStack alignItems={"center"} spacing={0}>
@@ -180,7 +185,7 @@ export default function App() {
                 Nodes Errors
               </Text>
               <Text fontSize={"24px"} color={"#252733"} fontWeight={"bold"}>
-                {nodesErrors}
+                {nodesInfo.totalErrors}
               </Text>
             </VStack>
           </VStack>

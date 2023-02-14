@@ -15,19 +15,18 @@ import type { LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { redis } from "~/pkg/redis/redis.server";
 import getLastAndCurrentDay from "~/utils/get-last-day";
+import StateGraph from "~/components/dashboard/state-graph";
 
 type Report = {
   id: string;
   status: string;
   createdAt: string;
-  // createdAt: time.Time;
 };
 
 type GroupReport = {
   type: string;
-  services: Report[][];
+  services: Report[];
   createdAt: string;
-  // createdAt: time.Time;
 };
 
 type loaderData = {
@@ -63,7 +62,7 @@ export const loader: LoaderFunction = async () => {
     return lastDayKeys;
   });
 
-  const jeje: string[] = [];
+  const keysBatch: string[] = [];
 
   // sort it ascendently
   let lastKeyAdded = 0;
@@ -71,14 +70,14 @@ export const loader: LoaderFunction = async () => {
   lastDayKeys = lastDayKeys.sort((a, b) => a - b);
   const be = lastDayKeys.filter((key) => {
     if (key - lastKeyAdded > OneHour) {
-      jeje.push(`${jobsPrefix}${key}`);
+      keysBatch.push(`${jobsPrefix}${key}`);
       lastKeyAdded = key;
     }
 
-    return jeje;
+    return keysBatch;
   });
 
-  const jobsGroup = (await redis.getBatch(jeje)) as GroupReport[];
+  const jobsGroup = (await redis.getBatch(keysBatch)) as GroupReport[];
 
   return { jobsGroup } as loaderData;
 };
@@ -132,38 +131,44 @@ export default function App() {
   console.log("---> app: ", jobsGroup.length);
 
   // get total errors
-  const jobsErrors: number[] = [];
+  const workingPercentages: number[] = [];
+  const hour: string[] = [];
 
-  for (let i = 0; i++; i > jobsGroup.length) {
-    const jobsPerReport = jobsGroup[i].services;
+  jobsGroup.forEach((jobReport) => {
+    console.log("jobsReport: ", jobReport);
+    const jobsReports = jobReport.services;
+    console.log("createadat : ", jobReport.createdAt);
+    const reportHour = new Date(jobReport.createdAt);
+    const totalJobs = jobsReports.length;
 
-    const aLPHA = jobsPerReport.map((job) => {
-      const errorPerHour = job.reduce((total, current) => {
-        console.log("stats: ", current.status);
-        return total + current.status === "error" ? 1 : 0;
-      }, 0);
-      jobsErrors.push(errorPerHour);
+    let errors = 0;
+    jobsReports.forEach((job) => {
+      if (job.status === "error" || job.status === "autoStopped") {
+        errors += 1;
+      }
     });
-  }
 
-  console.log("jobsErrors: ", jobsErrors);
+    const errorsPercentage = (errors * 100) / totalJobs;
+    const runningPercentage = 100 - errorsPercentage;
 
-  // const nodesErrors = nodes.reduce(
-  //   (total, current) =>
-  //     total + current.status !== "running" || "stopped" ? 1 : 0,
-  //   0
-  // );
-  // console.log("nodesErrors: ", nodesErrors);
+    workingPercentages.push(runningPercentage);
+    hour.push(reportHour.getHours().toString());
+  });
 
-  // // TODO: add errors from sync  when available the state
+  console.log("---:> loader: ", workingPercentages);
+  console.log("---:> loader: ", hour);
+
   const syncErrors = 0;
   const nodesErrors = 0;
 
   const totalErrors = syncErrors + 0 + nodesErrors;
-  // const workingInstances = totalInstances - totalErrors;
 
-  // const availabilityState = (workingInstances * 100) / totalInstances;
-
+  const hoursArray: string[] = [];
+  const working: number[] = [];
+  for (let i = 0; i < 25; i++) {
+    hoursArray.push((i % 25).toString().padStart(2, "0"));
+    working.push(i + 60);
+  }
   return (
     <>
       <HeaderDashboard title={"Overview"} linkTo={""} />
@@ -192,7 +197,7 @@ export default function App() {
           border={"1px solid #DFE0EB"}
           p={"0 32px"}
         >
-          <VStack alignItems={"stretch"} width={"66%"} p={"30px 0"}>
+          <VStack alignItems={"stretch"} width={"100%"} p={"30px 0"}>
             <Text fontSize={"19px"} color={"#252733"} fontWeight={"bold"}>
               Status
             </Text>
@@ -200,13 +205,8 @@ export default function App() {
               <Text fontSize={"12px"} color={"#9FA2B4"}>
                 Updated a few seconds ago
               </Text>
-              <Text fontSize={"12px"} color={"#9FA2B4"}>
-                ⚪ Today
-              </Text>
-              <Text fontSize={"12px"} color={"#9FA2B4"}>
-                🔴 Yesterday
-              </Text>
             </HStack>
+            <StateGraph input={working} labels={hoursArray}></StateGraph>
           </VStack>
           <VStack
             // bg={"green"}
@@ -239,7 +239,7 @@ export default function App() {
                 Jobs Errors
               </Text>
               <Text fontSize={"24px"} color={"#252733"} fontWeight={"bold"}>
-                {jobsErrors}
+                {0}
               </Text>
             </VStack>
             <VStack alignItems={"center"} spacing={0}>

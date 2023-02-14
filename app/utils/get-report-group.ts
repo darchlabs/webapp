@@ -9,7 +9,11 @@ export default async function getReportGroup(
   service: string
 ): Promise<GroupReport[] | undefined> {
   // Assert the service name is valid
-  if (service !== "jobs" && service !== "synchronizer" && service !== "nodes") {
+  if (
+    service !== "jobs" &&
+    service !== "synchronizers" &&
+    service !== "nodes"
+  ) {
     throw new Error("The service name is invalid");
   }
 

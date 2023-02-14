@@ -20,7 +20,6 @@ export default function getServiceInsights(
   for (let i = 0; i < dateArrayLen; i++) {
     workingPercentages.push(0);
   }
-
   // If the service is undefined, then return the data with zero values
   if (!serviceGroup) {
     return {
@@ -29,12 +28,13 @@ export default function getServiceInsights(
       totalInstances: totalInstances,
     };
   }
+  console.log("serviceGroup[0].type: ", serviceGroup[0].type);
 
   // get the working state and the total errors of the group using the elements of the given date array
   serviceGroup.forEach((service) => {
     errors = 0;
-    const jobsReports = service.reports;
-    totalInstances = jobsReports.length;
+    const serviceReports = service.reports;
+    totalInstances = serviceReports.length;
     const reportHour = new Date(service.createdAt).getHours();
 
     // If the report hour doesn't match the working
@@ -42,9 +42,10 @@ export default function getServiceInsights(
       return;
     }
 
-    jobsReports.forEach((job) => {
+    serviceReports.forEach((service) => {
+      console.log("service.status: ", service.status);
       // Check if the report is in the hour range
-      if (job.status !== "running" && job.status !== "stopped") {
+      if (service.status !== "running" && service.status !== "stopped") {
         // If it matches the hour range, and is not running or stopped, then add the error
         errors += 1;
       }

@@ -37,9 +37,13 @@ type loaderData = {
 };
 
 export const loader: LoaderFunction = async () => {
-  const syncGroup = await getReportGroup("synchronizer");
+  const syncGroup = await getReportGroup("synchronizers");
   const jobsGroup = await getReportGroup("jobs");
   const nodesGroup = await getReportGroup("nodes");
+
+  console.log("syncGroup: ", syncGroup);
+  console.log("jobsGroup: ", jobsGroup);
+  console.log("nodesGroup: ", nodesGroup);
 
   return { jobsGroup, syncGroup, nodesGroup } as loaderData;
 };
@@ -95,6 +99,10 @@ export default function App() {
   const syncInfo = getServiceInsights(syncGroup, hoursArrayLen);
   const jobsInfo = getServiceInsights(jobsGroup, hoursArrayLen);
   const nodesInfo = getServiceInsights(nodesGroup, hoursArrayLen);
+
+  console.log("syncInfo: ", syncInfo);
+  console.log("jobsInfo: ", jobsInfo);
+  console.log("nodesInfo: ", nodesInfo);
 
   // calc total instances and errors
   const totalInstances =

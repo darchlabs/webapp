@@ -33,8 +33,8 @@ export default async function getReportGroup(
   let lastDayKeys = getKeysByDate(servicePrefix, serviceKeys, lastDay, now);
   lastDayKeys = lastDayKeys.sort((a, b) => a - b);
 
-  // Get the batch of the keys with an hour of difference
-  const keysBatch = getKeysWithOffset(servicePrefix, lastDayKeys, OneHour);
+  // Get the parsed batch of the keys
+  const keysBatch = getKeys(servicePrefix, lastDayKeys);
 
   // Get the values with the already filtered keys batch
   const serviceGroup = (await redis.getBatch(keysBatch)) as GroupReport[];
@@ -68,6 +68,19 @@ function getKeysByDate(
   return lastDayKeys;
 }
 
+// Parse the keys based on the service prefix and the time
+function getKeys(servicePrefix: string, keys: number[]) {
+  // Define array for pushing the filtered keys
+  const keysBatch: string[] = [];
+  // Filter by those reports that have supperior difference than the offset period
+  const filterKeys = keys.filter((key) => {
+    keysBatch.push(`${servicePrefix}${key}`);
+  });
+
+  return keysBatch;
+}
+
+// Get the parsed batch of the keys with an spefici period of difference
 function getKeysWithOffset(
   servicePrefix: string,
   keys: number[],
@@ -83,8 +96,6 @@ function getKeysWithOffset(
       keysBatch.push(`${servicePrefix}${key}`);
       lastKeyAdded = key;
     }
-
-    return keysBatch;
   });
 
   return keysBatch;

@@ -16,7 +16,10 @@ import { useLoaderData } from "@remix-run/react";
 import StateGraph from "~/components/dashboard/state-graph";
 import getReportGroup from "~/utils/get-report-group";
 import { getHoursPeriodArr } from "~/utils/get-date-period-arr";
-import getServiceInsights from "~/utils/get-service-insigths";
+import {
+  getAllServicesInsight,
+  getServiceInsights,
+} from "~/utils/get-service-insigths";
 
 type Report = {
   id: string;
@@ -40,10 +43,6 @@ export const loader: LoaderFunction = async () => {
   const syncGroup = await getReportGroup("synchronizers");
   const jobsGroup = await getReportGroup("jobs");
   const nodesGroup = await getReportGroup("nodes");
-
-  console.log("syncGroup: ", syncGroup);
-  console.log("jobsGroup: ", jobsGroup);
-  console.log("nodesGroup: ", nodesGroup);
 
   return { jobsGroup, syncGroup, nodesGroup } as loaderData;
 };
@@ -100,17 +99,25 @@ export default function App() {
   const jobsInfo = getServiceInsights(jobsGroup, hoursArrayLen);
   const nodesInfo = getServiceInsights(nodesGroup, hoursArrayLen);
 
-  console.log("syncInfo: ", syncInfo);
-  console.log("jobsInfo: ", jobsInfo);
-  console.log("nodesInfo: ", nodesInfo);
+  // Get the last report based on the actual hour
+  const lastReport = new Date(Date.now()).getHours();
 
   // calc total instances and errors
   const totalInstances =
-    syncInfo.totalInstances +
-    jobsInfo.totalInstances +
-    nodesInfo.totalInstances;
+    syncInfo.totalInstances[lastReport] +
+    jobsInfo.totalInstances[lastReport] +
+    nodesInfo.totalInstances[lastReport];
   const totalErrors =
-    syncInfo.totalErrors + jobsInfo.totalErrors + nodesInfo.totalErrors;
+    syncInfo.totalErrors[lastReport] +
+    jobsInfo.totalErrors[lastReport] +
+    nodesInfo.totalErrors[lastReport];
+
+  const allServicesState = getAllServicesInsight(
+    hoursArray,
+    syncInfo,
+    jobsInfo,
+    nodesInfo
+  );
 
   return (
     <>
@@ -125,9 +132,12 @@ export default function App() {
         // border={"1px solid #DFE0EB"}
       >
         <Grid width={"full"} templateColumns="repeat(4, 1fr)" gap={6}>
-          <Card title="Synchronizers" num={syncInfo.totalInstances} />
-          <Card title="Jobs" num={jobsInfo.totalInstances} />
-          <Card title="Nodes" num={nodesInfo.totalInstances} />
+          <Card
+            title="Synchronizers"
+            num={syncInfo.totalInstances[lastReport]}
+          />
+          <Card title="Jobs" num={jobsInfo.totalInstances[lastReport]} />
+          <Card title="Nodes" num={nodesInfo.totalInstances[lastReport]} />
           <Card title="Errors" num={totalErrors} error={true} />
         </Grid>
 
@@ -150,7 +160,7 @@ export default function App() {
               </Text>
             </HStack>
             <StateGraph
-              input={jobsInfo.dateWorkingState}
+              input={allServicesState}
               labels={hoursArray}
             ></StateGraph>
           </VStack>
@@ -177,7 +187,7 @@ export default function App() {
                 Synchronizers Errors
               </Text>
               <Text fontSize={"24px"} color={"#252733"} fontWeight={"bold"}>
-                {syncInfo.totalErrors}
+                {syncInfo.totalErrors[lastReport]}
               </Text>
             </VStack>
             <VStack alignItems={"center"} spacing={0}>
@@ -185,7 +195,7 @@ export default function App() {
                 Jobs Errors
               </Text>
               <Text fontSize={"24px"} color={"#252733"} fontWeight={"bold"}>
-                {jobsInfo.totalErrors}
+                {jobsInfo.totalErrors[lastReport]}
               </Text>
             </VStack>
             <VStack alignItems={"center"} spacing={0}>
@@ -193,7 +203,7 @@ export default function App() {
                 Nodes Errors
               </Text>
               <Text fontSize={"24px"} color={"#252733"} fontWeight={"bold"}>
-                {nodesInfo.totalErrors}
+                {nodesInfo.totalErrors[lastReport]}
               </Text>
             </VStack>
           </VStack>

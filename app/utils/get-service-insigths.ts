@@ -68,7 +68,7 @@ export function getServiceInsights(
 }
 
 export function getAllServicesInsight(
-  periodArr: number[],
+  periodArr: any[],
   syncServiceInfo: ServiceInsigths,
   jobsServiceInfo: ServiceInsigths,
   nodesServiceInfo: ServiceInsigths

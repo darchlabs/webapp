@@ -7,6 +7,7 @@
     "start": "remix-serve build"
   },
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.3.4",
     "@emotion/react": "^11.10.4",
     "@emotion/server": "^11.10.0",
@@ -18,10 +19,14 @@
     "@remix-run/node": "^1.7.2",
     "@remix-run/react": "^1.7.2",
     "@remix-run/serve": "^1.7.2",
+    "@types/faker": "^6.6.9",
     "ajv": "^8.11.0",
+    "chart": "^0.1.2",
     "ethers": "^5.7.1",
     "framer-motion": "^6.5.1",
+    "node-cron": "^2.0.0",
     "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "redis": "^4.3.1"
@@ -29,8 +34,10 @@
   "devDependencies": {
     "@remix-run/dev": "^1.7.2",
     "@remix-run/eslint-config": "^1.7.2",
+    "@types/node-cron": "^2.0.0",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
+    "@types/uuid": "^9.0.0",
     "eslint": "^8.23.1",
     "typescript": "^4.7.4"
   },

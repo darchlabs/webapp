@@ -1,4 +1,16 @@
-import { HStack, VStack, Menu, MenuButton, MenuList, MenuItem, Button, Text, Show, Icon, Flex } from "@chakra-ui/react";
+import {
+  HStack,
+  VStack,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  Text,
+  Show,
+  Icon,
+  Flex,
+} from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
 import type { Network } from "../../../../types";
 import EthereumAvatar from "../../../../components/icon/ethereum-avatar";
@@ -65,7 +77,13 @@ export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdFormData")) as SynchronizerFormData;
   if (!current) {
-    return redirect("/admin/synchronizers/create/network");
+    current = {
+      network: "none",
+      address: "",
+      raw: "",
+    } as SynchronizerFormData;
+
+    await redis.set("createdFormData", current);
   }
 
   return json(current);
@@ -117,11 +135,19 @@ export default function StepNetwork() {
               justifyContent={"start"}
               alignItems={"center"}
             >
-              {network === "none" ? <Text as={"span"}>Select a network</Text> : getSelectedNetwork(network)}
+              {network === "none" ? (
+                <Text as={"span"}>Select a network</Text>
+              ) : (
+                getSelectedNetwork(network)
+              )}
             </MenuButton>
             <MenuList>
               <MenuItem minH="48px" onClick={() => onClick("ethereum")}>
-                <EthereumAvatar mr="12px" borderRadius="full" boxSize={"1.5rem"} />
+                <EthereumAvatar
+                  mr="12px"
+                  borderRadius="full"
+                  boxSize={"1.5rem"}
+                />
                 <span>Ethereum Mainnet</span>
               </MenuItem>
               <MenuItem minH="48px" onClick={() => onClick("polygon")}>
@@ -143,11 +169,21 @@ export default function StepNetwork() {
           </Text>
 
           <Show above="md">
-            <Text fontWeight={"normal"} fontSize={"12px"} color={"gray.500"} pt={"15px"}>
-              <Text as="span" fontWeight={"bold"} borderBottom={"1px dotted #9FA2B4"}>
+            <Text
+              fontWeight={"normal"}
+              fontSize={"12px"}
+              color={"gray.500"}
+              pt={"15px"}
+            >
+              <Text
+                as="span"
+                fontWeight={"bold"}
+                borderBottom={"1px dotted #9FA2B4"}
+              >
                 Hint
               </Text>
-              : For now we are only accepting contracts on Ethereum and Polygon. Check the{" "}
+              : For now we are only accepting contracts on Ethereum and Polygon.
+              Check the{" "}
               <Text as="span" fontWeight={"bold"} color={"#ED64A6"}>
                 Roadmap
               </Text>{" "}

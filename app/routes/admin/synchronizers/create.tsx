@@ -29,22 +29,6 @@ const steps: Step[] = [
   },
 ];
 
-export const loader: LoaderFunction = async () => {
-  // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdFormData")) as SynchronizerFormData;
-  if (!current) {
-    current = {
-      network: "none",
-      address: "",
-      raw: "",
-    } as SynchronizerFormData;
-
-    await redis.set("createdFormData", current);
-  }
-
-  return json({});
-};
-
 export default function Create() {
   const { pathname } = useLocation();
 
@@ -64,7 +48,11 @@ export default function Create() {
         p={["25px 32px 25px", "25px 32px 25px", "40px 32px 30px"]}
       >
         <VStack spacing={["15px", "15px", "35px"]} w={"full"}>
-          <HStack w={"full"} justifyContent="space-between" alignItems={"start"}>
+          <HStack
+            w={"full"}
+            justifyContent="space-between"
+            alignItems={"start"}
+          >
             <Text fontWeight={"bold"} fontSize={"19px"}>
               Create Synchronizer
             </Text>

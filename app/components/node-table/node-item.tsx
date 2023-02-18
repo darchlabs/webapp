@@ -15,6 +15,7 @@ import {
   color,
   Button,
   useClipboard,
+  Badge,
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
 import type { Node } from "../../pkg/node/types";
@@ -24,9 +25,11 @@ import PolygonAvatar from "../icon/polygon-avatar";
 import EthereumAvatar from "../icon/ethereum-avatar";
 import BaseAvatar from "../icon/base-avatar";
 import AvalancheAvatar from "../icon/avalanche-avatar";
-import { RiMore2Fill, RiStopCircleLine } from "react-icons/ri";
-import { useLoaderData } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
+import {
+  RiMore2Fill,
+  RiPlayCircleFill,
+  RiStopCircleLine,
+} from "react-icons/ri";
 
 function getNetworkAvatar(network: string) {
   switch (network) {
@@ -56,101 +59,101 @@ function getColorSchemeByStatus(status: string) {
   return "gray";
 }
 
+export default function NodeItem({
+  item: { id, chain, port, status, name, fromBlockNumber },
+  nodesURL,
+  nodeId,
+  handlerNodeId,
+}: {
+  item: Node;
+  nodesURL: string;
+  nodeId: string;
+  handlerNodeId: (id: string) => void;
+}) {
+  const networkAvatar = getNetworkAvatar(chain);
+  const { onCopy } = useClipboard(`${nodesURL}/jsonrpc/${id}`);
+  const shortId = id.substring(0, 8);
 
-export default function NodeItem({item: { id, chain, port, status, name, fromBlockNumber }, nodesURL }: {item: Node, nodesURL: string}) {
-    const networkAvatar = getNetworkAvatar(chain);
-    const colorBadge = getColorSchemeByStatus(status);
-    const [isFetching, setIsFetching] = React.useState(false);
-    const { onCopy } = useClipboard(`${nodesURL}/jsonrpc/${id}`);
-    const shortId = id.substring(0, 8);
-    
-    const handleOnclick = () => {
-        const post = async () => {
-            setIsFetching(true)
-            try {
-                const res = await fetch(`${nodesURL}/api/v1/nodes`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                      },
-                    // fix api to support nodesId
-                    body: JSON.stringify({ node_id: id }),
-                })
-                window.location.assign("/admin/nodes");
-            } catch (error) {
-                setIsFetching(false);
-                console.log(error)
-            }
-        };
-        
-        post();
-    }
+  return (
+    <Tr>
+      <Td>
+        <HStack spacing={"25px"}>
+          <HStack>{networkAvatar}</HStack>
 
-    
-    
-    return (
-        <Tr>
-            <Td>
-                <HStack spacing={"25px"}>
-                    <HStack>{networkAvatar}</HStack>
+          <HStack>
+            <VStack alignItems={"start"}>
+              <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+                {/*insert name here also when name is available*/}
+                {chain}
+              </Text>
+              <Text fontWeight={"small"} fontSize={"12px"} color={"#718096"}>
+                {/*insert name here also when name is available*/}
+                {name}
+              </Text>
+            </VStack>
+          </HStack>
+        </HStack>
+      </Td>
 
-                    <HStack>
-                        <VStack alignItems={"start"}>
-                            <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-                                {/*insert name here also when name is available*/}
-                                {chain}
-                            </Text>
-                            <Text fontWeight={"small"} fontSize={"12px"} color={"#718096"}>
-                                {/*insert name here also when name is available*/}
-                                {name}
-                            </Text>
-                        </VStack>
-                    </HStack>
-                </HStack>
-            </Td>
+      <Td>
+        <HStack spacing={"12.5px"}>
+          <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+            {shortId}...
+          </Text>
+          <Button onClick={onCopy} size={"small"}>
+            <CopyIcon boxSize={5} color={"#C5C7CD"} />
+          </Button>
+        </HStack>
+      </Td>
 
-            <Td>
-                <HStack spacing={"12.5px"}>
-                    <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-                        {shortId}...
-                    </Text>
-                    <Button onClick={onCopy} size={"small"}>
-                        <CopyIcon boxSize={5} color={"#C5C7CD"} />
-                    </Button>
-                </HStack>
-            </Td>
+      <Td>
+        <HStack spacing={"25px"}>
+          <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+            {port}
+          </Text>
+        </HStack>
+      </Td>
 
-            <Td>
-                <HStack spacing={"25px"}>
-                    <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-                        {port}
-                    </Text>
-                </HStack>
-            </Td>
+      <Td>
+        <HStack spacing={"25px"}>
+          <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+            {fromBlockNumber}
+          </Text>
+        </HStack>
+      </Td>
 
-            <Td>
-                <HStack spacing={"25px"}>
-                    <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-                        {fromBlockNumber}
-                    </Text>
-                </HStack>
-            </Td>
+      <Td>
+        <Badge
+          textTransform={"uppercase"}
+          colorScheme={getColorSchemeByStatus(status)}
+        >
+          {status}
+        </Badge>
+      </Td>
 
-            <Td>
-                <HStack>
-                    <HStack alignItems={"start"}>
-                        <StatusIcon status={status} color={colorBadge} />
-                    </HStack>
-
-                    <Menu>
-                    <MenuButton as={IconButton} variant="ghost" icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />} />
-                    <MenuList minW="0" w={"150px"}>
-                        <MenuItem icon={<RiStopCircleLine size={15} />}>Stop/Start</MenuItem>
-                        <MenuItem onClick={handleOnclick} icon={<BsTrash />}>Delete</MenuItem>
-                    </MenuList>
-                    </Menu>
-                </HStack>
-            </Td>
-        </Tr>
-    );
+      <Td>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            variant="ghost"
+            icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />}
+          />
+          <MenuList minW="0" w={"150px"}>
+            <MenuItem
+              type="submit"
+              name="updateStatus"
+              value="delete"
+              icon={<BsTrash />}
+              onClick={() => {
+                handlerNodeId(id);
+              }}
+            >
+              Delete
+            </MenuItem>
+          </MenuList>
+        </Menu>
+        <input type="hidden" name="nodeId" value={nodeId} />
+      </Td>
+    </Tr>
+  );
 }

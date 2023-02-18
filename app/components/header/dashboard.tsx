@@ -1,8 +1,22 @@
-import { Avatar, Button, Flex, Heading, HStack, Show, Text } from "@chakra-ui/react";
+import {
+  Avatar,
+  Button,
+  Flex,
+  Heading,
+  HStack,
+  Show,
+  Text,
+} from "@chakra-ui/react";
 import { Link, useLocation } from "@remix-run/react";
 import NotificationIcon from "../../components/icon/notification";
 
-export default function DashboardHeader({ title, linkTo }: { title: string, linkTo: string }) {
+export default function DashboardHeader({
+  title,
+  linkTo,
+}: {
+  title: string;
+  linkTo: string;
+}) {
   const { pathname } = useLocation();
   console.log("here in dashboard", pathname);
   const toPath = `/admin${linkTo}`;
@@ -39,7 +53,7 @@ export default function DashboardHeader({ title, linkTo }: { title: string, link
 
         <Show above="md">
           <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-            El Diego
+            John Doe
           </Text>
         </Show>
 
@@ -47,7 +61,7 @@ export default function DashboardHeader({ title, linkTo }: { title: string, link
           <Avatar
             border={"2px solid #DFE0EB"}
             size={"md"}
-            src="https://tmssl.akamaized.net/images/foto/galerie/diego-maradona-1401100569-36.jpg?lm=1483605486"
+            src="https://www.freepik.com/free-icon/business-person_15633442.htm#query=man&position=7&from_view=search&track=sph"
           />
         </Flex>
       </HStack>

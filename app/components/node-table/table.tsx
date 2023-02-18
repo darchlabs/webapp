@@ -17,12 +17,27 @@ import {
   Heading,
 } from "@chakra-ui/react";
 
-import { RiFilter2Fill, RiSortAsc, RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
+import {
+  RiFilter2Fill,
+  RiSortAsc,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
+} from "react-icons/ri";
 import { Link } from "@remix-run/react";
 import NodeItem from "./node-item";
 import type { Node } from "../../pkg/node/types";
 
-function TableWithData({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: string }) {
+function TableWithData({
+  nodeList,
+  nodesURL,
+  nodeId,
+  handlerNodeId,
+}: {
+  nodeList: Node[];
+  nodesURL: string;
+  nodeId: string;
+  handlerNodeId: (id: string) => void;
+}) {
   return (
     <VStack
       w={"full"}
@@ -32,7 +47,12 @@ function TableWithData({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: str
       border={"1px solid #DFE0EB"}
       borderRadius={"8px"}
     >
-      <HStack w={"full"} p={"32px"} justifyContent={"space-between"} alignItems="start">
+      <HStack
+        w={"full"}
+        p={"32px"}
+        justifyContent={"space-between"}
+        alignItems="start"
+      >
         <VStack alignItems={"start"} spacing={1}>
           <Text fontWeight={"bold"} fontSize={"19px"}>
             All nodes ({nodeList.length})
@@ -53,7 +73,9 @@ function TableWithData({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: str
 
           <HStack>
             <Button
-              leftIcon={<Icon boxSize={5} color={"#C5C7CD"} as={RiFilter2Fill} />}
+              leftIcon={
+                <Icon boxSize={5} color={"#C5C7CD"} as={RiFilter2Fill} />
+              }
               colorScheme="pink"
               variant="ghost"
               color="#4B506D"
@@ -78,7 +100,13 @@ function TableWithData({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: str
           </Thead>
           <Tbody>
             {nodeList.map((node, _index) => (
-              <NodeItem key={node.id} item={node} nodesURL={nodesURL} />
+              <NodeItem
+                key={node.id}
+                item={node}
+                nodesURL={nodesURL}
+                nodeId={nodeId}
+                handlerNodeId={handlerNodeId}
+              />
             ))}
           </Tbody>
           <TableCaption pt={0} mb={"8px"}>
@@ -88,7 +116,12 @@ function TableWithData({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: str
                   Rows per page:
                 </Text>
                 <Stack spacing={3}>
-                  <Select variant="unstyled" size={"sm"} placeholder="5" color={"#4B506D"} />
+                  <Select
+                    variant="unstyled"
+                    size={"sm"}
+                    placeholder="5"
+                    color={"#4B506D"}
+                  />
                 </Stack>
               </HStack>
               <HStack pr={"10px"}>
@@ -130,22 +163,33 @@ function EmptyTable(shouldShow: boolean = true) {
         Start by creating a Node
       </Heading>
       <Text fontSize="md" textAlign={"center"}>
-        DarchLabs offers several networks and environments in order to run nodes.
+        DarchLabs offers several networks and environments in order to run
+        nodes.
       </Text>
       <Text fontSize="md" textAlign={"center"}>
-        With us, you can enable your environments  and easy to run nodes for your project.
+        With us, you can enable your environments and easy to run nodes for your
+        project.
       </Text>
 
       <Button size={"sm"} colorScheme={"pink"}>
-        <Link to={"/admin/nodes/create/network"}>
-          CREATE NODE
-        </Link>
+        <Link to={"/admin/nodes/create/network"}>CREATE NODE</Link>
       </Button>
     </VStack>
   );
 }
 
-export default function NodeTable({ nodeList, nodesURL }: { nodeList: Node[], nodesURL: string }) {
-  return !nodeList.length ? EmptyTable() : TableWithData({ nodeList, nodesURL });
+export default function NodeTable({
+  nodeList,
+  nodesURL,
+  nodeId,
+  handlerNodeId,
+}: {
+  nodeList: Node[];
+  nodesURL: string;
+  nodeId: string;
+  handlerNodeId: (id: string) => void;
+}) {
+  return !nodeList.length
+    ? EmptyTable()
+    : TableWithData({ nodeList, nodesURL, nodeId, handlerNodeId });
 }
-

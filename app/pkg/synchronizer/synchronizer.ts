@@ -1,6 +1,6 @@
 import fetch from "@remix-run/web-fetch";
 import type { ListEventsResponse } from "./requests";
-import parseAbi from "./utils/parse-abi";
+import parseAbi from "../utils/parse-abi";
 
 export default class Synchronizer {
   private URL: string;

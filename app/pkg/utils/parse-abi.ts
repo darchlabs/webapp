@@ -1,4 +1,4 @@
-import type { Abi, AbiInput } from "../types";
+import type { Abi, AbiInput } from "../synchronizer/types";
 
 export default function parseAbi(inputString: string): Abi {
   const abiObject = JSON.parse(inputString) as any;

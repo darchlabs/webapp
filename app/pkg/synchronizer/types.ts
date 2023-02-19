@@ -6,7 +6,10 @@ type _synchronizer = {
   raw?: string;
 };
 
-export type SynchronizerFormData = _synchronizer & {};
+export type SynchronizerFormData = _synchronizer & {
+  abi: string;
+  event: string;
+};
 
 export type SynchronizerBase = {
   latestBlockNumber: number;

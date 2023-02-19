@@ -45,7 +45,7 @@ export const action = async ({ request }: ActionArgs) => {
   const body = await request.formData();
 
   // check if pressed back button
-  if (body.get("_action") === "cancel") {
+  if (body.get("_action") === "back") {
     return redirect("/admin/jobs/create/contract");
   }
 
@@ -53,11 +53,6 @@ export const action = async ({ request }: ActionArgs) => {
   if (body.get("_action") === "cancel") {
     await redis.del("createdJobFormData");
     return redirect("/admin/jobs");
-  }
-
-  // check if pressed back button
-  if (body.get("_action") === "back") {
-    return redirect("/admin/jobs/create/contract");
   }
 
   // get current created form data from redis, create if not exists

@@ -1,21 +1,14 @@
 import { HStack, VStack, Text, Button, Flex } from "@chakra-ui/react";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData, Form } from "@remix-run/react";
+import { useLoaderData, Form } from "@remix-run/react";
 import { useState } from "react";
 import { redis } from "~/pkg/redis/redis.server";
 import type {
   Abi,
-  SynchronizerBase,
   SynchronizerFormData,
 } from "../../../../pkg/synchronizer/types";
 import { synchronizer } from "~/pkg/synchronizer/synchronizer.server";
-import { abiMethod } from "../../jobs/create/methods";
-import parseAbi from "~/pkg/utils/parse-abi";
-
-type SyncLen = {
-  len: number;
-};
 
 export async function action({ request }: ActionArgs) {
   // parse form data

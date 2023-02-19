@@ -70,7 +70,7 @@ export async function action({ request }: ActionArgs) {
   await redis.set("createdFormData", current);
 
   // redirect to address page
-  return redirect("/admin/synchronizers/create/address");
+  return redirect("/admin/synchronizers/create/contract");
 }
 
 export const loader: LoaderFunction = async () => {

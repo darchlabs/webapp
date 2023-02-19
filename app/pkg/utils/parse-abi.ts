@@ -1,7 +1,13 @@
 import type { Abi, AbiInput } from "../synchronizer/types";
 
 export default function parseAbi(inputString: string): Abi {
-  const abiObject = JSON.parse(inputString) as any;
+  let abiObject: any;
+  try {
+    abiObject = JSON.parse(inputString) as any;
+  } catch (e) {
+    console.log("Error parsing JSON: ", e);
+  }
+
   if (
     typeof abiObject.anonymous !== "boolean" ||
     !Array.isArray(abiObject.inputs) ||

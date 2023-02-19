@@ -8,6 +8,7 @@ export default function parseAbi(inputString: string): Abi {
     console.log("Error parsing JSON: ", e);
   }
 
+
   if (
     typeof abiObject.anonymous !== "boolean" ||
     !Array.isArray(abiObject.inputs) ||

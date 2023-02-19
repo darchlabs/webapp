@@ -4,7 +4,17 @@ import { json, redirect } from "@remix-run/node";
 import { Link, useLoaderData, Form } from "@remix-run/react";
 import { useState } from "react";
 import { redis } from "~/pkg/redis/redis.server";
-import type { Abi, SynchronizerBase, SynchronizerFormData } from "../../../../pkg/synchronizer/types";
+import type {
+  Abi,
+  SynchronizerBase,
+  SynchronizerFormData,
+} from "../../../../pkg/synchronizer/types";
+import { synchronizer } from "~/pkg/synchronizer/synchronizer.server";
+import { abiMethod } from "../../jobs/create/methods";
+
+type SyncLen = {
+  len: number;
+};
 
 export async function action({ request }: ActionArgs) {
   // parse form data
@@ -22,9 +32,13 @@ export async function action({ request }: ActionArgs) {
     return redirect("/admin/synchronizers/create/network");
   }
 
-  // get network value from form and save in redis
-  current.address = body.get("address") as string;
-  await redis.set("createdFormData", current);
+  // Create sync event
+  const res = await synchronizer.InsertEvent(
+    current.address,
+    current.network,
+    current.raw!
+  );
+  console.log("res: ", res);
 
   // redirect to abi page
   return redirect("/admin/synchronizers");
@@ -67,7 +81,12 @@ export default function StepConfirm() {
             Synchronizer info
           </Text>
 
-          <VStack alignItems={"start"} color={"gray.500"} fontSize={"14px"} spacing={"2px"}>
+          <VStack
+            alignItems={"start"}
+            color={"gray.500"}
+            fontSize={"14px"}
+            spacing={"2px"}
+          >
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
                 Network
@@ -95,8 +114,9 @@ export default function StepConfirm() {
           </Text>
 
           <Text fontWeight={"normal"} fontSize={"14px"} color={"gray.500"}>
-            Remember you can't change information about the synchronizer afterwards, so if you want to make changes,
-            you'll need to delete it first and then create a new one.
+            Remember you can't change information about the synchronizer
+            afterwards, so if you want to make changes, you'll need to delete it
+            first and then create a new one.
           </Text>
         </VStack>
       </Flex>

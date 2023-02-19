@@ -1,24 +1,24 @@
 import { HStack, VStack, Text, Button, Flex } from "@chakra-ui/react";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Link, useLoaderData, Form } from "@remix-run/react";
+import { useLoaderData, Form } from "@remix-run/react";
 import { useState } from "react";
 import { redis } from "~/pkg/redis/redis.server";
 import type {
   Abi,
-  SynchronizerBase,
   SynchronizerFormData,
 } from "../../../../pkg/synchronizer/types";
 import { synchronizer } from "~/pkg/synchronizer/synchronizer.server";
-import { abiMethod } from "../../jobs/create/methods";
 
-type SyncLen = {
-  len: number;
-};
 
 export async function action({ request }: ActionArgs) {
   // parse form data
   const body = await request.formData();
+
+  // check if pressed back button
+  if (body.get("_action") === "back") {
+    return redirect("/admin/synchronizers/create/event");
+  }
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
@@ -56,6 +56,7 @@ export const loader: LoaderFunction = async () => {
 
 export default function StepConfirm() {
   const { address, raw } = useLoaderData<SynchronizerFormData>();
+
   const abi: Abi = JSON.parse(raw!);
   const [fetchLoading, setFetchLoading] = useState(false);
 
@@ -101,7 +102,7 @@ export default function StepConfirm() {
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
-                Event name
+                Event
               </Text>
               : {abi.name}
             </Text>
@@ -133,11 +134,16 @@ export default function StepConfirm() {
         >
           CREATE
         </Button>
-        <Link to={"/admin/synchronizers/create/abi"}>
-          <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
-            BACK
-          </Button>
-        </Link>
+        <Button
+          size={"sm"}
+          colorScheme={"pink"}
+          variant={"outline"}
+          type="submit"
+          name="_action"
+          value="back"
+        >
+          BACK
+        </Button>
         <Button
           disabled={fetchLoading}
           size={"sm"}

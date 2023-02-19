@@ -39,7 +39,6 @@ export default class Synchronizer {
       const event = {
         abi: parsedAbi,
         network,
-        type: "event",
       };
 
       const res = await fetch(url, {

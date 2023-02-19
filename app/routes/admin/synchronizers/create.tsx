@@ -9,8 +9,8 @@ import { redis } from "~/pkg/redis/redis.server";
 
 enum StepEnum {
   network,
-  address,
-  abi,
+  contract,
+  event,
   confirm,
 }
 
@@ -19,10 +19,10 @@ const steps: Step[] = [
     text: "network",
   },
   {
-    text: "address",
+    text: "contract",
   },
   {
-    text: "ABI",
+    text: "event",
   },
   {
     text: "confirm",

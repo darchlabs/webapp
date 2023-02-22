@@ -8,8 +8,6 @@ import {
 
 export function useProjectState(): ProjectState {
   const ctx = useContext(StateContext);
-  console.log("StateContext: ", StateContext);
-  console.log("ctx: ", ctx);
   if (ctx === undefined) {
     throw new Error("state context is not defined");
   }

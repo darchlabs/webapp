@@ -11,7 +11,7 @@ import HeaderDashboard from "../../components/header/dashboard";
 // import type { ListEventsResponse } from "../../pkg/synchronizer/requests";
 // import { useLoaderData } from "@remix-run/react";
 
-import type { LoaderFunction } from "@remix-run/node";
+import { LoaderFunction, redirect } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import StateGraph from "~/components/dashboard/state-graph";
 import getReportGroup from "~/utils/get-report-group";
@@ -20,6 +20,7 @@ import {
   getAllServicesInsight,
   getServiceInsights,
 } from "~/utils/get-service-insigths";
+import { redis } from "~/pkg/redis/redis.server";
 
 type Report = {
   id: string;
@@ -37,6 +38,7 @@ type loaderData = {
   jobsGroup: GroupReport[] | undefined;
   syncGroup: GroupReport[] | undefined;
   nodesGroup: GroupReport[] | undefined;
+  token: string;
 };
 
 export const loader: LoaderFunction = async () => {
@@ -44,7 +46,19 @@ export const loader: LoaderFunction = async () => {
   const jobsGroup = await getReportGroup("jobs");
   const nodesGroup = await getReportGroup("nodes");
 
-  return { jobsGroup, syncGroup, nodesGroup } as loaderData;
+  let token: string | undefined;
+  try {
+    token = await redis.get("token");
+    // redirect to login if not exist
+    if (!token || token === "") {
+      return redirect("/login");
+    }
+  } catch (err) {
+    console.log("err: ", err);
+    return redirect("/login");
+  }
+
+  return { jobsGroup, syncGroup, nodesGroup, token } as loaderData;
 };
 
 const Card = ({
@@ -88,7 +102,13 @@ const Card = ({
 };
 
 export default function App() {
-  const { syncGroup, jobsGroup, nodesGroup } = useLoaderData() as loaderData;
+  const { syncGroup, jobsGroup, nodesGroup, token } =
+    useLoaderData() as loaderData;
+
+  // // set token in local storage
+  if (typeof window !== "undefined") {
+    localStorage.setItem("token", token);
+  }
 
   // get the time period data of 24 hours and its length
   const hoursArray = getHoursPeriodArr(24);

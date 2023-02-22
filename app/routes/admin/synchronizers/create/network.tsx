@@ -89,7 +89,10 @@ export const loader: LoaderFunction = async () => {
   return json(current);
 };
 
-export default function StepNetwork() {
+export default async function StepNetwork() {
+  const token = (await redis.get("token")) as string;
+  console.log("token: ", token);
+
   const formData = useLoaderData<SynchronizerFormData>();
 
   const [fetchLoading, setFetchLoading] = useState(false);

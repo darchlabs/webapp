@@ -20,7 +20,7 @@ import type {
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { infra } from "~/pkg/infra/infra.server";
-import { Form } from "@remix-run/react";
+import { Form, useTransition } from "@remix-run/react";
 import { MockUser, createUserSession, getUserId } from "~/session.server";
 import { LoginRespose } from "~/pkg/infra/requests";
 
@@ -55,24 +55,27 @@ export const action: ActionFunction = async ({ request }: ActionArgs) => {
     request,
     userId: res.data.id,
   });
-
-  // return redirect(`/admin?token=${token}`);
 };
 
 export default function OnboardingAdminPassword() {
   // define hooks
   const [show, setShow] = React.useState(false);
-  const [checked, setChecked] = React.useState(false);
-
-  // if 'passwordState' not defined, get respetive previous value
   const [password, setPassword] = React.useState("");
+  const [checkAccepted, setCheckAccepted] = React.useState(false);
 
   // define handlers
   const handleClickInputButton = () => setShow(!show);
-  const handleChangeCheck = () => setChecked(!checked);
   const handleChangePassword = ({ target: { value } }: any) => {
     setPassword(value);
   };
+  const handleChangeCheckAccepted = () => setCheckAccepted(!checkAccepted);
+
+  // Define state for loader in the button
+  const transition = useTransition();
+  const isSubmitting =
+    transition.submission?.formData.get("_action") === "continue";
+
+  console.log("password: ", password);
 
   // component
   return (
@@ -140,8 +143,8 @@ export default function OnboardingAdminPassword() {
               pt={4}
               pb={5}
               colorScheme="pink"
-              checked={!checked}
-              onChange={handleChangeCheck}
+              checked={!checkAccepted}
+              onChange={handleChangeCheckAccepted}
             >
               <Text color={"gray.400"} fontWeight={"normal"} fontSize={"xs"}>
                 I agree to the{" "}
@@ -153,14 +156,15 @@ export default function OnboardingAdminPassword() {
             </Checkbox>
 
             <Button
-              disabled={false}
-              isLoading={false}
+              disabled={password === "" || !checkAccepted}
+              isLoading={isSubmitting}
               width={"full"}
               bgColor={"pink.400"}
               fontWeight={"normal"}
               color={"white"}
               name="_action"
               type="submit"
+              value="continue"
               size={"lg"}
             >
               Continue

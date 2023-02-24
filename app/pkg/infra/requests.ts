@@ -1,7 +1,7 @@
 import type { Auth, MetaToken, User } from "./types";
 
 export type LoginRespose = {
-  data: User;
+  data: User | string;
   meta: MetaToken;
 };
 

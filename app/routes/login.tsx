@@ -20,9 +20,16 @@ import type {
 } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { infra } from "~/pkg/infra/infra.server";
-import { Form, useTransition } from "@remix-run/react";
+import { Form, useActionData, useTransition } from "@remix-run/react";
 import { MockUser, createUserSession, getUserId } from "~/session.server";
 import { LoginRespose } from "~/pkg/infra/requests";
+
+type actionData =
+  | {
+      error: string;
+      errorPassword: string;
+    }
+  | undefined;
 
 export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
   const userId = await getUserId(request);
@@ -43,13 +50,20 @@ export const action: ActionFunction = async ({ request }: ActionArgs) => {
   //   verification_token: "string",
   // };
   // const res = { data: MockUser, meta: mockMeta } as LoginRespose;
-  const res = await infra.Login(userEmail, password);
 
-  // TODO(nb): return error if not exists
-  // if (!req.data.id && req.data.id === "") {
-  //   return json({ error });
-  // }
-  // const token = req.meta.token;
+  let res = { data: "" } as LoginRespose;
+  let error = "";
+  try {
+    res = await infra.Login(userEmail, password);
+  } catch (err) {
+    error = err as string;
+  }
+
+  // return error if not exists
+  if (error !== "" || typeof res.data === "string") {
+    const error = "User cannot be found with the given password";
+    return json({ error, errorPassword: password });
+  }
 
   return createUserSession({
     request,
@@ -75,7 +89,18 @@ export default function OnboardingAdminPassword() {
   const isSubmitting =
     transition.submission?.formData.get("_action") === "continue";
 
-  console.log("password: ", password);
+  // define disabled state for next button and get action data info
+  let nextDisabled = false;
+  let error = "";
+
+  const actionData = useActionData() as actionData;
+  if (actionData?.error) {
+    error = actionData.error;
+
+    if (password == actionData?.errorPassword) {
+      nextDisabled = true;
+    }
+  }
 
   // component
   return (
@@ -103,6 +128,7 @@ export default function OnboardingAdminPassword() {
             >
               Password
             </Text>
+
             <InputGroup size="lg" borderColor={"gray.100"}>
               <Input
                 name="password"
@@ -127,6 +153,7 @@ export default function OnboardingAdminPassword() {
                   borderColor: "pink.400",
                 }}
               />
+
               <InputRightElement>
                 <IconButton
                   aria-label="Show or hide password input button"
@@ -138,7 +165,9 @@ export default function OnboardingAdminPassword() {
                 />
               </InputRightElement>
             </InputGroup>
-
+            {error === "" ? null : (
+              <Text color={"red.400"}>Error: {error}</Text>
+            )}
             <Checkbox
               pt={4}
               pb={5}
@@ -156,7 +185,7 @@ export default function OnboardingAdminPassword() {
             </Checkbox>
 
             <Button
-              disabled={password === "" || !checkAccepted}
+              disabled={password === "" || !checkAccepted || nextDisabled}
               isLoading={isSubmitting}
               width={"full"}
               bgColor={"pink.400"}

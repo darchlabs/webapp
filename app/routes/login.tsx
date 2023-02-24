@@ -22,7 +22,7 @@ import { json, redirect } from "@remix-run/node";
 import { infra } from "~/pkg/infra/infra.server";
 import { Form, useActionData, useTransition } from "@remix-run/react";
 import { MockUser, createUserSession, getUserId } from "~/session.server";
-import { LoginRespose } from "~/pkg/infra/requests";
+import type { LoginRespose } from "~/pkg/infra/requests";
 
 type actionData =
   | {
@@ -44,30 +44,30 @@ export const action: ActionFunction = async ({ request }: ActionArgs) => {
 
   const userEmail = "admin@darchlabs.com";
 
-  // Mock data
-  const mockMeta = {
-    token: "string",
-    verification_token: "string",
-  };
-  const res = { data: MockUser, meta: mockMeta } as LoginRespose;
-  if (typeof res.data === "string") {
-    const error = "User cannot be found with the given password";
-    return json({ error, errorPassword: password });
-  }
-
-  // let res = { data: "" } as LoginRespose;
-  // let error = "";
-  // try {
-  //   res = await infra.Login(userEmail, password);
-  // } catch (err) {
-  //   error = err as string;
-  // }
-
-  // // return error if not exists
-  // if (error !== "" || typeof res.data === "string") {
+  // // Mock data
+  // const mockMeta = {
+  //   token: "string",
+  //   verification_token: "string",
+  // };
+  // const res = { data: MockUser, meta: mockMeta } as LoginRespose;
+  // if (typeof res.data === "string") {
   //   const error = "User cannot be found with the given password";
   //   return json({ error, errorPassword: password });
   // }
+
+  let res = { data: "" } as LoginRespose;
+  let error = "";
+  try {
+    res = await infra.Login(userEmail, password);
+  } catch (err) {
+    error = err as string;
+  }
+
+  // return error if not exists
+  if (error !== "" || typeof res.data === "string") {
+    const error = "User cannot be found with the given password";
+    return json({ error, errorPassword: password });
+  }
 
   return createUserSession({
     request,

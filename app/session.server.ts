@@ -22,7 +22,7 @@ export async function createUserSession({
 }) {
   const session = await getSession(request);
   session.set(USER_SESSION_KEY, userId);
-  return redirect("/", {
+  return redirect("/admin", {
     headers: {
       "Set-Cookie": await sessionStorage.commitSession(session, {
         maxAge: 60 * 60 * 24 * 7, // 7 days,

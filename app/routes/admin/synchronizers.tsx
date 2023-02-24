@@ -5,11 +5,15 @@ import HeaderDashboard from "../../components/header/dashboard";
 import type { ListEventsResponse } from "../../pkg/synchronizer/requests";
 
 import { Outlet, useLoaderData } from "@remix-run/react";
-import type { LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { synchronizer } from "../../pkg/synchronizer/synchronizer.server";
+import { requireUserId } from "~/session.server";
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const data = await synchronizer.ListEvents();
   return json(data as ListEventsResponse);
 };
@@ -24,8 +28,11 @@ export default function App() {
 
   return (
     <>
-      <HeaderDashboard title={"Synchronizers"} linkTo={"/synchronizers/create/network"}/>
-      
+      <HeaderDashboard
+        title={"Synchronizers"}
+        linkTo={"/synchronizers/create/network"}
+      />
+
       <Outlet />
 
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>

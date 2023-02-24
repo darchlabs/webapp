@@ -11,13 +11,17 @@ import type {
   ListProvidersResponse,
 } from "~/pkg/jobs/requests";
 import { useState } from "react";
+import { requireUserId } from "~/session.server";
 
 type loaderData = {
   jobs: ListJobsResponse;
   providers: ListProvidersResponse;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const data = await job.ListJobs();
   const providers = await job.ListProviders();
 
@@ -25,6 +29,9 @@ export const loader: LoaderFunction = async () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const body = await request.formData();
 
   const id = `${body.get("jobId")}`;

@@ -22,6 +22,7 @@ import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { SynchronizerFormData } from "~/pkg/synchronizer/types";
+import { requireUserId } from "~/session.server";
 
 function getSelectedNetwork(network: Network) {
   if (network === "ethereum") {
@@ -50,6 +51,9 @@ function getSelectedNetwork(network: Network) {
 }
 
 export async function action({ request }: ActionArgs) {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // parse form data
   const body = await request.formData();
 
@@ -73,7 +77,10 @@ export async function action({ request }: ActionArgs) {
   return redirect("/admin/synchronizers/create/contract");
 }
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdFormData")) as SynchronizerFormData;
   if (!current) {

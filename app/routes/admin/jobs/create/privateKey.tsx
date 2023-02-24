@@ -3,8 +3,12 @@ import { Form, Link } from "@remix-run/react";
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
+import { requireUserId } from "~/session.server";
 
 export const action = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const body = await request.formData();
 
   if (body.get("_action") === "cancel") {

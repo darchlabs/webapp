@@ -20,6 +20,7 @@ import react from "react";
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 import type { SynchronizerFormData } from "~/pkg/synchronizer/types";
 import type { abiMethod } from "../../jobs/create/methods";
+import { requireUserId } from "~/session.server";
 
 export type abiEvent = {
   anonymous: false;
@@ -32,7 +33,10 @@ type loaderData = {
   currentSync: SynchronizerFormData;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const currentSync = (await redis.get(
     "createdFormData"
   )) as SynchronizerFormData;
@@ -44,8 +48,10 @@ export const loader: LoaderFunction = async () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
-  const body = await request.formData();
+  // check user is logged
+  const userId = await requireUserId(request);
 
+  const body = await request.formData();
   // check if pressed back button
   if (body.get("_action") === "back") {
     return redirect("/admin/synchronizers/create/contract");

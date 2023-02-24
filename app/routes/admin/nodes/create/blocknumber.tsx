@@ -1,16 +1,27 @@
-import { HStack, VStack, Text, Input, Show, Flex, Button, NumberIncrementStepper } from "@chakra-ui/react";
-import { redirect } from "@remix-run/node";
+import {
+  HStack,
+  VStack,
+  Text,
+  Input,
+  Show,
+  Flex,
+  Button,
+} from "@chakra-ui/react";
+import { LoaderArgs, redirect } from "@remix-run/node";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import React, { useState } from "react";
 import { redis } from "~/pkg/redis/redis.server";
 import type { NodeFormData } from "~/pkg/node/types";
-import { utils } from "ethers";
+import { requireUserId } from "~/session.server";
 
 export async function action({ request }: ActionArgs) {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // parse form data
-  const body  = await request.formData();
+  const body = await request.formData();
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
@@ -32,7 +43,10 @@ export async function action({ request }: ActionArgs) {
   return redirect("/admin/nodes/create/confirm");
 }
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
@@ -54,15 +68,15 @@ export default function StepBlockNumber() {
       return setBlockNumber(-1);
     }
 
-    const fromBlockNumber = Number(ev.target.value)
+    const fromBlockNumber = Number(ev.target.value);
     return setBlockNumber(fromBlockNumber);
   }
 
   React.useEffect(() => {
-    if(blockNumber && !Number.isNaN(blockNumber) && blockNumber > 0) {
+    if (blockNumber && !Number.isNaN(blockNumber) && blockNumber > 0) {
       return setReady(true);
     }
-  
+
     return setReady(false);
   }, [blockNumber]);
 
@@ -102,15 +116,26 @@ export default function StepBlockNumber() {
           </Text>
 
           <Text fontWeight={"normal"} fontSize={"14px"} color={"gray.500"}>
-            If you wan to fork the entire network, you only need to set the block number to 0.
+            If you wan to fork the entire network, you only need to set the
+            block number to 0.
           </Text>
 
           <Show above="md">
-            <Text fontWeight={"normal"} fontSize={"12px"} color={"gray.500"} pt={"15px"}>
-              <Text as="span" fontWeight={"bold"} borderBottom={"1px dotted #9FA2B4"}>
+            <Text
+              fontWeight={"normal"}
+              fontSize={"12px"}
+              color={"gray.500"}
+              pt={"15px"}
+            >
+              <Text
+                as="span"
+                fontWeight={"bold"}
+                borderBottom={"1px dotted #9FA2B4"}
+              >
                 Hint
               </Text>
-              : you can fork mainnet from your interest block in order to avoid big amounts extra data.
+              : you can fork mainnet from your interest block in order to avoid
+              big amounts extra data.
             </Text>
           </Show>
         </VStack>

@@ -45,25 +45,29 @@ export const action: ActionFunction = async ({ request }: ActionArgs) => {
   const userEmail = "admin@darchlabs.com";
 
   // Mock data
-  // const mockMeta = {
-  //   token: "string",
-  //   verification_token: "string",
-  // };
-  // const res = { data: MockUser, meta: mockMeta } as LoginRespose;
-
-  let res = { data: "" } as LoginRespose;
-  let error = "";
-  try {
-    res = await infra.Login(userEmail, password);
-  } catch (err) {
-    error = err as string;
-  }
-
-  // return error if not exists
-  if (error !== "" || typeof res.data === "string") {
+  const mockMeta = {
+    token: "string",
+    verification_token: "string",
+  };
+  const res = { data: MockUser, meta: mockMeta } as LoginRespose;
+  if (typeof res.data === "string") {
     const error = "User cannot be found with the given password";
     return json({ error, errorPassword: password });
   }
+
+  // let res = { data: "" } as LoginRespose;
+  // let error = "";
+  // try {
+  //   res = await infra.Login(userEmail, password);
+  // } catch (err) {
+  //   error = err as string;
+  // }
+
+  // // return error if not exists
+  // if (error !== "" || typeof res.data === "string") {
+  //   const error = "User cannot be found with the given password";
+  //   return json({ error, errorPassword: password });
+  // }
 
   return createUserSession({
     request,

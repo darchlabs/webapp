@@ -7,8 +7,12 @@ import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { node } from "../../pkg/node/node.server";
 import { useState } from "react";
+import { requireUserId } from "~/session.server";
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const response = await node.GetStatus();
   return json({ response, nodesURL: node.getURL() });
 };
@@ -18,12 +22,12 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export const action = async ({ request }: ActionArgs) => {
-  const body = await request.formData();
+  // check user is logged
+  const userId = await requireUserId(request);
 
+  const body = await request.formData();
   const id = `${body.get("nodeId")}`;
-  console.log("id: ", id);
   const action = body.get("updateStatus");
-  console.log("aciton : ", action);
 
   if (action === "delete") {
     const res = await node.DeleteNode(id);

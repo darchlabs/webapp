@@ -17,19 +17,23 @@ import {
   useLoaderData,
   useTransition,
 } from "@remix-run/react";
-import type { LoaderFunction, ActionArgs } from "@remix-run/node";
+import type { LoaderFunction, ActionArgs, LoaderArgs } from "@remix-run/node";
 import { redirect, json } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import * as cronValidator from "node-cron";
 import { cronMap } from "../utils/cron-utils";
+import { requireUserId } from "~/session.server";
 
 type loaderData = {
   currentJob: JobsFormData;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
     return redirect("/admin/jobs/create/provider");
@@ -46,8 +50,10 @@ type actionData =
   | undefined;
 
 export const action = async ({ request }: ActionArgs) => {
-  const body = await request.formData();
+  // check user is logged
+  const userId = await requireUserId(request);
 
+  const body = await request.formData();
   if (body.get("_action") === "back") {
     return redirect("/admin/jobs/create/methods");
   }

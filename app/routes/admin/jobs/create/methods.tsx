@@ -14,11 +14,13 @@ import {
   redirect,
   json,
   type LoaderFunction,
+  LoaderArgs,
 } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
+import { requireUserId } from "~/session.server";
 
 export type abiMethod = {
   inputs: [];
@@ -32,7 +34,10 @@ type loaderData = {
   currentJob: JobsFormData;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
     return redirect("/admin/jobs/create/provider");
@@ -42,6 +47,9 @@ export const loader: LoaderFunction = async () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const body = await request.formData();
 
   // check if pressed back button

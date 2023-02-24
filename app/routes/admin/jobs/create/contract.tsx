@@ -11,18 +11,23 @@ import {
   redirect,
   json,
   type LoaderFunction,
+  LoaderArgs,
 } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import { ethers, utils } from "ethers";
 import { getChainId } from "~/utils/chain-info";
+import { requireUserId } from "~/session.server";
 
 type loaderData = {
   currentJob: JobsFormData;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
     return redirect("/admin/jobs/create/provider");
@@ -40,8 +45,10 @@ type actionData =
   | undefined;
 
 export const action = async ({ request }: ActionArgs) => {
-  const body = await request.formData();
+  // check user is logged
+  const userId = await requireUserId(request);
 
+  const body = await request.formData();
   // check if pressed back button
   if (body.get("_action") === "back") {
     return redirect("/admin/jobs/create/provider");

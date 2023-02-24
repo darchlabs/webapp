@@ -88,11 +88,13 @@ const Document = withEmotionCache(
   }
 );
 
-export async function loader({ request }: LoaderArgs) {
-  return json({
-    user: await getUser(request),
-  });
-}
+// TODO: this doesn't work so it is commented
+// export async function loader({ request }: LoaderArgs) {
+//   const user = await getUser(request);
+//   return json({
+//     user,
+//   });
+// }
 
 export default function App() {
   return (

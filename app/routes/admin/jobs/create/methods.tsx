@@ -14,16 +14,24 @@ import {
   redirect,
   json,
   type LoaderFunction,
+  LoaderArgs,
 } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
+import { requireUserId } from "~/session.server";
+
+type Output = {
+  internalType: string;
+  name: string;
+  type: string;
+};
 
 export type abiMethod = {
   inputs: [];
   name: string;
-  outputs: [[Object]];
+  outputs: [Output];
   stateMutability: string;
   type: string;
 };
@@ -32,7 +40,10 @@ type loaderData = {
   currentJob: JobsFormData;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
     return redirect("/admin/jobs/create/provider");
@@ -42,6 +53,9 @@ export const loader: LoaderFunction = async () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const body = await request.formData();
 
   // check if pressed back button
@@ -114,7 +128,9 @@ export default function StepMethods() {
   console.log("methods: ", methods);
 
   const viewMethods = methods.filter(
-    (method) => method.stateMutability === "view"
+    (method) =>
+      method.stateMutability === "view" &&
+      method.outputs[0]?.internalType === "bool"
   );
   const actionMethods = methods.filter(
     (method) => method.stateMutability === "nonpayable"

@@ -11,6 +11,7 @@ import {
   redirect,
   json,
   type LoaderFunction,
+  LoaderArgs,
 } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type {
@@ -26,6 +27,7 @@ import capitalize from "../utils/capitalize";
 import getProviderName from "../utils/provider-name";
 import { errorsMsgMap, errorsRedirectMap } from "../utils/errors";
 import { useState } from "react";
+import { requireUserId } from "~/session.server";
 
 type actionData =
   | {
@@ -44,7 +46,10 @@ type JobsLen = {
   len: number;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
     return redirect("/admin/jobs/create/provider");
@@ -61,6 +66,9 @@ export const loader: LoaderFunction = async () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // parse form data
   const body = await request.formData();
   console.log("data: ", body);

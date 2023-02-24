@@ -1,15 +1,28 @@
-import { HStack, VStack, Menu, MenuButton, MenuList, MenuItem, Button, Text, Show, Icon, Flex } from "@chakra-ui/react";
+import {
+  HStack,
+  VStack,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Button,
+  Text,
+  Show,
+  Icon,
+  Flex,
+} from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
 import type { Network } from "../../../../types";
 import EthereumAvatar from "../../../../components/icon/ethereum-avatar";
 import PolygonSelectIcon from "../../../../components/icon/polygon-select-icon";
 import { useState } from "react";
 import { Form, useLoaderData } from "@remix-run/react";
-import type { ActionArgs, LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { NodeFormData } from "~/pkg/node/types";
+import { requireUserId } from "~/session.server";
 
 function getSelectedNetwork(network: Network) {
   if (network === "ethereum") {
@@ -38,6 +51,9 @@ function getSelectedNetwork(network: Network) {
 }
 
 export async function action({ request }: ActionArgs) {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // parse form data
   const body = await request.formData();
 
@@ -61,11 +77,20 @@ export async function action({ request }: ActionArgs) {
   return redirect("/admin/nodes/create/blocknumber");
 }
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
-    return redirect("/admin/nodes/create/network")
+    console.log("inside create 1");
+    current = {
+      network: "none",
+      fromBlockNumber: 0,
+    } as NodeFormData;
+
+    await redis.set("createdNodeFormData", current);
   }
 
   return json({});
@@ -117,11 +142,19 @@ export default function StepNetwork() {
               justifyContent={"start"}
               alignItems={"center"}
             >
-              {network === "none" ? <Text as={"span"}>Select a network</Text> : getSelectedNetwork(network)}
+              {network === "none" ? (
+                <Text as={"span"}>Select a network</Text>
+              ) : (
+                getSelectedNetwork(network)
+              )}
             </MenuButton>
             <MenuList>
               <MenuItem minH="48px" onClick={() => onClick("ethereum")}>
-                <EthereumAvatar mr="12px" borderRadius="full" boxSize={"1.5rem"} />
+                <EthereumAvatar
+                  mr="12px"
+                  borderRadius="full"
+                  boxSize={"1.5rem"}
+                />
                 <span>Ethereum Mainnet</span>
               </MenuItem>
               <MenuItem minH="48px" onClick={() => onClick("polygon")}>
@@ -143,11 +176,21 @@ export default function StepNetwork() {
           </Text>
 
           <Show above="md">
-            <Text fontWeight={"normal"} fontSize={"12px"} color={"gray.500"} pt={"15px"}>
-              <Text as="span" fontWeight={"bold"} borderBottom={"1px dotted #9FA2B4"}>
+            <Text
+              fontWeight={"normal"}
+              fontSize={"12px"}
+              color={"gray.500"}
+              pt={"15px"}
+            >
+              <Text
+                as="span"
+                fontWeight={"bold"}
+                borderBottom={"1px dotted #9FA2B4"}
+              >
                 Hint
               </Text>
-              : For now we are only supporting networks like Ethereum and Polygon. Check the{" "}
+              : For now we are only supporting networks like Ethereum and
+              Polygon. Check the{" "}
               <Text as="span" fontWeight={"bold"} color={"#ED64A6"}>
                 Roadmap
               </Text>{" "}

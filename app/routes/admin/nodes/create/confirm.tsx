@@ -1,12 +1,16 @@
 import { HStack, VStack, Text, Button, Flex } from "@chakra-ui/react";
-import type { ActionArgs, LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Link, useLoaderData, Form, useTransition } from "@remix-run/react";
 import { redis } from "../../../../pkg/redis/redis.server";
 import type { NodeFormData } from "../../../../pkg/node/types";
 import { node } from "../../../../pkg/node/node.server";
+import { requireUserId } from "~/session.server";
 
 export async function action({ request }: ActionArgs) {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // parse form data
   const body = await request.formData();
 
@@ -25,19 +29,20 @@ export async function action({ request }: ActionArgs) {
   // get block number
   await redis.set("createdNodeFormData", current);
   await node.PostNewNode(current.network, current.fromBlockNumber);
-  await async function() {
+  await (async function () {
     await redis.del("createdNodeFormData");
     await new Promise((resolve) => setTimeout(resolve, 1500));
     return;
-  }();
-
-
+  })();
 
   // redirect to abi page
   return redirect("/admin/nodes");
 }
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // get current created form data from redis, create if not exists
   const current = (await redis.get("createdNodeFormData")) as NodeFormData;
   if (!current) {
@@ -47,17 +52,17 @@ export const loader: LoaderFunction = async () => {
   return json(current);
 };
 
-
 export default function StepConfirm() {
   const { network, fromBlockNumber } = useLoaderData<NodeFormData>();
   // const [fetchLoading, setFetchLoading] = useState(false);
 
   const transition = useTransition();
-  const fetchLoading = transition.submission?.formData.get("_action") === "submit";
+  const fetchLoading =
+    transition.submission?.formData.get("_action") === "submit";
   // function handleOnClickCreate() {
   //   setFetchLoading(true);
   // }
-  
+
   return (
     <Form method="post">
       <Flex
@@ -76,7 +81,12 @@ export default function StepConfirm() {
             Node info
           </Text>
 
-          <VStack alignItems={"start"} color={"gray.500"} fontSize={"14px"} spacing={"2px"}>
+          <VStack
+            alignItems={"start"}
+            color={"gray.500"}
+            fontSize={"14px"}
+            spacing={"2px"}
+          >
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
                 Network
@@ -98,8 +108,9 @@ export default function StepConfirm() {
           </Text>
 
           <Text fontWeight={"normal"} fontSize={"14px"} color={"gray.500"}>
-            Remember you can't change information about the node afterwards, so if you want to make changes,
-            you'll need to delete it first and then create a new one.
+            Remember you can't change information about the node afterwards, so
+            if you want to make changes, you'll need to delete it first and then
+            create a new one.
           </Text>
         </VStack>
       </Flex>

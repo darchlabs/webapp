@@ -11,7 +11,7 @@ import HeaderDashboard from "../../components/header/dashboard";
 // import type { ListEventsResponse } from "../../pkg/synchronizer/requests";
 // import { useLoaderData } from "@remix-run/react";
 
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderArgs, LoaderFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import StateGraph from "~/components/dashboard/state-graph";
 import getReportGroup from "~/utils/get-report-group";
@@ -20,6 +20,7 @@ import {
   getAllServicesInsight,
   getServiceInsights,
 } from "~/utils/get-service-insigths";
+import { requireUserId } from "~/session.server";
 
 type Report = {
   id: string;
@@ -39,7 +40,9 @@ type loaderData = {
   nodesGroup: GroupReport[] | undefined;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  const userId = await requireUserId(request);
+
   const syncGroup = await getReportGroup("synchronizers");
   const jobsGroup = await getReportGroup("jobs");
   const nodesGroup = await getReportGroup("nodes");

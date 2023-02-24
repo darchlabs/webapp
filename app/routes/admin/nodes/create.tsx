@@ -25,28 +25,10 @@ const steps: Step[] = [
   },
 ];
 
-export const loader: LoaderFunction = async () => {
-  console.log("inside create")
-  // get current created form data from redis, create if not exists
-  let current = (await redis.get("createdNodeFormData")) as NodeFormData;
-  if (!current) {
-  console.log("inside create 1")
-    current = {
-      network: "none",
-      fromBlockNumber: 0,
-    } as NodeFormData;
-
-    await redis.set("createdNodeFormData", current);
-  }
-  console.log("inside create 2")
-
-  return json({});
-};
-
 export default function Create() {
   const { pathname } = useLocation();
 
-  console.log("-------> inside create component")
+  console.log("-------> inside create component");
 
   const [, , , , step] = pathname.split("/");
   const index = Object.values(StepEnum).indexOf(step);
@@ -64,7 +46,11 @@ export default function Create() {
         p={["25px 32px 25px", "25px 32px 25px", "40px 32px 30px"]}
       >
         <VStack spacing={["15px", "15px", "35px"]} w={"full"}>
-          <HStack w={"full"} justifyContent="space-between" alignItems={"start"}>
+          <HStack
+            w={"full"}
+            justifyContent="space-between"
+            alignItems={"start"}
+          >
             <Text fontWeight={"bold"} fontSize={"19px"}>
               Create node
             </Text>
@@ -77,4 +63,3 @@ export default function Create() {
     </HStack>
   );
 }
-

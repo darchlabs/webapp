@@ -9,7 +9,7 @@ import {
   Button,
   Show,
 } from "@chakra-ui/react";
-import { redirect } from "@remix-run/node";
+import { LoaderArgs, redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import react from "react";
 
@@ -22,13 +22,17 @@ import { job } from "~/pkg/jobs/jobs.server";
 import { type Network } from "~/types";
 import type { JobsFormData, Provider } from "~/pkg/jobs/types";
 import capitalize from "../utils/capitalize";
+import { requireUserId } from "~/session.server";
 
 type loaderData = {
   providers: Provider[];
   currentJob: JobsFormData;
 };
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // get current created form data from redis, create if not exists
   let currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
@@ -53,6 +57,9 @@ export const loader: LoaderFunction = async () => {
 };
 
 export const action = async ({ request }: ActionArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   const body = await request.formData();
 
   // check if pressed cancel button

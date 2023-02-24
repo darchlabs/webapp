@@ -1,5 +1,5 @@
 import { HStack, VStack, Text, Button, Flex } from "@chakra-ui/react";
-import type { ActionArgs, LoaderFunction } from "@remix-run/node";
+import type { ActionArgs, LoaderArgs, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { useLoaderData, Form } from "@remix-run/react";
 import { useState } from "react";
@@ -9,9 +9,12 @@ import type {
   SynchronizerFormData,
 } from "../../../../pkg/synchronizer/types";
 import { synchronizer } from "~/pkg/synchronizer/synchronizer.server";
-
+import { requireUserId } from "~/session.server";
 
 export async function action({ request }: ActionArgs) {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // parse form data
   const body = await request.formData();
 
@@ -44,7 +47,10 @@ export async function action({ request }: ActionArgs) {
   return redirect("/admin/synchronizers");
 }
 
-export const loader: LoaderFunction = async () => {
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  // check user is logged
+  const userId = await requireUserId(request);
+
   // get current created form data from redis, create if not exists
   const current = (await redis.get("createdFormData")) as SynchronizerFormData;
   if (!current) {

@@ -10,7 +10,7 @@ import { useState } from "react";
 
 export const loader: LoaderFunction = async () => {
   const response = await node.GetStatus();
-  return json({ response, nodesURL: node.getURL() });
+  return json({ response, nodesURL: node.getAppDNS() });
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {

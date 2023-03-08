@@ -71,7 +71,7 @@ export default function NodeItem({
   handlerNodeId: (id: string) => void;
 }) {
   const networkAvatar = getNetworkAvatar(chain);
-  const { onCopy } = useClipboard(`${nodesURL}/jsonrpc/${id}`);
+  const { onCopy } = useClipboard(`${nodesURL}/nodes/jsonrpc/${id}`);
   const shortId = id.substring(0, 8);
 
   return (

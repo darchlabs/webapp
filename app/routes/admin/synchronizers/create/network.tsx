@@ -10,18 +10,21 @@ import {
   Show,
   Icon,
   Flex,
+  Input,
 } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
 import type { Network } from "../../../../types";
 import EthereumAvatar from "../../../../components/icon/ethereum-avatar";
 import PolygonSelectIcon from "../../../../components/icon/polygon-select-icon";
 import { useState } from "react";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { SynchronizerFormData } from "~/pkg/synchronizer/types";
+import { ethers } from "ethers";
+import { getChainId } from "~/utils/chain-info";
 
 function getSelectedNetwork(network: Network) {
   if (network === "ethereum") {
@@ -49,6 +52,11 @@ function getSelectedNetwork(network: Network) {
   return null;
 }
 
+type actionData = {
+  message: string;
+  nodeURL: string;
+};
+
 export async function action({ request }: ActionArgs) {
   // parse form data
   const body = await request.formData();
@@ -59,14 +67,46 @@ export async function action({ request }: ActionArgs) {
     return redirect("/admin/synchronizers");
   }
 
+  const nodeURL = `${body.get("nodeURL")}`;
+  // Get client
+  const client = new ethers.providers.JsonRpcProvider(nodeURL);
+  try {
+    await client.getNetwork();
+  } catch (err: any) {
+    return { message: "invalid client", nodeURL };
+  }
+
+  // Validate client works
+  let chainId = 0;
+  try {
+    const clientNet = await client.getNetwork();
+    chainId = clientNet.chainId;
+  } catch (err: any) {
+    return { message: err, nodeURL };
+  }
+  if (!chainId || chainId === 0) {
+    return { message: "invalid client", nodeURL };
+  }
+
+  // Validate client network
+  const network = `${body.get("network")}`.toLowerCase() as Network;
+  if (chainId !== getChainId(network.toString().toLowerCase())) {
+    return {
+      message: "client network doesn't match the given network",
+      nodeURL,
+    };
+  }
+
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdFormData")) as SynchronizerFormData;
   if (!current) {
     return redirect("/admin/synchronizers/create/network");
   }
 
-  // get network value from form and save in redis
-  current.network = body.get("network") as Network;
+  // get values from form and save in redis
+  current.network = network;
+  current.nodeURL = nodeURL;
+  //TODO: Update node url too
   await redis.set("createdFormData", current);
 
   // redirect to address page
@@ -94,9 +134,21 @@ export default function StepNetwork() {
 
   const [fetchLoading, setFetchLoading] = useState(false);
   const [network, setNetwork] = useState(formData.network);
+  const [nodeURL, setNodeURL] = useState("");
 
   function onClick(network: Network) {
     setNetwork(network);
+  }
+
+  function onInputNodeURL(nodeURL: string) {
+    setNodeURL(nodeURL);
+  }
+
+  let isDisabled = false;
+
+  const error = useActionData() as actionData;
+  if (error?.nodeURL === nodeURL) {
+    isDisabled = true;
   }
 
   return (
@@ -157,6 +209,21 @@ export default function StepNetwork() {
             </MenuList>
           </Menu>
           <input type="hidden" name="network" value={network} />
+          <Text fontWeight={"semibold"} fontSize={"16px"} color={"#9FA2B4"}>
+            Node Provider URL
+          </Text>
+          <Input
+            name="nodeURL"
+            type="text"
+            placeholder="`node url ...`"
+            defaultValue={nodeURL}
+            onChange={(event) => {
+              onInputNodeURL(event.target.value);
+            }}
+          />
+          <HStack>
+            {error ? <Text color={"red.400"}>{error.message}</Text> : null}
+          </HStack>
         </VStack>
 
         <VStack w={["full", "full", "58%"]} alignItems={"start"}>
@@ -196,7 +263,7 @@ export default function StepNetwork() {
       <HStack w={"full"} justifyContent={"start"} pt={"12px"} spacing={"10px"}>
         <Button
           isLoading={fetchLoading}
-          disabled={network === "none" || fetchLoading}
+          disabled={network === "none" || fetchLoading || isDisabled}
           size={"sm"}
           colorScheme={"pink"}
           name={"_action"}

@@ -10,37 +10,49 @@ import type {
 } from "../../../../pkg/synchronizer/types";
 import { synchronizer } from "~/pkg/synchronizer/synchronizer.server";
 
-
 export async function action({ request }: ActionArgs) {
   // parse form data
   const body = await request.formData();
 
+  console.log("--.-> confirm");
   // check if pressed back button
   if (body.get("_action") === "back") {
     return redirect("/admin/synchronizers/create/event");
   }
+  console.log("1");
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
     await redis.del("createdFormData");
     return redirect("/admin/synchronizers");
   }
+  console.log("2");
 
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdFormData")) as SynchronizerFormData;
   if (!current) {
     return redirect("/admin/synchronizers/create/network");
   }
+  console.log("3");
 
+  console.log(
+    "asas :",
+    current.address,
+    current.network,
+    current.raw!,
+    current.nodeURL
+  );
   // Create sync event
   const res = await synchronizer.InsertEvent(
     current.address,
     current.network,
-    current.raw!
+    current.raw!,
+    current.nodeURL
   );
   console.log("res: ", res);
 
   // redirect to abi page
+  await redis.del("createdFormData");
   return redirect("/admin/synchronizers");
 }
 

@@ -8,6 +8,7 @@ import {
   MenuList,
   Button,
   Show,
+  Input,
 } from "@chakra-ui/react";
 import { redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
@@ -15,24 +16,35 @@ import react from "react";
 
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 import Logo from "~/components/icon/logo";
-import { useLoaderData, Form, useTransition } from "@remix-run/react";
+import {
+  useLoaderData,
+  Form,
+  useTransition,
+  useActionData,
+} from "@remix-run/react";
 import type { ActionArgs, LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { job } from "~/pkg/jobs/jobs.server";
 import { type Network } from "~/types";
 import type { JobsFormData, Provider } from "~/pkg/jobs/types";
 import capitalize from "../utils/capitalize";
+import { getChainId } from "~/utils/chain-info";
+import { ethers } from "ethers";
 
 type loaderData = {
   providers: Provider[];
   currentJob: JobsFormData;
 };
 
+type actionData = {
+  message: string;
+  nodeURL: string;
+};
+
 export const loader: LoaderFunction = async () => {
   // get current created form data from redis, create if not exists
   let currentJob = (await redis.get("createdJobFormData")) as JobsFormData;
   if (!currentJob) {
-    console.log("creating ...");
     currentJob = {
       providerId: "",
       network: "none",
@@ -61,13 +73,44 @@ export const action = async ({ request }: ActionArgs) => {
     return redirect("/admin/jobs");
   }
 
+  const nodeURL = `${body.get("nodeURL")}`;
+  // Get client
+  const client = new ethers.providers.JsonRpcProvider(nodeURL);
+  try {
+    await client.getNetwork();
+  } catch (err: any) {
+    return { message: "invalid client", nodeURL };
+  }
+
+  // Validate client works
+  let chainId = 0;
+  try {
+    const clientNet = await client.getNetwork();
+    chainId = clientNet.chainId;
+  } catch (err: any) {
+    return { message: err, nodeURL };
+  }
+  if (!chainId || chainId === 0) {
+    return { message: "invalid client", nodeURL };
+  }
+
+  // Validate client network
+  const network = `${body.get("network")}`.toLowerCase() as Network;
+  if (chainId !== getChainId(network)) {
+    return {
+      message: "client network doesn't match the given network",
+      nodeURL,
+    };
+  }
+
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdJobFormData")) as JobsFormData;
-  console.log("current: ", current);
 
   // get provider and network values from form, then format and save them in redis
+  current.nodeURL = nodeURL;
+  current.network = network;
   current.providerId = `${body.get("provider")}`;
-  current.network = `${body.get("network")}`.toLowerCase() as Network;
+
   await redis.set("createdJobFormData", current);
 
   // redirect to address page
@@ -82,6 +125,7 @@ export default function StepProvider() {
 
   let [providerId, setProviderId] = react.useState(currentProviderId);
   let [network, setNetwork] = react.useState(currentNetwork);
+  let [nodeURL, setNodeURL] = react.useState("");
 
   let provider = providers.find((item) => item.id === providerId);
 
@@ -91,6 +135,17 @@ export default function StepProvider() {
 
   function onNetworkClick(network: Network) {
     setNetwork(capitalize(network));
+  }
+
+  function onInputNodeURL(nodeURL: string) {
+    setNodeURL(nodeURL);
+  }
+
+  let isDisabled = false;
+
+  const error = useActionData() as actionData;
+  if (error?.nodeURL === nodeURL) {
+    isDisabled = true;
   }
 
   const transition = useTransition();
@@ -143,7 +198,7 @@ export default function StepProvider() {
                 })}
               </MenuList>
             </Menu>
-            <Text fontSize={"20px"} color={"ActiveBorder"}>
+            <Text fontSize={"20px"} color={"ActiveBorder"} paddingTop={"3"}>
               Network
             </Text>
             <Menu closeOnSelect={true}>
@@ -169,6 +224,22 @@ export default function StepProvider() {
               </MenuList>
             </Menu>
             <input name={"network"} value={network} type="hidden" />
+
+            <Text fontSize={"20px"} color={"ActiveBorder"} paddingTop={"3"}>
+              Node Provider URL
+            </Text>
+            <Input
+              name="nodeURL"
+              type="text"
+              placeholder="`node url ...`"
+              defaultValue={nodeURL}
+              onChange={(event) => {
+                onInputNodeURL(event.target.value);
+              }}
+            />
+            <HStack>
+              {error ? <Text color={"red.400"}>{error.message}</Text> : null}
+            </HStack>
             <HStack
               w={"full"}
               justifyContent={"start"}
@@ -183,7 +254,10 @@ export default function StepProvider() {
                 type="submit"
                 isLoading={isSubmitting}
                 disabled={
-                  providerId === "" || network === "none" || isCanceling
+                  providerId === "" ||
+                  network === "none" ||
+                  isCanceling ||
+                  isDisabled
                 }
               >
                 NEXT

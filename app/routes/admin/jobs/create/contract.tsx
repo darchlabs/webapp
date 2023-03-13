@@ -65,7 +65,7 @@ export const action = async ({ request }: ActionArgs) => {
 
   // Get the network chain id and instance the client provider with it
   const network = current.network;
-  const chainId = getChainId(network);
+  const chainId = getChainId(network.toLowerCase());
   const provider = ethers.getDefaultProvider(chainId);
 
   // Check the address format is valid

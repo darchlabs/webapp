@@ -20,10 +20,16 @@ import type { JobsFormData } from "~/pkg/jobs/types";
 import react from "react";
 import PolygoSelectIcon from "~/components/icon/polygon-select-icon";
 
+type Output = {
+  internalType: string;
+  name: string;
+  type: string;
+};
+
 export type abiMethod = {
   inputs: [];
   name: string;
-  outputs: [[Object]];
+  outputs: [Output];
   stateMutability: string;
   type: string;
 };
@@ -114,7 +120,9 @@ export default function StepMethods() {
   console.log("methods: ", methods);
 
   const viewMethods = methods.filter(
-    (method) => method.stateMutability === "view"
+    (method) =>
+      method.stateMutability === "view" &&
+      method.outputs[0]?.internalType === "bool"
   );
   const actionMethods = methods.filter(
     (method) => method.stateMutability === "nonpayable"

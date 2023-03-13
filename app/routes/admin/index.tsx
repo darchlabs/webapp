@@ -37,14 +37,21 @@ type loaderData = {
   jobsGroup: GroupReport[] | undefined;
   syncGroup: GroupReport[] | undefined;
   nodesGroup: GroupReport[] | undefined;
+  username: string;
 };
 
 export const loader: LoaderFunction = async () => {
+  // Get reports of each service
   const syncGroup = await getReportGroup("synchronizers");
   const jobsGroup = await getReportGroup("jobs");
   const nodesGroup = await getReportGroup("nodes");
 
-  return { jobsGroup, syncGroup, nodesGroup } as loaderData;
+  // Get username
+  const username = process.env["USER_NAME"]
+    ? process.env["USER_NAME"]
+    : "John Doe";
+
+  return { jobsGroup, syncGroup, nodesGroup, username } as loaderData;
 };
 
 const Card = ({
@@ -88,7 +95,8 @@ const Card = ({
 };
 
 export default function App() {
-  const { syncGroup, jobsGroup, nodesGroup } = useLoaderData() as loaderData;
+  const { syncGroup, jobsGroup, nodesGroup, username } =
+    useLoaderData() as loaderData;
 
   // get the time period data of 24 hours and its length
   const hoursArray = getHoursPeriodArr(24);
@@ -121,7 +129,7 @@ export default function App() {
 
   return (
     <>
-      <HeaderDashboard title={"Overview"} linkTo={""} />
+      <HeaderDashboard title={"Overview"} linkTo={""} username={username} />
 
       <VStack
         w={"full"}

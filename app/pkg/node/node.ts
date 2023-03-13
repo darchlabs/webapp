@@ -4,13 +4,19 @@ import type { HTTPResponse } from "../jobs/requests";
 
 export default class Node {
   private URL: string;
+  private AppDNS: string;
 
-  constructor(URL: string) {
+  constructor(URL: string, AppDNS: string) {
     this.URL = URL;
+    this.AppDNS = AppDNS;
   }
 
   public getURL(): string {
     return this.URL;
+  }
+
+  public getAppDNS(): string {
+    return this.AppDNS;
   }
 
   public async PostNewNode(

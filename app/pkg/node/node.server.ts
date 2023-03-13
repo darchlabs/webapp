@@ -17,13 +17,13 @@ if (process.env.NODE_ENV === "production") {
 }
 
 function getClient() {
-  const { NODE_API_URL } = process.env;
+  const { NODE_API_URL, APP_DNS } = process.env;
   invariant(typeof NODE_API_URL === "string", "NODE_API_URL env var not set");
+  invariant(typeof APP_DNS === "string", "NODE_API_URL env var not set");
 
-  const client = new Node(NODE_API_URL);
+  const client = new Node(NODE_API_URL, APP_DNS);
 
   return client;
 }
 
 export { node };
-

@@ -1,37 +1,16 @@
 version: "3.9"
 
-volumes:
-  data-redis:
-    driver: local
-
 services:
-  synchronizers:
-    image: darchlabs/synchronizer-v2:1.2.0
+  webapp:
+    image: darchlabs/webapp
+    env_file:
+      - ./.env
     ports:
-      - 5555:5555
-    env_file:
-      - .env.synchronizers
-
-  jobs:
-    image: darchlabs/jobs:1.0.0
-    ports:
-      - 7777:7777
-    env_file:
-      - .env.jobs
-
-  reporter:
-    image: darchlabs/reporter:1.1.0
-    env_file:
-      - .env.reporter
-
-  nodes:
-    image: darchlabs/nodes-ethereum:0.0.2
-    env_file:
-      - .env.nodes
+      - "3000:3000"
 
   redis:
     image: redis:latest
     ports:
-      - 6379:6379
+      - "6379:6379"
     volumes:
-      - data-redis:/data-redis
+      - ./data/redis:/redis

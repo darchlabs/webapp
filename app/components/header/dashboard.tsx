@@ -13,9 +13,11 @@ import NotificationIcon from "../../components/icon/notification";
 export default function DashboardHeader({
   title,
   linkTo,
+  username,
 }: {
   title: string;
   linkTo: string;
+  username: string;
 }) {
   const { pathname } = useLocation();
   console.log("here in dashboard", pathname);
@@ -53,7 +55,7 @@ export default function DashboardHeader({
 
         <Show above="md">
           <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
-            John Doe
+            {username}
           </Text>
         </Show>
 

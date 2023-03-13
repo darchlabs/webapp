@@ -1,5 +1,5 @@
 import { HStack, VStack, Text, Input, Button } from "@chakra-ui/react";
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useTransition } from "@remix-run/react";
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { redis } from "~/pkg/redis/redis.server";
 import type { JobsFormData } from "~/pkg/jobs/types";
@@ -27,6 +27,14 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function StepCron() {
+  // Define state for loaders in the buttons
+  const transition = useTransition();
+  const isSubmitting =
+    transition.submission?.formData.get("_action") === "next";
+  const isGoingBack = transition.submission?.formData.get("_action") === "back";
+  const isCanceling =
+    transition.submission?.formData.get("_action") === "cancel";
+
   return (
     <HStack justifyContent={"center"} w={"full"} pt={"5px"}>
       <Form method="post">
@@ -53,24 +61,35 @@ export default function StepCron() {
           <Button
             size={"sm"}
             colorScheme={"pink"}
-            name={"_action"}
-            value={"submit"}
+            name="_action"
+            value="next"
             type="submit"
+            isLoading={isSubmitting}
+            isDisabled={isCanceling || isGoingBack}
           >
-            NEXT
+            CREATE
           </Button>
-          <Link to="/admin/jobs/methods">
-            <Button size={"sm"} colorScheme={"pink"} variant={"outline"}>
-              BACK
-            </Button>
-          </Link>
           <Button
-            name={"_action"}
-            value={"cancel"}
+            size={"sm"}
+            colorScheme={"pink"}
+            variant={"outline"}
+            name="_action"
+            value="back"
+            type="submit"
+            isLoading={isGoingBack}
+            isDisabled={isCanceling || isSubmitting}
+          >
+            BACK
+          </Button>
+          <Button
             size={"sm"}
             colorScheme={"pink"}
             variant={"ghost"}
             type="submit"
+            name="_action"
+            value="cancel"
+            isLoading={isCanceling}
+            isDisabled={isGoingBack || isSubmitting}
           >
             Cancel
           </Button>

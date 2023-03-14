@@ -9,9 +9,20 @@ import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { synchronizer } from "../../pkg/synchronizer/synchronizer.server";
 
+type loaderData = {
+  data: ListEventsResponse;
+  username: string;
+};
+
 export const loader: LoaderFunction = async () => {
-  const data = await synchronizer.ListEvents();
-  return json(data as ListEventsResponse);
+  const data = (await synchronizer.ListEvents()) as ListEventsResponse;
+
+  // Get username
+  const username = process.env["USER_NAME"]
+    ? process.env["USER_NAME"]
+    : "John Doe";
+
+  return json<loaderData>({ data, username });
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
@@ -20,12 +31,16 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function App() {
-  const items = useLoaderData<ListEventsResponse>();
+  const { data: items, username } = useLoaderData<loaderData>();
 
   return (
     <>
-      <HeaderDashboard title={"Synchronizers"} linkTo={"/synchronizers/create/network"}/>
-      
+      <HeaderDashboard
+        username={username}
+        title={"Synchronizers"}
+        linkTo={"/synchronizers/create/network"}
+      />
+
       <Outlet />
 
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>

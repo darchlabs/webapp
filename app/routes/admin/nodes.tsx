@@ -10,7 +10,13 @@ import { useState } from "react";
 
 export const loader: LoaderFunction = async () => {
   const response = await node.GetStatus();
-  return json({ response, nodesURL: node.getAppDNS() });
+
+  // Get username
+  const username = process.env["USER_NAME"]
+    ? process.env["USER_NAME"]
+    : "John Doe";
+
+  return json({ response, nodesURL: node.getAppDNS(), username });
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
@@ -34,7 +40,7 @@ export const action = async ({ request }: ActionArgs) => {
 };
 
 export default function App() {
-  const { response, nodesURL } = useLoaderData<typeof loader>();
+  const { response, nodesURL, username } = useLoaderData<typeof loader>();
 
   let [id, setId] = useState("");
   function handlerNodeId(id: string) {
@@ -43,7 +49,11 @@ export default function App() {
 
   return (
     <>
-      <HeaderDashboard title={"Nodes"} linkTo={"/nodes/create/network"} />
+      <HeaderDashboard
+        username={username}
+        title={"Nodes"}
+        linkTo={"/nodes/create/network"}
+      />
 
       <Outlet />
 

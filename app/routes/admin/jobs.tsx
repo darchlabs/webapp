@@ -15,13 +15,19 @@ import { useState } from "react";
 type loaderData = {
   jobs: ListJobsResponse;
   providers: ListProvidersResponse;
+  username: string;
 };
 
 export const loader: LoaderFunction = async () => {
   const data = await job.ListJobs();
   const providers = await job.ListProviders();
 
-  return json({ jobs: data, providers: providers });
+  // Get username
+  const username = process.env["USER_NAME"]
+    ? process.env["USER_NAME"]
+    : "John Doe";
+
+  return json({ jobs: data, providers: providers, username });
 };
 
 export const action = async ({ request }: ActionArgs) => {
@@ -56,7 +62,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function App() {
-  const { jobs, providers } = useLoaderData<loaderData>();
+  const { jobs, providers, username } = useLoaderData<loaderData>();
 
   let [id, setId] = useState("");
   function handlerJobId(id: string) {
@@ -65,7 +71,11 @@ export default function App() {
 
   return (
     <>
-      <HeaderDashboard title={"Jobs"} linkTo={`/jobs/create/provider`} />
+      <HeaderDashboard
+        username={username}
+        title={"Jobs"}
+        linkTo={`/jobs/create/provider`}
+      />
       <Outlet />
 
       <Form method="post">

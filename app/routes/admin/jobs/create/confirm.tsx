@@ -83,11 +83,9 @@ export const action = async ({ request }: ActionArgs) => {
   }
 
   // Make the request for creating the job with the data
-  const bodyRequest = current as JobsRequest;
+  const bodyRequest = current as unknown as JobsRequest;
 
   bodyRequest.type = "cronjob";
-  // Get the node url of the corresponding network
-  bodyRequest.nodeUrl = job.networkNodesMap.get(`${current.network}`)!;
 
   // Get jobs len for assigning the new job name number
   const { len: jobsLen } = (await redis.get("currentNumberOfJobs")) as JobsLen;
@@ -95,6 +93,7 @@ export const action = async ({ request }: ActionArgs) => {
   // Delete the jobs len from redis because it will be updated
   await redis.del("currentNumberOfJobs");
 
+  bodyRequest.network = "goerli";
   // Create job
   const res = await job.CreateJob(bodyRequest);
   console.log("res.meta.statusCode: ", res.meta);

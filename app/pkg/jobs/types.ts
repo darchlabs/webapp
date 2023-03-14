@@ -5,11 +5,7 @@ export type Job = {
   name: string;
   providerId: string;
   status: CronjobStatus;
-<<<<<<< HEAD
   network: Network;
-=======
-  network: string;
->>>>>>> c9e50c0 (feat(jobs): created jobs route and child routes in the admin route and connected the webapp with the jobs api.)
   address: string;
   abi: string;
   nodeUrl: string;
@@ -36,6 +32,7 @@ export type JobsForm = {
   address: string;
   abi: string;
   cronjob: string;
+  nodeURL: string;
   checkMethod: string;
   actionMethod: string;
   privateKey: string;

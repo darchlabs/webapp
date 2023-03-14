@@ -9,6 +9,7 @@ type _synchronizer = {
 export type SynchronizerFormData = _synchronizer & {
   abi: string;
   event: string;
+  nodeURL: string;
 };
 
 export type SynchronizerBase = {

@@ -29,18 +29,23 @@ export default class Synchronizer {
   public async InsertEvent(
     address: string,
     network: string,
-    abi: string
+    abi: string,
+    nodeURL: string
   ): Promise<ListEventsResponse> {
     try {
+      console.log(1);
       const url = `${this.URL}/api/v1/events/${address}`;
 
       const parsedAbi = parseAbi(abi);
+      console.log(2);
 
       const event = {
         abi: parsedAbi,
         network,
+        nodeURL,
       };
 
+      console.log(3);
       const res = await fetch(url, {
         method: "POST",
         headers: {
@@ -50,10 +55,13 @@ export default class Synchronizer {
           event,
         }),
       });
+      console.log(4);
 
       const data = (await res.json()) as ListEventsResponse;
+      console.log("data: ", data);
       return data;
     } catch (err: any) {
+      console.log("errrorr: ", err);
       throw err;
     }
   }

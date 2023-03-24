@@ -15,6 +15,10 @@ export type SynchronizerFormData = _synchronizer & {
 export type SynchronizerBase = {
   latestBlockNumber: number;
   abi: Abi;
+  network: Network;
+  address: string;
+  error: string;
+  status: string;
 };
 
 export type Synchronizer = SynchronizerBase & {

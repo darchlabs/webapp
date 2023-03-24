@@ -99,6 +99,7 @@ function TableWithData({ items, cronjob }: { items: Synchronizer[]; cronjob: Cro
               <Th>Event Details</Th>
               <Th>Network</Th>
               <Th>Last Updated</Th>
+              <Th>Status</Th>
               <Th></Th>
             </Tr>
           </Thead>

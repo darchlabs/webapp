@@ -20,9 +20,16 @@ function getClient() {
   const { REDIS_URL } = process.env;
   invariant(typeof REDIS_URL === "string", "REDIS_URL env var not set");
 
-  const client = new Redis(REDIS_URL);
   console.log("before connect");
-  client.connect();
+  const client = new Redis(REDIS_URL);
+  client
+    .connect()
+    .then(() => {
+      console.log("connected");
+    })
+    .catch((err) => {
+      console.log("error in redis connection", err);
+    });
   console.log("after connect");
 
   return client;

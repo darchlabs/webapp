@@ -18,9 +18,7 @@ export const loader: LoaderFunction = async () => {
   const data = (await synchronizer.ListEvents()) as ListEventsResponse;
 
   // Get username
-  const username = process.env["USER_NAME"]
-    ? process.env["USER_NAME"]
-    : "John Doe";
+  const username = process.env["USER_NAME"] ? process.env["USER_NAME"] : "John Doe";
 
   return json<loaderData>({ data, username });
 };
@@ -35,11 +33,7 @@ export default function App() {
 
   return (
     <>
-      <HeaderDashboard
-        username={username}
-        title={"Synchronizers"}
-        linkTo={"/synchronizers/create/network"}
-      />
+      <HeaderDashboard username={username} title={"Synchronizers"} linkTo={"/synchronizers/create/network"} />
 
       <Outlet />
 

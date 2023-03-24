@@ -4,52 +4,32 @@ import { json, redirect } from "@remix-run/node";
 import { useLoaderData, Form } from "@remix-run/react";
 import { useState } from "react";
 import { redis } from "~/pkg/redis/redis.server";
-import type {
-  Abi,
-  SynchronizerFormData,
-} from "../../../../pkg/synchronizer/types";
+import type { Abi, SynchronizerFormData } from "../../../../pkg/synchronizer/types";
 import { synchronizer } from "~/pkg/synchronizer/synchronizer.server";
 
 export async function action({ request }: ActionArgs) {
   // parse form data
   const body = await request.formData();
 
-  console.log("--.-> confirm");
   // check if pressed back button
   if (body.get("_action") === "back") {
     return redirect("/admin/synchronizers/create/event");
   }
-  console.log("1");
 
   // check if pressed cancel button
   if (body.get("_action") === "cancel") {
     await redis.del("createdFormData");
     return redirect("/admin/synchronizers");
   }
-  console.log("2");
 
   // get current created form data from redis, create if not exists
   let current = (await redis.get("createdFormData")) as SynchronizerFormData;
   if (!current) {
     return redirect("/admin/synchronizers/create/network");
   }
-  console.log("3");
 
-  console.log(
-    "asas :",
-    current.address,
-    current.network,
-    current.raw!,
-    current.nodeURL
-  );
   // Create sync event
-  const res = await synchronizer.InsertEvent(
-    current.address,
-    current.network,
-    current.raw!,
-    current.nodeURL
-  );
-  console.log("res: ", res);
+  await synchronizer.InsertEvent(current.address, current.network, current.raw!, current.nodeURL);
 
   // redirect to abi page
   await redis.del("createdFormData");
@@ -94,12 +74,7 @@ export default function StepConfirm() {
             Synchronizer info
           </Text>
 
-          <VStack
-            alignItems={"start"}
-            color={"gray.500"}
-            fontSize={"14px"}
-            spacing={"2px"}
-          >
+          <VStack alignItems={"start"} color={"gray.500"} fontSize={"14px"} spacing={"2px"}>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
                 Network
@@ -127,9 +102,8 @@ export default function StepConfirm() {
           </Text>
 
           <Text fontWeight={"normal"} fontSize={"14px"} color={"gray.500"}>
-            Remember you can't change information about the synchronizer
-            afterwards, so if you want to make changes, you'll need to delete it
-            first and then create a new one.
+            Remember you can't change information about the synchronizer afterwards, so if you want to make changes,
+            you'll need to delete it first and then create a new one.
           </Text>
         </VStack>
       </Flex>
@@ -146,14 +120,7 @@ export default function StepConfirm() {
         >
           CREATE
         </Button>
-        <Button
-          size={"sm"}
-          colorScheme={"pink"}
-          variant={"outline"}
-          type="submit"
-          name="_action"
-          value="back"
-        >
+        <Button size={"sm"} colorScheme={"pink"} variant={"outline"} type="submit" name="_action" value="back">
           BACK
         </Button>
         <Button

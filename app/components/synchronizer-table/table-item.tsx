@@ -5,13 +5,17 @@ import {
   VStack,
   HStack,
   Text,
-  // Badge,
   Icon,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
+  Badge,
+  Tooltip,
 } from "@chakra-ui/react";
+
+import type { LoaderFunction } from "@remix-run/node";
+import { json } from "@remix-run/node";
 
 import type { Network } from "../../types";
 import type { Synchronizer } from "../../pkg/synchronizer/types";
@@ -38,6 +42,25 @@ function getNetworkAvatar(network: Network) {
   return <BaseAvatar boxSize={12} />;
 }
 
+function getColorSchemeByStatus(status: string) {
+  switch (status) {
+    case "running":
+      return "green";
+    case "synching":
+      return "yellow";
+    case "error":
+      return "red";
+    case "stopped":
+      return "gray";
+  }
+
+  return "gray";
+}
+
+export const loader: LoaderFunction = async () => {
+  return json({});
+};
+
 export default function TableItem({
   item: {
     network,
@@ -45,6 +68,8 @@ export default function TableItem({
     abi: { name },
     updatedAt,
     latestBlockNumber,
+    status,
+    error,
   },
 }: {
   item: Synchronizer;
@@ -87,6 +112,13 @@ export default function TableItem({
             Block: {latestBlockNumber}
           </Text>
         </VStack>
+      </Td>
+      <Td>
+        <Tooltip label={error} placement="auto" isDisabled={error === ""} bg={"red.500"}>
+          <Badge textTransform={"uppercase"} colorScheme={getColorSchemeByStatus(status)}>
+            {status}
+          </Badge>
+        </Tooltip>
       </Td>
       <Td>
         <Menu>

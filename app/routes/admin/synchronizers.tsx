@@ -1,26 +1,41 @@
 import { HStack } from "@chakra-ui/react";
-import SynchronizerTable from "../../components/synchronizer-table/table";
-import HeaderDashboard from "../../components/header/dashboard";
-
-import type { ListEventsResponse } from "../../pkg/synchronizer/requests";
-
 import { Outlet, useLoaderData } from "@remix-run/react";
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderFunction, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { synchronizer } from "../../pkg/synchronizer/synchronizer.server";
 
-type loaderData = {
-  data: ListEventsResponse;
+import HeaderDashboard from "../../components/header/dashboard";
+import { Table } from "../../components/table";
+import type { ListEventsResponse } from "../../pkg/synchronizer/requests";
+import { synchronizer } from "../../pkg/synchronizer/synchronizer.server";
+import { EmptyTable, TableItem, SubHeader } from "../../components/synchronizers";
+
+type SynchronizersLoaderData = {
+  events: ListEventsResponse;
   username: string;
 };
 
-export const loader: LoaderFunction = async () => {
-  const data = (await synchronizer.ListEvents()) as ListEventsResponse;
+export const loader: LoaderFunction = async ({ request }: LoaderArgs) => {
+  const events = (await synchronizer.ListEvents()) as ListEventsResponse;
+
+  // get sort query param
+  const url = new URL(request.url);
+  const sort = url.searchParams.get("sort") || "desc";
+
+  // sort events
+  if (sort === "asc") {
+    events.data.sort((a, b) => {
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
+  } else if (sort === "desc") {
+    events.data.sort((a, b) => {
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
 
   // Get username
   const username = process.env["USER_NAME"] ? process.env["USER_NAME"] : "John Doe";
 
-  return json<loaderData>({ data, username });
+  return json<SynchronizersLoaderData>({ events, username });
 };
 
 export function ErrorBoundary({ error }: { error: Error }) {
@@ -29,7 +44,13 @@ export function ErrorBoundary({ error }: { error: Error }) {
 }
 
 export default function App() {
-  const { data: items, username } = useLoaderData<loaderData>();
+  const {
+    events: {
+      data,
+      meta: { cronjob },
+    },
+    username,
+  } = useLoaderData<SynchronizersLoaderData>();
 
   return (
     <>
@@ -38,7 +59,17 @@ export default function App() {
       <Outlet />
 
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>
-        <SynchronizerTable items={items.data} cronjob={items.meta.cronjob} />
+        <Table
+          title="synchronizers"
+          columns={["event details", "network", "status", "last updated", ""]}
+          listURL="/admin/synchronizers"
+          subHeader={<SubHeader cronjob={cronjob} />}
+          emptyTable={<EmptyTable createLink={"/admin/synchronizers/create/network"} />}
+        >
+          {data.map((item, index) => (
+            <TableItem key={index} item={item} />
+          ))}
+        </Table>
       </HStack>
     </>
   );

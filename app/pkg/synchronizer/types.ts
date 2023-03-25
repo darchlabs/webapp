@@ -12,16 +12,17 @@ export type SynchronizerFormData = _synchronizer & {
   nodeURL: string;
 };
 
-export type SynchronizerBase = {
+export type SynchronizerStatus = "synching" | "running" | "stopped" | "error";
+
+export type Synchronizer = {
+  id?: string;
+  network: Network;
+  nodeURL: string;
+  address: string;
   latestBlockNumber: number;
   abi: Abi;
-  network: Network;
-  address: string;
+  status: SynchronizerStatus;
   error: string;
-  status: string;
-};
-
-export type Synchronizer = SynchronizerBase & {
   createdAt: string;
   updatedAt: string;
 };

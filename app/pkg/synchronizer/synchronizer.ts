@@ -70,7 +70,3 @@ export default class Synchronizers {
     }
   }
 }
-
-// stop event
-// start event
-// get event

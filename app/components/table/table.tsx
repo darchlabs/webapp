@@ -5,14 +5,12 @@ import { Header } from "./header";
 
 export function Table({
   title,
-  listURL,
   columns,
   subHeader,
   emptyTable,
   children,
 }: {
   title: string;
-  listURL: string;
   columns: string[];
   subHeader?: JSX.Element;
   emptyTable: JSX.Element;
@@ -31,7 +29,7 @@ export function Table({
       border={"1px solid #DFE0EB"}
       borderRadius={"8px"}
     >
-      <Header title={title} length={children.length} subHeader={subHeader} listURL={listURL} />
+      <Header title={title} length={children.length} subHeader={subHeader} />
       <Content columns={columns}>{children}</Content>
     </VStack>
   );

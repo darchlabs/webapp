@@ -62,7 +62,6 @@ export default function App() {
         <Table
           title="synchronizers"
           columns={["event details", "network", "status", "last updated", ""]}
-          listURL="/admin/synchronizers"
           subHeader={<SubHeader cronjob={cronjob} />}
           emptyTable={<EmptyTable createLink={"/admin/synchronizers/create/network"} />}
         >

@@ -2,12 +2,13 @@ export function GetColorSchemeByStatus(status: string): string {
   switch (status) {
     case "running":
       return "green";
-    case "sync":
+    case "synching":
       return "yellow";
     case "error":
+      return "red";
     case "stopped":
     case "stopping":
-      return "red";
+      return "gray";
   }
 
   return "gray";

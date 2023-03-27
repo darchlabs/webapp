@@ -13,10 +13,11 @@ import {
   Badge,
   Tooltip,
 } from "@chakra-ui/react";
+import { Form, useLocation, useSubmit } from "@remix-run/react";
 
 import type { Synchronizer } from "../../pkg/synchronizer/types";
 
-import { RiMore2Fill, RiStopCircleLine } from "react-icons/ri";
+import { RiMore2Fill, RiStopCircleLine, RiPlayCircleLine } from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
 
 import ShortAddress from "../../utils/short-address";
@@ -37,7 +38,41 @@ export function TableItem({
 }: {
   item: Synchronizer;
 }) {
+  // load hooks
+  const submit = useSubmit();
+  const { pathname, search } = useLocation();
+
   const networkAvatar = GetNetworkAvatar(network);
+
+  // define handlers
+  function onClickHandler(action: string) {
+    // prepare data to send in the form
+    const formData = new FormData();
+    formData.append("redirectURL", `${pathname}${search}`);
+    formData.append("eventName", name);
+    formData.append("address", address);
+
+    // send form to delete event action
+    submit(formData, {
+      method: "post",
+      action: `/admin/synchronizers/actions/${action}`,
+    });
+  }
+
+  let action = null;
+  if (status === "running") {
+    action = (
+      <MenuItem onClick={() => onClickHandler("stop")} icon={<RiStopCircleLine size={15} />}>
+        Stop
+      </MenuItem>
+    );
+  } else if (status === "error" || status === "stopped") {
+    action = (
+      <MenuItem onClick={() => onClickHandler("start")} icon={<RiPlayCircleLine size={15} />}>
+        Start
+      </MenuItem>
+    );
+  }
 
   return (
     <Tr>
@@ -87,8 +122,10 @@ export function TableItem({
         <Menu>
           <MenuButton as={IconButton} variant="ghost" icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />} />
           <MenuList minW="0" w={"150px"}>
-            <MenuItem icon={<RiStopCircleLine size={15} />}>Stop</MenuItem>
-            <MenuItem icon={<BsTrash />}>Delete</MenuItem>
+            {action}
+            <MenuItem onClick={() => onClickHandler("delete")} icon={<BsTrash />}>
+              Delete
+            </MenuItem>
           </MenuList>
         </Menu>
       </Td>

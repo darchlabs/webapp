@@ -1,19 +1,13 @@
 import getLastAndCurrentDay from "./get-last-day";
-import { redis } from "~/pkg/redis/redis.server";
-import type { GroupReport } from "~/routes/admin/index";
+import { redis } from "@pkg/redis/redis.server";
+import type { GroupReport } from "@routes/examples";
 
 // UNIX time is in seconds
 const OneHour = 60 * 60; // 60 secs * 60 minutes
 
-export default async function getReportGroup(
-  service: string
-): Promise<GroupReport[] | undefined> {
+export default async function getReportGroup(service: string): Promise<GroupReport[] | undefined> {
   // Assert the service name is valid
-  if (
-    service !== "jobs" &&
-    service !== "synchronizers" &&
-    service !== "nodes"
-  ) {
+  if (service !== "jobs" && service !== "synchronizers" && service !== "nodes") {
     throw new Error("The service name is invalid");
   }
 
@@ -41,12 +35,7 @@ export default async function getReportGroup(
   return serviceGroup;
 }
 
-function getKeysByDate(
-  servicePrefix: string,
-  serviceKeys: string[],
-  firstDate: number,
-  secondDate: number
-): number[] {
+function getKeysByDate(servicePrefix: string, serviceKeys: string[], firstDate: number, secondDate: number): number[] {
   // Get len of the keys
   const keyDateLen = serviceKeys[0].toString().length;
 
@@ -81,11 +70,7 @@ function getKeys(servicePrefix: string, keys: number[]) {
 }
 
 // Get the parsed batch of the keys with an spefici period of difference
-function getKeysWithOffset(
-  servicePrefix: string,
-  keys: number[],
-  ofsetPeriod: number
-) {
+function getKeysWithOffset(servicePrefix: string, keys: number[], ofsetPeriod: number) {
   // Define array for pushing the filtered keys
   const keysBatch: string[] = [];
   // Initialize variable for store the last key added

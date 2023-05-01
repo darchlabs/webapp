@@ -1,12 +1,10 @@
-export const ChainIds = {
+const ChainIds = {
   ethereum: 1,
+  rinkeby: 4,
   goerli: 5,
   polygon: 137,
   mumbai: 80001,
-  binance: 56,
   avalanche: 43114,
-  fuji: 43113,
-  sepolia: 11155111,
 };
 
 export function getChainId(name: string) {
@@ -26,6 +24,7 @@ export function getChainId(name: string) {
   throw new Error(`Network id couldn't be found by the name ${name}`);
 }
 
+// TODO(ca): maybe remove it
 export function GetNetworkNodesUrl(): Map<string, string> {
   const chains = Object.entries(ChainIds);
   let nodesMap = new Map<string, string>();

@@ -13,17 +13,15 @@ import {
   Badge,
   Tooltip,
 } from "@chakra-ui/react";
-import { Form, useLocation, useSubmit } from "@remix-run/react";
+import { useLocation, useSubmit } from "@remix-run/react";
 
-import type { Synchronizer } from "../../pkg/synchronizer/types";
+import type { Event, EventAbi } from "darchlabs";
 
 import { RiMore2Fill, RiStopCircleLine, RiPlayCircleLine } from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
 
-import ShortAddress from "../../utils/short-address";
-
-import { GetColorSchemeByStatus } from "../../utils/get-color-scheme-by-status";
-import { GetNetworkAvatar } from "../../utils/get-network-avatar";
+import { ShortAddress, GetNetworkAvatar } from "@utils/index";
+import { GetColorSchemeByStatus } from "../get-color-scheme-by-status";
 
 export function TableItem({
   item: {
@@ -36,9 +34,9 @@ export function TableItem({
     error,
   },
 }: {
-  item: Synchronizer;
+  item: Event;
 }) {
-  // load hooks
+  // define hooks
   const submit = useSubmit();
   const { pathname, search } = useLocation();
 
@@ -55,7 +53,7 @@ export function TableItem({
     // send form to delete event action
     submit(formData, {
       method: "post",
-      action: `/admin/synchronizers/actions/${action}`,
+      action: `/events/${action}/action`,
     });
   }
 
@@ -77,14 +75,14 @@ export function TableItem({
   return (
     <Tr>
       <Td>
-        <HStack spacing={"25px"}>
+        <HStack spacing={6}>
           <HStack>{networkAvatar}</HStack>
           <HStack>
             <VStack alignItems={"start"}>
-              <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+              <Text fontWeight={"medium"} fontSize={"md"} color={"blackAlpha.800"}>
                 {name}
               </Text>
-              <Text fontSize={"14px"} color={"#C5C7CD"}>
+              <Text fontSize={"sm"} color={"blackAlpha.500"}>
                 {ShortAddress(address)}
               </Text>
             </VStack>
@@ -92,17 +90,7 @@ export function TableItem({
         </HStack>
       </Td>
       <Td>
-        <VStack alignItems={"start"}>
-          <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"} textTransform={"capitalize"}>
-            {network}
-          </Text>
-          <Text fontSize={"14px"} color={"#C5C7CD"}>
-            Mainnet
-          </Text>
-        </VStack>
-      </Td>
-      <Td>
-        <Tooltip label={error} placement="auto" isDisabled={error === ""} bg={"red.500"}>
+        <Tooltip label={error} placement="auto" isDisabled={error === ""} bg={"blackAlpha.500"}>
           <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus(status)}>
             {status}
           </Badge>
@@ -110,17 +98,21 @@ export function TableItem({
       </Td>
       <Td>
         <VStack alignItems={"start"}>
-          <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
+          <Text fontWeight={"medium"} fontSize={"md"} color={"blackAlpha.800"}>
             {new Date(updatedAt).toDateString()}
           </Text>
-          <Text fontSize={"14px"} color={"#C5C7CD"}>
+          <Text fontSize={"sm"} color={"blackAlpha.500"}>
             Block: {latestBlockNumber}
           </Text>
         </VStack>
       </Td>
       <Td>
         <Menu>
-          <MenuButton as={IconButton} variant="ghost" icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />} />
+          <MenuButton
+            as={IconButton}
+            variant="ghost"
+            icon={<Icon boxSize={5} color={"blackAlpha.500"} as={RiMore2Fill} />}
+          />
           <MenuList minW="0" w={"150px"}>
             {action}
             <MenuItem onClick={() => onClickHandler("delete")} icon={<BsTrash />}>

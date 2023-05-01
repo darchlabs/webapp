@@ -8,8 +8,8 @@ export function EmptyTable({ createLink }: { createLink: string }) {
       maxW={"1000px"}
       alignItems={"center"}
       bg={"white"}
-      border={"1px solid #DFE0EB"}
-      borderRadius={"8px"}
+      border={"1px solid red"}
+      borderRadius={8}
       p={8}
       spacing={5}
     >

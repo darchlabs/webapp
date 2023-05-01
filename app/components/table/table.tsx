@@ -1,24 +1,32 @@
-import { VStack } from "@chakra-ui/react";
+import { VStack, Text, Tr, Td } from "@chakra-ui/react";
 
-import { Content } from "./content";
+import { Body } from "./body";
 import { Header } from "./header";
+import type { Pagination } from "darchlabs";
 
 export function Table({
   title,
   columns,
   subHeader,
+  emptyMsg,
   emptyTable,
+  pagination,
   children,
 }: {
   title: string;
   columns: string[];
   subHeader?: JSX.Element;
-  emptyTable: JSX.Element;
+  emptyMsg: string;
+  emptyTable?: JSX.Element;
+  pagination?: Pagination;
   children: JSX.Element[];
 }) {
-  if (!children.length) {
+  if (!children.length && emptyTable) {
     return emptyTable;
   }
+
+  // define header table length
+  const length = pagination?.totalElements || children.length;
 
   return (
     <VStack
@@ -26,11 +34,25 @@ export function Table({
       maxW={"1000px"}
       alignItems={"start"}
       bg={"white"}
-      border={"1px solid #DFE0EB"}
-      borderRadius={"8px"}
+      borderStyle={"solid"}
+      borderWidth={1}
+      borderColor={"blackAlpha.300"}
+      borderRadius={8}
     >
-      <Header title={title} length={children.length} subHeader={subHeader} />
-      <Content columns={columns}>{children}</Content>
+      <Header title={title} length={length} subHeader={subHeader} />
+      <Body columns={columns} pagination={pagination}>
+        {children.length ? (
+          children
+        ) : (
+          <Tr>
+            <Td colSpan={columns.length}>
+              <Text py={[3]} textAlign={"center"} color="blackAlpha.800">
+                {emptyMsg}
+              </Text>
+            </Td>
+          </Tr>
+        )}
+      </Body>
     </VStack>
   );
 }

@@ -1,6 +1,6 @@
 import { Icon } from "@chakra-ui/react";
 
-export default function AvalancheAvatar(props: any) {
+export const AvalancheAvatarIcon = (props: any) => {
   return (
     <Icon {...props} viewBox="0 0 44 44">
       <g>
@@ -18,4 +18,4 @@ export default function AvalancheAvatar(props: any) {
       </defs>
     </Icon>
   );
-}
+};

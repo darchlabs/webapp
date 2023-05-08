@@ -1,6 +1,6 @@
 import { Icon } from "@chakra-ui/react";
 
-export default function PolygoSelectIcon(props: any) {
+export const PolygonSelectIcon = (props: any) => {
   return (
     <Icon {...props} viewBox="0 0 84 84">
       <circle cx="42" cy="42" r="41.5" fill="white" stroke="white" />
@@ -12,4 +12,4 @@ export default function PolygoSelectIcon(props: any) {
       </g>
     </Icon>
   );
-}
+};

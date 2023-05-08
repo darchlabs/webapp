@@ -1,6 +1,6 @@
 import { Icon } from "@chakra-ui/react";
 
-export default function LogoSquare(props: any) {
+export const LogoSquareIcon = (props: any) => {
   return (
     <Icon {...props} viewBox="0 0 237 237">
       <path
@@ -18,4 +18,4 @@ export default function LogoSquare(props: any) {
       <line x1="4" y1="97.6326" x2="232.002" y2="97.6326" stroke="#ED64A6" strokeWidth="8" strokeLinecap="square" />
     </Icon>
   );
-}
+};

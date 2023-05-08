@@ -1,6 +1,6 @@
 import { Icon } from "@chakra-ui/react";
 
-export default function EthereumAvatar(props: any) {
+export const EthereumAvatarIcon = (props: any) => {
   return (
     <Icon {...props} viewBox="0 0 44 44">
       <circle cx="22" cy="22" r="22" fill="#F6F6F6" />
@@ -18,4 +18,4 @@ export default function EthereumAvatar(props: any) {
       <path d="M13.0957 22.2621L21.9968 27.3939V18.3159L13.0957 22.2621Z" fill="#393939" />
     </Icon>
   );
-}
+};

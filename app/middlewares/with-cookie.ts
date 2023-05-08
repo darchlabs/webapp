@@ -7,7 +7,6 @@ export type Cookie<T> = {
 
 export function withCookie<T>(name: string, getSession: any, commitSession: any, fn: LoaderFunction): LoaderFunction {
   return async (args: LoaderArgs) => {
-    console.log("111");
     // get cookie
     const session = await getSession(args.request.headers.get("Cookie"));
     const data: T = session.get(name) ? session.get(name) : ({} as T);

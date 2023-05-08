@@ -21,11 +21,11 @@ import { VscPieChart } from "react-icons/vsc";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { BsTrash } from "react-icons/bs";
 
-import type { EventStatus } from "darchlabs";
+import { type EventStatus, type SmartContract } from "darchlabs";
 
-import { ShortAddress, GetNetworkAvatar } from "../../../utils";
-import { GetColorSchemeByStatus } from "../get-color-scheme-by-status";
-import type { SmartContract } from "darchlabs";
+import { ShortAddress } from "@utils/short-address";
+import { GetNetworkAvatar } from "@utils/get-network-avatar";
+import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 
 export function TableItem({ item }: { item: SmartContract }) {
   // define hooks

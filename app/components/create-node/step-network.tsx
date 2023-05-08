@@ -1,14 +1,14 @@
 import { HStack, VStack, Menu, MenuButton, MenuList, MenuItem, Button, Text, Show, Icon } from "@chakra-ui/react";
 import { BsChevronDown } from "react-icons/bs";
-import type { Network } from "../../types";
-import EthereumAvatar from "../icon/ethereum-avatar";
-import PolygonSelectIcon from "../../components/icon/polygon-select-icon";
+import type { Network } from "darchlabs";
+import { EthereumAvatarIcon } from "@components/icon/ethereum-avatar";
+import { PolygonSelectIcon } from "@components/icon/polygon-select-icon";
 
 function getSelectedNetwork(network: Network) {
   if (network === "ethereum") {
     return (
       <HStack>
-        <EthereumAvatar mr="12px" borderRadius="full" boxSize={"1.5rem"} />
+        <EthereumAvatarIcon mr="12px" borderRadius="full" boxSize={"1.5rem"} />
         <Text as={"span"} textTransform={"capitalize"}>
           Ethereum Mainnet
         </Text>
@@ -60,11 +60,11 @@ export default function StepNetwork(network: Network, setNetwork: (n: Network) =
             justifyContent={"start"}
             alignItems={"center"}
           >
-            {network === "none" ? <Text as={"span"}>Select a network</Text> : getSelectedNetwork(network)}
+            {network === ("" as Network) ? <Text as={"span"}>Select a network</Text> : getSelectedNetwork(network)}
           </MenuButton>
           <MenuList>
             <MenuItem minH="48px" onClick={() => onClick("ethereum")}>
-              <EthereumAvatar mr="12px" borderRadius="full" boxSize={"1.5rem"} />
+              <EthereumAvatarIcon mr="12px" borderRadius="full" boxSize={"1.5rem"} />
               <span>Ethereum Mainnet</span>
             </MenuItem>
             <MenuItem minH="48px" onClick={() => onClick("polygon")}>

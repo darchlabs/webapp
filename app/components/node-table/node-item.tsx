@@ -1,4 +1,3 @@
-import React from "react";
 import {
   IconButton,
   Tr,
@@ -6,42 +5,32 @@ import {
   VStack,
   HStack,
   Text,
-  // Badge,
   Icon,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  color,
   Button,
   useClipboard,
   Badge,
 } from "@chakra-ui/react";
 import { CopyIcon } from "@chakra-ui/icons";
-import type { Node } from "../../pkg/node/types";
-import { StatusIcon } from "../status-icon/status-icon";
+import type { Node } from "@models/nodes/types";
 import { BsTrash } from "react-icons/bs";
-import PolygonAvatar from "../icon/polygon-avatar";
-import EthereumAvatar from "../icon/ethereum-avatar";
-import BaseAvatar from "../icon/base-avatar";
-import AvalancheAvatar from "../icon/avalanche-avatar";
-import {
-  RiMore2Fill,
-  RiPlayCircleFill,
-  RiStopCircleLine,
-} from "react-icons/ri";
+import { PolygonAvatarIcon, EthereumAvatarIcon, BaseAvatarIcon, AvalancheAvatarIcon } from "../icon";
+import { RiMore2Fill } from "react-icons/ri";
 
 function getNetworkAvatar(network: string) {
   switch (network) {
     case "polygon":
-      return <PolygonAvatar boxSize={12} />;
+      return <PolygonAvatarIcon boxSize={12} />;
     case "ethereum":
-      return <EthereumAvatar boxSize={12} />;
+      return <EthereumAvatarIcon boxSize={12} />;
     case "avalanche":
-      return <AvalancheAvatar boxSize={12} />;
+      return <AvalancheAvatarIcon boxSize={12} />;
   }
 
-  return <BaseAvatar boxSize={12} />;
+  return <BaseAvatarIcon boxSize={12} />;
 }
 
 function getColorSchemeByStatus(status: string) {
@@ -123,21 +112,14 @@ export default function NodeItem({
       </Td>
 
       <Td>
-        <Badge
-          textTransform={"uppercase"}
-          colorScheme={getColorSchemeByStatus(status)}
-        >
+        <Badge textTransform={"uppercase"} colorScheme={getColorSchemeByStatus(status)}>
           {status}
         </Badge>
       </Td>
 
       <Td>
         <Menu>
-          <MenuButton
-            as={IconButton}
-            variant="ghost"
-            icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />}
-          />
+          <MenuButton as={IconButton} variant="ghost" icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />} />
           <MenuList minW="0" w={"150px"}>
             <MenuItem
               type="submit"

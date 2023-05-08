@@ -15,13 +15,13 @@ import {
 } from "@chakra-ui/react";
 import { useLocation, useSubmit } from "@remix-run/react";
 
-import type { Event, EventAbi } from "darchlabs";
+import type { Event } from "darchlabs";
 
 import { RiMore2Fill, RiStopCircleLine, RiPlayCircleLine } from "react-icons/ri";
 import { BsTrash } from "react-icons/bs";
 
 import { ShortAddress, GetNetworkAvatar } from "@utils/index";
-import { GetColorSchemeByStatus } from "../get-color-scheme-by-status";
+import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 
 export function TableItem({
   item: {
@@ -90,7 +90,7 @@ export function TableItem({
         </HStack>
       </Td>
       <Td>
-        <Tooltip label={error} placement="auto" isDisabled={error === ""} bg={"blackAlpha.500"}>
+        <Tooltip label={error} placement="auto" isDisabled={error === ""} bg={"blackAlpha.800"}>
           <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus(status)}>
             {status}
           </Badge>

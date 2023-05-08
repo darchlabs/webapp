@@ -1,6 +1,6 @@
 import { HStack, VStack, Text, Input, Show } from "@chakra-ui/react";
 
-export default function StepAddress(address: string, setAddress: (address: string) => void) {
+export default function StepBlockNumber(blockNumber: number, setBlockNumber: (blockNumber: number) => void) {
   return (
     <>
       <VStack w={["full", "full", "36%"]} alignItems="stretch">
@@ -14,8 +14,8 @@ export default function StepAddress(address: string, setAddress: (address: strin
         </HStack>
 
         <Input
-          value={address}
-          onChange={(ev) => setAddress(ev.target.value)}
+          value={blockNumber}
+          onChange={(ev) => setBlockNumber(Number(ev.target.value))}
           fontSize={"12px"}
           size={"md"}
           placeholder="0x..."
@@ -24,11 +24,11 @@ export default function StepAddress(address: string, setAddress: (address: strin
 
       <VStack w={["full", "full", "58%"]} alignItems={"start"}>
         <Text fontWeight={"bold"} fontSize={"16px"} color={"gray.600"}>
-            Second, select the block number to fork your private chain.
+          Second, select the block number to fork your private chain.
         </Text>
 
         <Text fontWeight={"normal"} fontSize={"14px"} color={"gray.500"}>
-            If you want to fork the entire mainnet, use the original block which is 0.
+          If you want to fork the entire mainnet, use the original block which is 0.
         </Text>
 
         <Show above="md">

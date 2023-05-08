@@ -39,7 +39,7 @@ export function Table({
       borderColor={"blackAlpha.300"}
       borderRadius={8}
     >
-      <Header title={title} length={length} subHeader={subHeader} />
+      <Header title={title} length={length} subHeader={subHeader} pagination={pagination} />
       <Body columns={columns} pagination={pagination}>
         {children.length ? (
           children

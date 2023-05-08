@@ -1,16 +1,7 @@
 import { HStack, VStack, Text } from "@chakra-ui/react";
-import type { Abi, SynchronizerBase } from "../../types";
+import { type Network } from "darchlabs";
 
-export default function StepConfirm({ network }: string, blockNumber: Number) {
-  const addrStart = address.substring(0, 7);
-  const addrEnd = address.substring(address.length - 5, address.length);
-  const addr = `${addrStart}...${addrEnd}`;
-
-  console.log("KAJAJAAJAJ");
-  console.log("KAJAJAAJAJ");
-  console.log("KAJAJAAJAJ");
-  console.log("KAJAJAAJAJ", abi);
-
+export default function StepConfirm(network: Network, blockNumber: Number) {
   return (
     <HStack w={"full"} alignItems={"space-between"}>
       <VStack w={"36%"} alignItems="stretch">
@@ -28,9 +19,9 @@ export default function StepConfirm({ network }: string, blockNumber: Number) {
             </Text>
             <Text fontWeight={"semibold"}>
               <Text as={"span"} fontWeight={"bold"}>
-                Block number
+                Block number :
               </Text>
-              : {blockNumber}
+              {blockNumber.toString()}
             </Text>
           </VStack>
         </VStack>

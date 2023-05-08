@@ -8,3 +8,5 @@ node_modules
 
 dump.rdb
 sessions
+.DS_Store
+data

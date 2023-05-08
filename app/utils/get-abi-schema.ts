@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export function GetAbiSchema() {
+export const GetAbiSchema = () => {
   const Input = z.object({
     internalType: z.string(),
     name: z.string(),
@@ -45,7 +45,11 @@ export function GetAbiSchema() {
   });
 
   // define abi schema
-  return z.array(z.union([Event, Function, Constructor, Fallback, Receive])).refine(
+  return z.array(z.union([Event, Function, Constructor, Fallback, Receive]));
+};
+
+export const GetAbiEventSchema = () => {
+  return GetAbiSchema().refine(
     (abi) => {
       return abi.some((element) => element.type === "event");
     },
@@ -53,4 +57,4 @@ export function GetAbiSchema() {
       message: "The ABI must contain at least one event",
     }
   );
-}
+};

@@ -6,7 +6,7 @@ export function TemplateTitleDescriptionHint({
   hint,
 }: {
   title: string;
-  description: string;
+  description: string | JSX.Element;
   hint?: string | JSX.Element;
 }) {
   return (

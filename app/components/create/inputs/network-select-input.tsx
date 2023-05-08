@@ -8,16 +8,22 @@ export function NetworkSelectInput({
   form,
   value = "",
   error,
+  networks,
 }: {
   form: string;
   value: string;
   error?: string;
+  networks?: Network[];
 }): JSX.Element {
+  if (networks && !Array.isArray(networks)) {
+    throw new Error("networks array is not valid");
+  }
+
   // define hooks
   const [network, setNetwork] = useState(value as Network);
 
   // define values
-  const networks = Object.keys(NetworkInfo) as Network[];
+  const ns = networks ? networks : (Object.keys(NetworkInfo) as Network[]);
   const color = error ? "red.500" : "blackAlpha.500";
 
   // define handlers
@@ -67,7 +73,7 @@ export function NetworkSelectInput({
           )}
         </MenuButton>
         <MenuList>
-          {networks.map((network, index) => {
+          {ns.map((network, index) => {
             const info = NetworkInfo[network];
             return (
               <MenuItem key={index} minH="48px" onClick={() => handleOnClick(network)}>

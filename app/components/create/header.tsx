@@ -17,13 +17,13 @@ function getColor(currentStep: number, index: number): [string, string] {
   return [disabledColor, disabledColor];
 }
 
-export function Header<T>({
+export function Header({
   title,
   steps,
   currentIndex,
 }: {
   title: string;
-  steps: T[];
+  steps: string[];
   currentIndex: number;
 }): JSX.Element {
   return (

@@ -4,7 +4,7 @@ import { Form, useNavigation, useLocation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { Footer } from "./footer";
 
-export function Create<T>({
+export function Create({
   title,
   steps,
   currentStep,
@@ -15,11 +15,11 @@ export function Create<T>({
   children,
 }: {
   title: string;
-  steps: T[];
+  steps: string[];
   baseTo: string;
   backTo?: string;
   nextTo?: string;
-  currentStep: T;
+  currentStep: string;
   form: string;
   children: JSX.Element[];
 }): JSX.Element {
@@ -29,6 +29,9 @@ export function Create<T>({
   }
   if (children.length !== 2) {
     throw new Error("invalid children in create component");
+  }
+  if (!steps.includes(currentStep)) {
+    throw new Error("currentStep are not included in steps array");
   }
 
   // define hooks
@@ -63,8 +66,8 @@ export function Create<T>({
       py={[6, 6, 7, 8, 10]}
       px={[6, 6, 7, 8, 12]}
     >
-      <Form method="post" id={form}>
-        <Header<T> title={title} steps={steps} currentIndex={index} />
+      <Form method="post" id={form} style={{ width: "100%" }}>
+        <Header title={title} steps={steps} currentIndex={index} />
         <Flex flexDirection={["column", "column", "row"]} width={"full"}>
           {children}
         </Flex>

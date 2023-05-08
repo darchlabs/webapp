@@ -33,7 +33,7 @@ export function Footer({
         </Link>
       ) : null}
 
-      <Link to={baseTo}>
+      <Link to={`/${baseTo}`}>
         <Button disabled={isFetching} size={"sm"} colorScheme={"pink"} variant={"ghost"}>
           Cancel
         </Button>

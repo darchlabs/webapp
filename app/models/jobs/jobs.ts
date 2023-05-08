@@ -1,19 +1,12 @@
 import fetch from "@remix-run/web-fetch";
-import type {
-  ListProvidersResponse,
-  ListJobsResponse,
-  CreateJobResponse,
-  HTTPResponse,
-} from "./requests";
-import type { JobsRequest } from "./types";
+import type { ListProvidersResponse, ListJobsResponse, CreateJobResponse, HTTPResponse } from "./requests";
+import type { JobInput } from "./types";
 
 export default class Jobs {
   private URL: string;
-  public networkNodesMap: Map<string, string>;
 
-  constructor(URL: string, netNodesMap: Map<string, string>) {
+  constructor(URL: string) {
     this.URL = URL;
-    this.networkNodesMap = netNodesMap;
   }
 
   public async ListJobs(): Promise<ListJobsResponse> {
@@ -50,7 +43,7 @@ export default class Jobs {
     }
   }
 
-  public async CreateJob(req: JobsRequest): Promise<CreateJobResponse> {
+  public async CreateJob(req: JobInput): Promise<CreateJobResponse> {
     try {
       const url = `${this.URL}/api/v1/jobs`;
       const res = await fetch(url, {

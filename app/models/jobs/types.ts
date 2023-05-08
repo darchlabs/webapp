@@ -1,10 +1,12 @@
-import type { CronjobStatus, Network } from "darchlabs";
+import { type Network } from "darchlabs";
+
+export type JobStatus = "idle" | "running" | "stopped" | "autoStopped" | "error";
 
 export type Job = {
   id: string;
   name: string;
   providerId: string;
-  status: CronjobStatus;
+  status: JobStatus;
   network: Network;
   address: string;
   abi: string;
@@ -50,6 +52,20 @@ export type JobsRequest = {
   nodeUrl: string;
   privateKey: string;
   type: string;
+  cronjob: string;
+  checkMethod: string;
+  actionMethod: string;
+};
+
+export type JobInput = {
+  name: string;
+  providerId: string;
+  network: Network;
+  address: string;
+  nodeUrl: string;
+  privateKey: string;
+  abi: string;
+  type: "cronjob";
   cronjob: string;
   checkMethod: string;
   actionMethod: string;

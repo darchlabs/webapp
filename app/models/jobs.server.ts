@@ -1,4 +1,3 @@
-import { GetNetworkNodesUrl } from "@utils/chain-info";
 import Job from "./jobs";
 import invariant from "tiny-invariant";
 
@@ -21,17 +20,10 @@ if (process.env.NODE_ENV === "production") {
 }
 
 function getClient() {
-  // if (process.env.NODE_ENV === "development") {
-  //   console.log("alpga");
-  //   return new Job("");
-  // }
-
   const { JOB_API_URL } = process.env;
   invariant(typeof JOB_API_URL === "string", "JOB_API_URL env var not set");
 
-  const networkNodesMap = GetNetworkNodesUrl();
-
-  const client = new Job(JOB_API_URL, networkNodesMap);
+  const client = new Job(JOB_API_URL);
 
   return client;
 }

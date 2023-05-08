@@ -1,20 +1,22 @@
+import { type Network } from "darchlabs";
+
 export type Node = {
-    id: string;
-    name: string;
-    chain: string;
-    port: string;
-    fromBlockNumber: number;
-    status: string;
+  id: string;
+  name: string;
+  chain: string;
+  port: string;
+  fromBlockNumber: number;
+  status: string;
 };
 
 type _nodeFormData = {
-    network: string;
-    fromBlockNumber: number;
+  network: Network;
+  fromBlockNumber: number;
 };
 
 export type NodeBase = {
-    network: string;
-    fromBlockNumber: number;
+  network: Network;
+  fromBlockNumber: number;
 };
 
 export type NodeFormData = _nodeFormData & {};

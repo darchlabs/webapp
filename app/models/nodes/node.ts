@@ -2,7 +2,7 @@ import fetch from "@remix-run/web-fetch";
 import type { GetNodesStatusResponse, PostNewNodeResponse } from "./requests";
 import type { HTTPResponse } from "../jobs/requests";
 
-export default class Node {
+export default class Nodes {
   private URL: string;
   private AppDNS: string;
 

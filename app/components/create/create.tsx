@@ -1,4 +1,4 @@
-import { Flex, VStack } from "@chakra-ui/react";
+import { Flex, VStack, Box } from "@chakra-ui/react";
 import { Header } from "./header";
 import { Form, useNavigation, useLocation } from "@remix-run/react";
 import { useEffect, useState } from "react";
@@ -61,15 +61,20 @@ export function Create({
       bg={"white"}
       borderStyle={"solid"}
       borderWidth={1}
-      borderColor={"blackAlpha.300"}
+      borderColor={"blackAlpha.200"}
       borderRadius={8}
       py={[6, 6, 7, 8, 10]}
       px={[6, 6, 7, 8, 12]}
     >
       <Form method="post" id={form} style={{ width: "100%" }}>
         <Header title={title} steps={steps} currentIndex={index} />
-        <Flex flexDirection={["column", "column", "row"]} width={"full"}>
-          {children}
+        <Flex flexDirection={["column-reverse", "column-reverse", "row"]} width={"full"}>
+          <VStack flex={0.4} alignItems={"start"} pr={"10%"} w={"full"} my={[4, 4, 0]}>
+            {children[0]}
+          </VStack>
+          <Box w={"full"} flex={0.6}>
+            {children[1]}
+          </Box>
         </Flex>
         <input type="hidden" name={"baseTo"} value={baseTo} form={form} />
         <input type="hidden" name={"nextTo"} value={nextTo} form={form} />

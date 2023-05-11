@@ -24,7 +24,8 @@ export function NetworkSelectInput({
 
   // define values
   const ns = networks ? networks : (Object.keys(NetworkInfo) as Network[]);
-  const color = error ? "red.500" : "blackAlpha.500";
+  const textColor = error ? "red.500" : "blackAlpha.500";
+  const borderColor = error ? "red.500" : "blackAlpha.200";
 
   // define handlers
   function handleOnClick(n: Network) {
@@ -34,7 +35,7 @@ export function NetworkSelectInput({
   return (
     <>
       <input type="hidden" name={"network"} value={network} form={form} />
-      <Text color={color} fontWeight={"semibold"} fontSize={"md"}>
+      <Text color={textColor} fontWeight={"semibold"} fontSize={"md"}>
         Network
       </Text>
 
@@ -49,7 +50,7 @@ export function NetworkSelectInput({
           transition="all 0.2s"
           borderRadius={8}
           borderWidth={1.5}
-          borderColor={color}
+          borderColor={borderColor}
           textAlign={"left"}
           color={"blackAlpha.500"}
           size={"lg"}
@@ -92,7 +93,7 @@ export function NetworkSelectInput({
         </MenuList>
       </Menu>
 
-      {error ? <Text color={color}>You must select a network</Text> : null}
+      {error ? <Text color={textColor}>You must select a network</Text> : null}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useLocation, Link } from "@remix-run/react";
-import { Box, Text, Image, HStack, Flex, useMediaQuery } from "@chakra-ui/react";
+import { Box, Text, Image, HStack, Flex, useMediaQuery, theme } from "@chakra-ui/react";
 
 import { LogoIcon } from "../icon/logo";
 import { LogoSquareIcon } from "../icon/logo-square";
@@ -7,8 +7,8 @@ import { GetIconBySection } from "./get-icon-by-section";
 import { Items } from "./data";
 
 export function Sidebar() {
-  const [AboveToLg] = useMediaQuery("(min-width: 62rem)");
-  const [BelowToSm] = useMediaQuery("(max-width: 30rem)");
+  const [AboveToLg] = useMediaQuery(`(min-width: ${theme.breakpoints.lg})`);
+  const [BelowToSm] = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const { pathname } = useLocation();
 
   return (

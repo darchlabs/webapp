@@ -20,7 +20,7 @@ import { RiMore2Fill, RiStopCircleLine, RiPlayCircleFill } from "react-icons/ri"
 import { BsTrash } from "react-icons/bs";
 import { ShortAddress } from "@utils/short-address";
 import { GetNetworkAvatar } from "@utils/get-network-avatar";
-import { type Provider, type Job } from "@models/jobs/types";
+import { type Job } from "@models/jobs/types";
 import { CronjobValues } from "@utils/jobs-cron-utils";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 

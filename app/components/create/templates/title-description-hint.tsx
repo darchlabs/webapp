@@ -14,7 +14,7 @@ export function TemplateTitleDescriptionHint({
       <Text mb={3} color={"blackAlpha.800"} fontWeight={"bold"} lineHeight={5} fontSize={["md", "lg", "xl"]}>
         {title}
       </Text>
-      <Text mb={7} color={"gray.500"} fontWeight={"medium"} lineHeight={5} fontSize={["sm", "md"]}>
+      <Text mb={hint ? 7 : 2} color={"gray.500"} fontWeight={"medium"} lineHeight={5} fontSize={["sm", "md"]}>
         {description}
       </Text>
       {hint ? (

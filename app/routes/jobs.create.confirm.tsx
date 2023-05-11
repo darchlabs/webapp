@@ -1,4 +1,4 @@
-import { Box, VStack, Text } from "@chakra-ui/react";
+import { VStack, Text } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { Create, TemplateTitleDescriptionHint } from "@components/create";
 import { CreateJobConfirmAction, type ConfirmActionData } from "./jobs.create.confirm.action";
@@ -7,7 +7,6 @@ import { useLoaderData, useActionData } from "@remix-run/react";
 import { type LoaderData } from "./jobs.create.loader";
 import { ShortAddress } from "@utils/short-address";
 import { CreateJobConfirmLoader } from "./jobs.create.confirm.loader";
-import { type Provider } from "@models/jobs/types";
 import { CronjobValues } from "@utils/jobs-cron-utils";
 import { ToMap } from "@utils/to-map";
 
@@ -28,7 +27,7 @@ export default function CreateJobConfirm() {
     cron = cronTemplate.text;
   }
 
-  const providerName = ToMap(providers)[providerId];
+  const providerName = ToMap(providers)[providerId].name;
 
   return (
     <Create
@@ -39,7 +38,7 @@ export default function CreateJobConfirm() {
       baseTo="jobs"
       backTo="/jobs/create/account"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <VStack w={"full"} alignItems={"start"} pr={"10%"}>
         <Text color={"blackAlpha.800"} fontSize={"lg"} fontWeight={"semibold"}>
           Job info
         </Text>
@@ -97,12 +96,13 @@ export default function CreateJobConfirm() {
           </Text>
         ) : null}
       </VStack>
-      <Box flex={0.6}>
+
+      <>
         <TemplateTitleDescriptionHint
           title="Confirm information before to create job"
           description="Make sure the contract works correctly so that the calls to the methods don't fail. If you wish, you can later modify the job parameters"
         />
-      </Box>
+      </>
     </Create>
   );
 }

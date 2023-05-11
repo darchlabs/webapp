@@ -1,7 +1,5 @@
 import {
   Button,
-  Box,
-  VStack,
   Text,
   Modal,
   ModalOverlay,
@@ -45,7 +43,7 @@ export default function CreateJobAddress() {
         backTo="/jobs/create/cronjob"
         nextTo="confirm"
       >
-        <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+        <>
           <TextInput
             title={"Private Key"}
             name={"privateKey"}
@@ -54,8 +52,9 @@ export default function CreateJobAddress() {
             error={actionData?.privateKey.error}
             placeholder={"0x123456789..."}
           />
-        </VStack>
-        <Box flex={0.6}>
+        </>
+
+        <>
           <TemplateTitleTwoDescriptionsHint
             title="Enter Your Account's Private Key"
             description1={`Enter your private key without the "0x" prefix to execute the transaction`}
@@ -66,7 +65,7 @@ export default function CreateJobAddress() {
             }
             hint={"Hint: Ensure sufficient gas is available on the selected network for a successful transaction"}
           />
-        </Box>
+        </>
       </Create>
       <Modal isOpen={isOpen} onClose={onClose} isCentered={true} closeOnOverlayClick={false} closeOnEsc={false}>
         <ModalOverlay />

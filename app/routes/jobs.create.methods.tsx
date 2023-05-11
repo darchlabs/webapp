@@ -1,7 +1,7 @@
-import { Box, VStack, Text } from "@chakra-ui/react";
+import { VStack, Text } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 
-import { Create, TemplateTitleTwoDescriptionsHint, SelectInput, SelectInputValue } from "@components/create";
+import { Create, TemplateTitleTwoDescriptionsHint, SelectInput, type SelectInputValue } from "@components/create";
 import { CreateJobMethodsAction, type MethodsActionData } from "./jobs.create.methods.action";
 import { FormName, FormTitle, Steps } from "./jobs.create._index";
 import { CreateJobLoader, type LoaderData } from "./jobs.create.loader";
@@ -50,7 +50,7 @@ export default function CreateJobMethods() {
       backTo="/jobs/create/abi"
       nextTo="cronjob"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"} spacing={3} mb={5}>
+      <VStack w={"full"} alignItems={"start"} pr={"10%"}>
         <SelectInput
           name={"checkMethod"}
           title={"Check Method"}
@@ -70,7 +70,8 @@ export default function CreateJobMethods() {
           values={actionsMethods}
         />
       </VStack>
-      <Box flex={0.6}>
+
+      <>
         <TemplateTitleTwoDescriptionsHint
           title="Select the methods to call in the contract."
           description1={
@@ -86,7 +87,7 @@ export default function CreateJobMethods() {
             </>
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

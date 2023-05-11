@@ -1,4 +1,4 @@
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 
@@ -16,16 +16,16 @@ export default function CreateJobProvider() {
 
   return (
     <Create title={FormTitle} form={FormName} steps={Steps} currentStep="Provider" baseTo="jobs" nextTo="network">
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <ProviderSelectInput
           value={job?.providerId}
           form={FormName}
           providers={providers}
           error={actionData?.providerId?.error}
         />
-      </VStack>
+      </>
 
-      <Box flex={0.6}>
+      <>
         <TemplateTitleDescriptionHint
           title="Select the jobs provider"
           description="The contract must already be deployed on the provider's choosen network"
@@ -39,7 +39,7 @@ export default function CreateJobProvider() {
             </>
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

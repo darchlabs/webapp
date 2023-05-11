@@ -31,7 +31,7 @@ export default function CreateSynchronizerEvmConfirm() {
       baseTo="synchronizers"
       backTo="/synchronizers/create/evm/abi"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <Text color={"blackAlpha.800"} fontSize={"lg"} fontWeight={"semibold"}>
           Synchronizer info
         </Text>
@@ -64,13 +64,14 @@ export default function CreateSynchronizerEvmConfirm() {
         </VStack>
 
         {actionData?.confirm?.error ? <Text color={"red.500"}>{actionData?.confirm?.error}</Text> : null}
-      </VStack>
-      <Box flex={0.6}>
+      </>
+
+      <>
         <TemplateTitleDescriptionHint
           title="Confirm information before to create synchronizer"
           description="Remember that you cannot modify information about the synchronizer once it's created, so if you need to make changes, you will have to delete it first and then create a new one"
         />
-      </Box>
+      </>
     </Create>
   );
 }

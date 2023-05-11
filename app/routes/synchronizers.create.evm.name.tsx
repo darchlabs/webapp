@@ -1,4 +1,3 @@
-import { Box, VStack } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 
 import { Create, TemplateTitleDescriptionHint, TextInput } from "@components/create";
@@ -26,7 +25,7 @@ export default function CreateSynchronizerEvmName() {
       backTo="/synchronizers/create"
       nextTo="node"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <TextInput
           title={"Contract Name"}
           name={"name"}
@@ -35,16 +34,17 @@ export default function CreateSynchronizerEvmName() {
           error={actionData?.name.error}
           placeholder={"Name"}
         />
-      </VStack>
-      <Box flex={0.6}>
+      </>
+
+      <>
         <TemplateTitleDescriptionHint
-          title="Second, enter the name of the contract"
+          title="Enter the name of the contract"
           description="The name of smartcontract that will serve as a reference for identification purposes"
           hint={
             "Hint: Make sure to enter a address that is compatible with either the Ethereum or Polygon network, depending on the network you selected earlier"
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

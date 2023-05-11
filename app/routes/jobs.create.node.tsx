@@ -1,4 +1,3 @@
-import { Box, VStack } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 
 import { Create, TemplateTitleDescriptionHint, TextInput } from "@components/create";
@@ -24,7 +23,7 @@ export default function CreateJobNode() {
       backTo="/jobs/create/name"
       nextTo="address"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <TextInput
           title={"Node URL"}
           name={"nodeUrl"}
@@ -33,8 +32,9 @@ export default function CreateJobNode() {
           error={actionData?.nodeUrl.error}
           placeholder={"Insert the node url"}
         />
-      </VStack>
-      <Box flex={0.6}>
+      </>
+
+      <>
         <TemplateTitleDescriptionHint
           title="Enter the node URL"
           description="The URL must be valid and point to a node on the selected network"
@@ -42,7 +42,7 @@ export default function CreateJobNode() {
             "Hint: Make sure to enter a URL that is compatible with either the Ethereum or Polygon network, depending on the network you selected earlier"
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

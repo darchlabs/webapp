@@ -49,15 +49,15 @@ export const CreateSynchronizersEvmNodeAction = async function action({ request 
   }
 
   // check if nose url is valid client for the network
-  try {
-    await ValidateClient(scSession.network, form.nodeUrl);
-  } catch (err: any) {
-    return {
-      nodeUrl: {
-        error: err.message,
-      },
-    } as NodeActionData;
-  }
+  // try {
+  //   await ValidateClient(scSession.network, form.nodeUrl);
+  // } catch (err: any) {
+  //   return {
+  //     nodeUrl: {
+  //       error: err.message,
+  //     },
+  //   } as NodeActionData;
+  // }
 
   // save node url in session
   scSession.nodeURL = form.nodeUrl;

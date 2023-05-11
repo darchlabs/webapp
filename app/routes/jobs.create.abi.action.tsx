@@ -66,16 +66,16 @@ export const CreateJobAbiAction = async function action({ request }: ActionArgs)
     return redirect("/jobs/create");
   }
 
-  // check if abi is valid for the network
-  try {
-    ValidateContractAbi(jobSession.network, jobSession.address, JSON.stringify(abi));
-  } catch (err) {
-    return {
-      abi: {
-        error: `The abi is not valid for address/networkd. Please try again.`,
-      },
-    } as AbiActionData;
-  }
+  // // check if abi is valid for the network
+  // try {
+  //   ValidateContractAbi(jobSession.network, jobSession.address, JSON.stringify(abi));
+  // } catch (err) {
+  //   return {
+  //     abi: {
+  //       error: `The abi is not valid for address/networkd. Please try again.`,
+  //     },
+  //   } as AbiActionData;
+  // }
 
   // save abi in session
   jobSession.abi = JSON.stringify(abi);

@@ -1,4 +1,4 @@
-import { Box, Text, VStack } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { useActionData, useLoaderData } from "@remix-run/react";
 
@@ -18,17 +18,17 @@ export default function CreateSynchronizerNetwork() {
 
   return (
     <Create title={FormTitle} form={FormName} steps={Steps} currentStep="Network" baseTo="synchronizers" nextTo="name">
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <NetworkSelectInput
           value={loaderData?.smartcontract?.network}
           form={FormName}
           error={actionData?.network?.error}
         />
-      </VStack>
+      </>
 
-      <Box flex={0.6}>
+      <>
         <TemplateTitleDescriptionHint
-          title="First, select the network"
+          title="Select the network"
           description="The contract must already be implemented in the chosen network"
           hint={
             <>
@@ -40,7 +40,7 @@ export default function CreateSynchronizerNetwork() {
             </>
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

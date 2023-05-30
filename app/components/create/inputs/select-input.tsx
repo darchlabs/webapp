@@ -17,7 +17,7 @@ export function SelectInput({
   values,
 }: {
   name: string;
-  title: string;
+  title?: string;
   placeholder: string;
   form: string;
   value: string;
@@ -43,9 +43,12 @@ export function SelectInput({
   return (
     <VStack width="full" alignItems={"start"}>
       <input type="hidden" name={name} value={data} form={form} />
-      <Text color={textColor} fontWeight={"semibold"} fontSize={"md"} textTransform={"capitalize"}>
-        {title}
-      </Text>
+
+      {title ? (
+        <Text color={textColor} fontWeight={"semibold"} fontSize={"md"} textTransform={"capitalize"}>
+          {title}
+        </Text>
+      ) : null}
 
       <Menu>
         <MenuButton

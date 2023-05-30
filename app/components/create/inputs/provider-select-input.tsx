@@ -22,7 +22,7 @@ export function ProviderSelectInput({
   // define values
   const textColor = error ? "red.500" : "blackAlpha.500";
   const borderColor = error ? "red.500" : "blackAlpha.200";
-  const providerName = ToMap(providers)[providerId].name;
+  const providerName = ToMap(providers)[providerId]?.name;
 
   // define handlers
   function handleOnClick(n: string) {

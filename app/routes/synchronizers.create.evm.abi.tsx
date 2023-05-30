@@ -3,11 +3,12 @@ import { Create, TemplateTitleDescriptionHint, TextArea } from "@components/crea
 import { CreateSynchronizersEvmAbiAction, type AbiActionData } from "./synchronizers.create.evm.abi.action";
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { type SmartContractInput } from "darchlabs";
-import { CreateSynchronizersEvmLoader, type LoaderData } from "./synchronizers.create.evm._index";
+import { type LoaderData } from "./synchronizers.create.evm._index";
 import { FormName, FormTitle, Steps } from "./synchronizers.create._index";
+import { CreateSynchronizersEvmAbiLoader } from "./synchronizers.create.evm.abi.loader";
 
 export const action: ActionFunction = CreateSynchronizersEvmAbiAction;
-export const loader: LoaderFunction = CreateSynchronizersEvmLoader;
+export const loader: LoaderFunction = CreateSynchronizersEvmAbiLoader;
 
 export default function CreateSynchronizerEvmAbi() {
   const loaderData = useLoaderData() as LoaderData<SmartContractInput>;

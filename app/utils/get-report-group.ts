@@ -1,5 +1,5 @@
 import { redis } from "@models/redis.server";
-import type { GroupReport } from "@routes/examples";
+import { type GroupReport } from "@models/reporter";
 
 const OneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
 

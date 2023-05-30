@@ -1,19 +1,19 @@
 import { CircularProgress, Flex, GridItem, Heading, Text } from "@chakra-ui/react";
 
 export const ServiceStatusCard = ({
-  title,
-  loading,
   text,
-  error = false,
+  loading,
+  value,
+  isError = false,
 }: {
-  title: string;
-  loading: boolean;
   text: string;
-  error?: boolean;
+  loading: boolean;
+  value: string;
+  isError?: boolean;
 }) => {
-  const borderColor = error ? "pink.400" : "blackAlpha.200";
-  const titleColor = error ? "pink.400" : "gray.400";
-  const textColor = error ? "pink.400" : "blackAlpha.800";
+  const borderColor = isError ? "pink.400" : "blackAlpha.200";
+  const titleColor = isError ? "pink.400" : "gray.400";
+  const textColor = isError ? "pink.400" : "blackAlpha.800";
 
   return (
     <GridItem
@@ -31,13 +31,13 @@ export const ServiceStatusCard = ({
         justifyContent={"space-between"}
       >
         <Heading fontSize={["md", "sm", "lg", "lg"]} fontWeight={"semibold"} color={titleColor}>
-          {title}
+          {text}
         </Heading>
         {loading ? (
           <CircularProgress mt={[0, 2]} isIndeterminate color="pink.400" size={"25px"} />
         ) : (
           <Text mt={[0, 1]} fontSize={["lg", "lg", "xl", "2xl"]} color={textColor} fontWeight={"bold"}>
-            {text}
+            {value}
           </Text>
         )}
       </Flex>

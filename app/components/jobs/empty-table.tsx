@@ -9,7 +9,7 @@ export function EmptyTable({ createLink }: { createLink: string }) {
       alignItems={"center"}
       bg={"white"}
       borderWidth={1}
-      borderColor={"gray.300"}
+      borderColor={"blackAlpha.200"}
       borderStyle={"solid"}
       borderRadius={8}
       p={12}

@@ -36,7 +36,7 @@ export function Table({
       bg={"white"}
       borderStyle={"solid"}
       borderWidth={1}
-      borderColor={"blackAlpha.300"}
+      borderColor={"blackAlpha.200"}
       borderRadius={8}
     >
       <Header title={title} length={length} subHeader={subHeader} pagination={pagination} />

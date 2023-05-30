@@ -24,11 +24,11 @@ export default function CreateJobNetwork() {
       nextTo="name"
       backTo="/jobs/create/provider"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <NetworkSelectInput value={loaderData?.job?.network} form={FormName} error={actionData?.network?.error} />
-      </VStack>
+      </>
 
-      <Box flex={0.6}>
+      <>
         <TemplateTitleDescriptionHint
           title="Select the network"
           description="The contract must already be implemented in the chosen network"
@@ -42,7 +42,7 @@ export default function CreateJobNetwork() {
             </>
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

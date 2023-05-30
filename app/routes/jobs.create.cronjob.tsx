@@ -26,7 +26,7 @@ export default function CreateJobCronjob() {
       backTo="/jobs/create/methods"
       nextTo="account"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <SelectCustomInput
           name="cronjob"
           title="Cronjob"
@@ -38,8 +38,9 @@ export default function CreateJobCronjob() {
           customText="Custom Cronjob"
           values={CronjobValues}
         />
-      </VStack>
-      <Box flex={0.6}>
+      </>
+
+      <>
         <TemplateTitleDescriptionHint
           title="Select or insert the cron"
           description="The cron is responsible of defining the invterval for triggering the contract methods calls"
@@ -47,7 +48,7 @@ export default function CreateJobCronjob() {
             "Hint: For understanding more about cron, see the crontab.guru for getting more examples or see the official definition"
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

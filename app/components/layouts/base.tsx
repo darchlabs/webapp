@@ -16,9 +16,9 @@ export const BaseLayout = ({
   children: JSX.Element | JSX.Element[];
 }): JSX.Element => {
   return (
-    <HStack alignItems={"start"} spacing={0}>
+    <HStack alignItems={"start"} spacing={0} h={"calc(100vh)"}>
       <Sidebar />
-      <VStack as={"section"} bg={"gray.50"} minW={0} w={"full"} h={"calc(100vh)"} px={[4, 4, 8]} mb={["14!", "0!"]}>
+      <VStack as={"section"} bg={"gray.50"} minW={0} w={"full"} h={"full"} px={[4, 4, 8]} mb={["14!", "0!"]}>
         <Header title={title} linkTo={linkTo} linkFrom={linkFrom} subtitle={subtitle} />
         {children}
       </VStack>

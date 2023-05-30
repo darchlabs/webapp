@@ -20,8 +20,9 @@ export function ProviderSelectInput({
   const [providerId, setProviderId] = useState(value as string);
 
   // define values
-  const color = error ? "red.500" : "blackAlpha.500";
-  const providerName = ToMap(providers)[providerId].name;
+  const textColor = error ? "red.500" : "blackAlpha.500";
+  const borderColor = error ? "red.500" : "blackAlpha.200";
+  const providerName = ToMap(providers)[providerId]?.name;
 
   // define handlers
   function handleOnClick(n: string) {
@@ -31,7 +32,7 @@ export function ProviderSelectInput({
   return (
     <>
       <input type="hidden" name={"providerId"} value={providerId} form={form} />
-      <Text color={color} fontWeight={"semibold"} fontSize={"md"}>
+      <Text color={textColor} fontWeight={"semibold"} fontSize={"md"}>
         Provider
       </Text>
 
@@ -46,7 +47,7 @@ export function ProviderSelectInput({
           transition="all 0.2s"
           borderRadius={8}
           borderWidth={1.5}
-          borderColor={color}
+          borderColor={borderColor}
           textAlign={"left"}
           color={"blackAlpha.500"}
           size={"lg"}
@@ -78,7 +79,7 @@ export function ProviderSelectInput({
         </MenuList>
       </Menu>
 
-      {error ? <Text color={color}>You must select a provider</Text> : null}
+      {error ? <Text color={textColor}>You must select a provider</Text> : null}
     </>
   );
 }

@@ -41,7 +41,8 @@ export function SelectCustomInput({
   const [isCustom, setIsCustom] = useState(isCustomDefault as boolean);
 
   // define values
-  const color = error ? "red.500" : "blackAlpha.500";
+  const textColor = error ? "red.500" : "blackAlpha.500";
+  const borderColor = error ? "red.500" : "blaclAlpha.200";
 
   // define handlers
   function handleOnClick(n: string) {
@@ -55,7 +56,7 @@ export function SelectCustomInput({
   return (
     <VStack width="full" alignItems={"start"}>
       <HStack width={"full"} justifyContent={"space-between"}>
-        <Text color={color} fontWeight={"semibold"} fontSize={"md"} textTransform={"capitalize"}>
+        <Text color={textColor} fontWeight={"semibold"} fontSize={"md"} textTransform={"capitalize"}>
           {title}
         </Text>
         {isCustom && values && values.length > 0 ? (
@@ -85,7 +86,7 @@ export function SelectCustomInput({
               transition="all 0.2s"
               borderRadius={8}
               borderWidth={1.5}
-              borderColor={color}
+              borderColor={borderColor}
               textAlign={"left"}
               color={"blackAlpha.500"}
               size={"lg"}
@@ -135,7 +136,7 @@ export function SelectCustomInput({
         />
       )}
 
-      {error ? <Text color={color}>{error}</Text> : null}
+      {error ? <Text color={textColor}>{error}</Text> : null}
     </VStack>
   );
 }

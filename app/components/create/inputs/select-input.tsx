@@ -17,7 +17,7 @@ export function SelectInput({
   values,
 }: {
   name: string;
-  title: string;
+  title?: string;
   placeholder: string;
   form: string;
   value: string;
@@ -32,7 +32,8 @@ export function SelectInput({
   const [data, setData] = useState(value as string);
 
   // define values
-  const color = error ? "red.500" : "blackAlpha.500";
+  const textColor = error ? "red.500" : "blackAlpha.500";
+  const borderColor = error ? "red.500" : "blackAlpha.200";
 
   // define handlers
   function handleOnClick(n: string) {
@@ -42,9 +43,12 @@ export function SelectInput({
   return (
     <VStack width="full" alignItems={"start"}>
       <input type="hidden" name={name} value={data} form={form} />
-      <Text color={color} fontWeight={"semibold"} fontSize={"md"} textTransform={"capitalize"}>
-        {title}
-      </Text>
+
+      {title ? (
+        <Text color={textColor} fontWeight={"semibold"} fontSize={"md"} textTransform={"capitalize"}>
+          {title}
+        </Text>
+      ) : null}
 
       <Menu>
         <MenuButton
@@ -57,7 +61,7 @@ export function SelectInput({
           transition="all 0.2s"
           borderRadius={8}
           borderWidth={1.5}
-          borderColor={color}
+          borderColor={borderColor}
           textAlign={"left"}
           color={"blackAlpha.500"}
           size={"lg"}
@@ -87,7 +91,7 @@ export function SelectInput({
         </MenuList>
       </Menu>
 
-      {error ? <Text color={color}>{error}</Text> : null}
+      {error ? <Text color={textColor}>{error}</Text> : null}
     </VStack>
   );
 }

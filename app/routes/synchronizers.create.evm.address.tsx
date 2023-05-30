@@ -1,4 +1,3 @@
-import { Box, VStack } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 
 import { Create, TemplateTitleDescriptionHint, TextInput } from "@components/create";
@@ -26,7 +25,7 @@ export default function CreateSynchronizerEVMAddress() {
       backTo="/synchronizers/create/evm/node"
       nextTo="abi"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <TextInput
           title={"Contract Address"}
           name={"address"}
@@ -35,16 +34,17 @@ export default function CreateSynchronizerEVMAddress() {
           error={actionData?.address.error}
           placeholder={"0x123456789..."}
         />
-      </VStack>
-      <Box flex={0.6}>
+      </>
+
+      <>
         <TemplateTitleDescriptionHint
-          title="Fourthly, insert the address of the contract"
+          title="Insert the address of the contract"
           description="Remember to verify that the contract has been deployed on the provider that was specified earlier"
           hint={
             "Hint: Make sure to enter a address that is compatible with either the Ethereum or Polygon network, depending on the network you selected earlier"
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

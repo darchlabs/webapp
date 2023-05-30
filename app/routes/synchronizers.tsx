@@ -30,7 +30,7 @@ export default function App() {
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>
         <Table
           title="smart contracts"
-          columns={["Name", "network", "status", "last updated", ""]}
+          columns={["Name", "Network", "SC Status", "Events Status", ""]}
           pagination={pagination}
           emptyMsg={"You do not have any registered smart contracts."}
           {...tableOptions}

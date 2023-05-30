@@ -17,8 +17,8 @@ import { useLocation, useSubmit } from "@remix-run/react";
 
 import type { Event } from "darchlabs";
 
-import { RiMore2Fill, RiStopCircleLine, RiPlayCircleLine } from "react-icons/ri";
-import { BsTrash } from "react-icons/bs";
+import { RiMore2Fill } from "react-icons/ri";
+import { VscDebugRestart } from "react-icons/vsc";
 
 import { ShortAddress, GetNetworkAvatar } from "@utils/index";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
@@ -57,21 +57,6 @@ export function TableItem({
     });
   }
 
-  let action = null;
-  if (status === "running") {
-    action = (
-      <MenuItem onClick={() => onClickHandler("stop")} icon={<RiStopCircleLine size={15} />}>
-        Stop
-      </MenuItem>
-    );
-  } else if (status === "error" || status === "stopped") {
-    action = (
-      <MenuItem onClick={() => onClickHandler("start")} icon={<RiPlayCircleLine size={15} />}>
-        Start
-      </MenuItem>
-    );
-  }
-
   return (
     <Tr>
       <Td>
@@ -107,19 +92,20 @@ export function TableItem({
         </VStack>
       </Td>
       <Td>
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            variant="ghost"
-            icon={<Icon boxSize={5} color={"blackAlpha.500"} as={RiMore2Fill} />}
-          />
-          <MenuList minW="0" w={"150px"}>
-            {action}
-            <MenuItem onClick={() => onClickHandler("delete")} icon={<BsTrash />}>
-              Delete
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        {status === "error" || status === "stopped" ? (
+          <Menu>
+            <MenuButton
+              as={IconButton}
+              variant="ghost"
+              icon={<Icon boxSize={5} color={"blackAlpha.500"} as={RiMore2Fill} />}
+            />
+            <MenuList minW="0" w={"150px"}>
+              <MenuItem onClick={() => onClickHandler("start")} icon={<VscDebugRestart />}>
+                Restart
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        ) : null}
       </Td>
     </Tr>
   );

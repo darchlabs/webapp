@@ -20,7 +20,7 @@ import { RiMore2Fill, RiStopCircleLine, RiPlayCircleFill } from "react-icons/ri"
 import { BsTrash } from "react-icons/bs";
 import { ShortAddress } from "@utils/short-address";
 import { GetNetworkAvatar } from "@utils/get-network-avatar";
-import { type Provider, type Job } from "@models/jobs/types";
+import { type Job } from "@models/jobs/types";
 import { CronjobValues } from "@utils/jobs-cron-utils";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 
@@ -121,7 +121,7 @@ export function TableItem({ item, providerName }: { item: Job; providerName: str
           </Text>
         </VStack>
       </Td>
-      <Td>
+      {/* <Td>
         <VStack alignItems={"start"}>
           <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"} textTransform={"capitalize"}>
             {item.updatedAt !== "" ? new Date(item.updatedAt).toDateString() : new Date(item.createdAt).toDateString()}
@@ -130,7 +130,7 @@ export function TableItem({ item, providerName }: { item: Job; providerName: str
             {item.updatedAt ? timeDifference(item.updatedAt) : timeDifference(item.createdAt)}
           </Text>
         </VStack>
-      </Td>
+      </Td> */}
       <Td>
         <Tooltip
           label={latestLog}

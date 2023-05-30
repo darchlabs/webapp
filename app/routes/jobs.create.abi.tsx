@@ -1,4 +1,3 @@
-import { Box, VStack } from "@chakra-ui/react";
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { Create, TemplateTitleDescriptionHint, TextArea } from "@components/create";
 import { CreateJobAbiAction, type AbiActionData } from "./jobs.create.abi.action";
@@ -23,7 +22,7 @@ export default function CreateJobAbi() {
       backTo="/jobs/create/address"
       nextTo="methods"
     >
-      <VStack flex={0.4} alignItems={"start"} pr={"10%"}>
+      <>
         <TextArea
           title={"ABI"}
           name={"abi"}
@@ -32,8 +31,9 @@ export default function CreateJobAbi() {
           error={actionData?.abi.error}
           placeholder={'[{"anonymous": boolean, "inputs": Input[], "name": string, "type": "event"}]'}
         />
-      </VStack>
-      <Box flex={0.6}>
+      </>
+
+      <>
         <TemplateTitleDescriptionHint
           title="Insert the event ABI of the contract"
           description="Remember that if your contract is not verified, you will have to enter the ABI manually"
@@ -41,7 +41,7 @@ export default function CreateJobAbi() {
             "Hint: to verify the contract you can see the follow guide. Check our Roadmap to find out when we will implement contract verification in the admin panel"
           }
         />
-      </Box>
+      </>
     </Create>
   );
 }

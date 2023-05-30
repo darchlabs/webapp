@@ -5,8 +5,10 @@ export const GetColorSchemeByStatus = (status: string): string => {
     case "synching":
       return "yellow";
     case "error":
+    case "quota_exceeded":
     case "autoStopped":
       return "red";
+    case "idle":
     case "stopped":
     case "stopping":
       return "gray";

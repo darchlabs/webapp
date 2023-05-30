@@ -49,16 +49,16 @@ export const CreateJobAddressAction = async function action({ request }: ActionA
     return redirect("/jobs/create");
   }
 
-  // check if address is valid for network
-  try {
-    ValidateAddressContractInNetwork(jobSession.network, form.address);
-  } catch (err: any) {
-    return {
-      address: {
-        error: err.message,
-      },
-    } as AddressActionData;
-  }
+  // // check if address is valid for network
+  // try {
+  //   ValidateAddressContractInNetwork(jobSession.network, form.address);
+  // } catch (err: any) {
+  //   return {
+  //     address: {
+  //       error: err.message,
+  //     },
+  //   } as AddressActionData;
+  // }
 
   // check if the inserted address is valid
   if (!isAddress(form.address)) {

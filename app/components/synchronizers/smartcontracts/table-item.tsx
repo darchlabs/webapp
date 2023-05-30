@@ -13,11 +13,12 @@ import {
   MenuItem,
   Badge,
   CircularProgress,
+  Tooltip,
 } from "@chakra-ui/react";
 import { Link, useLocation, useFetcher } from "@remix-run/react";
 
 import { RiMore2Fill } from "react-icons/ri";
-import { VscPieChart } from "react-icons/vsc";
+import { VscPieChart, VscDebugRestart } from "react-icons/vsc";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { BsTrash } from "react-icons/bs";
 
@@ -114,42 +115,40 @@ export function TableItem({ item }: { item: SmartContract }) {
         </VStack>
       </Td>
       <Td>
-        {isFetching ? (
-          <VStack>
-            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("stopped")}>
-              {`Deleting`}
-            </Badge>
-          </VStack>
-        ) : (
-          <VStack>
-            {mapStatus.error > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("error")}>
-                {`${mapStatus.error} / error`}
-              </Badge>
-            ) : null}
-            {mapStatus.synching > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("synching")}>
-                {`${mapStatus.synching} / synching`}
-              </Badge>
-            ) : null}
-            {mapStatus.stopped > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("stopped")}>
-                {`${mapStatus.stopped} / stopped`}
-              </Badge>
-            ) : null}
-            {mapStatus.running > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("running")}>
-                {`${mapStatus.running} / running`}
-              </Badge>
-            ) : null}
-          </VStack>
-        )}
+        <Tooltip label={item.error} placement="auto" isDisabled={item.error === ""} bg={"blackAlpha.800"}>
+          <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus(item.status)}>
+            {item.status}
+          </Badge>
+        </Tooltip>
       </Td>
       <Td>
-        <VStack alignItems={"start"}>
+        {/* <VStack alignItems={"start"}>
           <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
             {new Date(item.updatedAt).toDateString()}
           </Text>
+        </VStack> */}
+
+        <VStack>
+          {mapStatus.error > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("error")}>
+              {`${mapStatus.error} / error`}
+            </Badge>
+          ) : null}
+          {mapStatus.synching > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("synching")}>
+              {`${mapStatus.synching} / synching`}
+            </Badge>
+          ) : null}
+          {mapStatus.stopped > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("stopped")}>
+              {`${mapStatus.stopped} / stopped`}
+            </Badge>
+          ) : null}
+          {mapStatus.running > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("running")}>
+              {`${mapStatus.running} / running`}
+            </Badge>
+          ) : null}
         </VStack>
       </Td>
       <Td>
@@ -160,6 +159,11 @@ export function TableItem({ item }: { item: SmartContract }) {
             <Link to={`/events/${item.address}`} onClick={(e) => checkIsFetching(e)}>
               <MenuItem icon={<HiOutlineDocumentText />}>Events</MenuItem>
             </Link>
+            {item.error !== "" ? (
+              <MenuItem onClick={() => onClickHandler("restart")} icon={<VscDebugRestart />}>
+                Restart
+              </MenuItem>
+            ) : null}
             <MenuItem onClick={() => onClickHandler("delete")} icon={<BsTrash />}>
               Delete
             </MenuItem>

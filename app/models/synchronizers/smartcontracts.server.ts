@@ -17,8 +17,10 @@ if (process.env.NODE_ENV === "production") {
 }
 
 function getClient() {
-  const { SYNCHORONIZER_API_URL } = process.env;
+  const { SYNCHORONIZER_API_URL, ETHERSCAN_API_KEY, POLYGONSCAN_API_KEY } = process.env;
   invariant(typeof SYNCHORONIZER_API_URL === "string", "SYNCHORONIZER_API_URL env var not set");
+  invariant(typeof ETHERSCAN_API_KEY === "string", "ETHERSCAN_API_KEY env var not set");
+  invariant(typeof POLYGONSCAN_API_KEY === "string", "POLYGONSCAN_API_KEY env var not set");
 
   const client = new SmartContractsClass(SYNCHORONIZER_API_URL);
 

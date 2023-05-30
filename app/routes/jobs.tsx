@@ -7,7 +7,7 @@ import { Table } from "@components/table";
 import { EmptyTable } from "@components/jobs/empty-table";
 import { useLocation } from "@remix-run/react";
 import { TableItem } from "@components/jobs/table-item";
-import { type Job, type Provider } from "@models/jobs/types";
+import { type Job } from "@models/jobs/types";
 import { ToMap } from "@utils/to-map";
 
 export const loader = JobsLoader;
@@ -39,7 +39,7 @@ export default function App() {
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>
         <Table
           title="jobs"
-          columns={["Jobs Details", "Provider", "Event", "Methods", "Last Updated", "Status", ""]}
+          columns={["Jobs Details", "Provider", "Event", "Methods", "Status", ""]}
           emptyMsg={"You do not have any registered jobs."}
           {...tableOptions}
         >

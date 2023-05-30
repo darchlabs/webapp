@@ -121,7 +121,7 @@ export function TableItem({ item, providerName }: { item: Job; providerName: str
           </Text>
         </VStack>
       </Td>
-      <Td>
+      {/* <Td>
         <VStack alignItems={"start"}>
           <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"} textTransform={"capitalize"}>
             {item.updatedAt !== "" ? new Date(item.updatedAt).toDateString() : new Date(item.createdAt).toDateString()}
@@ -130,7 +130,7 @@ export function TableItem({ item, providerName }: { item: Job; providerName: str
             {item.updatedAt ? timeDifference(item.updatedAt) : timeDifference(item.createdAt)}
           </Text>
         </VStack>
-      </Td>
+      </Td> */}
       <Td>
         <Tooltip
           label={latestLog}

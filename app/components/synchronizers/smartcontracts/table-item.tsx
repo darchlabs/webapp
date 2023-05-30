@@ -65,19 +65,19 @@ export function TableItem({ item }: { item: SmartContract }) {
     }
   }
 
-  // // define map status
-  // const mapStatus: { [key in EventStatus]: number } = {
-  //   error: 0,
-  //   synching: 0,
-  //   stopped: 0,
-  //   running: 0,
-  // };
+  // define map status
+  const mapStatus: { [key in EventStatus]: number } = {
+    error: 0,
+    synching: 0,
+    stopped: 0,
+    running: 0,
+  };
 
-  // // count all event status of event
-  // for (let i = 0; i < item.events.length; i++) {
-  //   const { status } = item.events[i];
-  //   mapStatus[status]++;
-  // }
+  // count all event status of event
+  for (let i = 0; i < item.events.length; i++) {
+    const { status } = item.events[i];
+    mapStatus[status]++;
+  }
 
   return (
     <Tr>
@@ -120,42 +120,35 @@ export function TableItem({ item }: { item: SmartContract }) {
             {item.status}
           </Badge>
         </Tooltip>
-        {/* {isFetching ? (
-          <VStack>
-            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("stopped")}>
-              {`Deleting`}
-            </Badge>
-          </VStack>
-        ) : (
-          <VStack>
-            {mapStatus.error > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("error")}>
-                {`${mapStatus.error} / error`}
-              </Badge>
-            ) : null}
-            {mapStatus.synching > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("synching")}>
-                {`${mapStatus.synching} / synching`}
-              </Badge>
-            ) : null}
-            {mapStatus.stopped > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("stopped")}>
-                {`${mapStatus.stopped} / stopped`}
-              </Badge>
-            ) : null}
-            {mapStatus.running > 0 ? (
-              <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("running")}>
-                {`${mapStatus.running} / running`}
-              </Badge>
-            ) : null}
-          </VStack>
-        )} */}
       </Td>
       <Td>
-        <VStack alignItems={"start"}>
+        {/* <VStack alignItems={"start"}>
           <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"}>
             {new Date(item.updatedAt).toDateString()}
           </Text>
+        </VStack> */}
+
+        <VStack>
+          {mapStatus.error > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("error")}>
+              {`${mapStatus.error} / error`}
+            </Badge>
+          ) : null}
+          {mapStatus.synching > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("synching")}>
+              {`${mapStatus.synching} / synching`}
+            </Badge>
+          ) : null}
+          {mapStatus.stopped > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("stopped")}>
+              {`${mapStatus.stopped} / stopped`}
+            </Badge>
+          ) : null}
+          {mapStatus.running > 0 ? (
+            <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("running")}>
+              {`${mapStatus.running} / running`}
+            </Badge>
+          ) : null}
         </VStack>
       </Td>
       <Td>

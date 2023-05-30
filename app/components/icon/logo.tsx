@@ -1,4 +1,4 @@
-export default function Logo() {
+export const LogoIcon = () => {
   return (
     <svg width="135" height="66" viewBox="0 0 135 66" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
@@ -11,4 +11,4 @@ export default function Logo() {
       />
     </svg>
   );
-}
+};

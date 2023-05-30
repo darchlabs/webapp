@@ -1,19 +1,17 @@
-import type { Network } from "../types";
+import type { Network } from "darchlabs";
 
-import PolygonAvatar from "../components/icon/polygon-avatar";
-import EthereumAvatar from "../components/icon/ethereum-avatar";
-import AvalancheAvatar from "../components/icon/avalanche-avatar";
-import BaseAvatar from "../components/icon/base-avatar";
+import { PolygonAvatarIcon, EthereumAvatarIcon, AvalancheAvatarIcon } from "@components/icon";
 
-export function GetNetworkAvatar(network: Network) {
+export const GetNetworkAvatar = (network: Network, size: number = 12) => {
   switch (network) {
-    case "polygon":
-      return <PolygonAvatar boxSize={12} />;
     case "ethereum":
-      return <EthereumAvatar boxSize={12} />;
+    case "rinkeby":
+    case "goerli":
+      return { ...(<EthereumAvatarIcon boxSize={size} />) };
+    case "polygon":
+    case "mumbai":
+      return { ...(<PolygonAvatarIcon boxSize={size} />) };
     case "avalanche":
-      return <AvalancheAvatar boxSize={12} />;
+      return { ...(<AvalancheAvatarIcon boxSize={size} />) };
   }
-
-  return <BaseAvatar boxSize={12} />;
-}
+};

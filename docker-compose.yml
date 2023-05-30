@@ -1,16 +1,38 @@
 version: "3.9"
 
 services:
-  webapp:
-    image: darchlabs/webapp
-    env_file:
-      - ./.env
-    ports:
-      - "3000:3000"
-
   redis:
     image: redis:latest
     ports:
       - "6379:6379"
     volumes:
       - ./data/redis:/redis
+
+  postgres:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+
+  synchronizers:
+    image: darchlabs/synchronizer-v2:1.8.0
+    ports:
+      - 5555:5555
+    restart: on-failure
+    env_file:
+      - .env.synchronizers
+    volumes:
+      - ./data/synchronizers:/home/synchronizers/data:rw
+
+  jobs:
+    image: darchlabs/jobs:1.1.7
+    ports:
+      - 7777:7777
+    restart: on-failure
+    env_file:
+      - .env.jobs
+    volumes:
+      - ./data/jobs:/home/jobs/data:rw

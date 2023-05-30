@@ -7,3 +7,6 @@ node_modules
 .env.*
 
 dump.rdb
+sessions
+.DS_Store
+data

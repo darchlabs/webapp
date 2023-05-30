@@ -1,133 +1,68 @@
-import { Box, Text, Image, VStack, HStack, Flex, useMediaQuery } from "@chakra-ui/react";
-import Logo from "../icon/logo";
-import LogoSquare from "../icon/logo-square";
-
 import { useLocation, Link } from "@remix-run/react";
+import { Box, Text, Image, HStack, Flex, useMediaQuery } from "@chakra-ui/react";
 
-import { VscPieChart, VscSync, VscSettingsGear, VscOrganization, VscBook, VscServerProcess } from "react-icons/vsc";
-import { MdWorkspacesOutline } from "react-icons/md";
+import { LogoIcon } from "../icon/logo";
+import { LogoSquareIcon } from "../icon/logo-square";
+import { GetIconBySection } from "./get-icon-by-section";
+import { Items } from "./data";
 
-interface ItemProps {
-  section: string;
-  path: string;
-  to: string;
-  separator?: boolean;
-}
-
-const items: ItemProps[] = [
-  {
-    section: "Overview",
-    path: "overview",
-    to: "/admin",
-  },
-  {
-    section: "Synchronizers",
-    path: "synchronizers",
-    to: "/admin/synchronizers",
-  },
-  {
-    section: "Jobs",
-    path: "jobs",
-    to: "/admin/jobs",
-  },
-  {
-    section: "Nodes",
-    path: "nodes",
-    to: "/admin/nodes",
-    separator: true,
-  },
-  {
-    section: "Settings",
-    path: "settings",
-    to: "/admin/settings",
-  },
-  {
-    section: "Users",
-    path: "users",
-    to: "/admin/users",
-  },
-  {
-    section: "Addresses",
-    path: "addresses",
-    to: "/admin/addresses",
-  },
-];
-
-function getIconBySection(section: string) {
-  switch (section.toLowerCase()) {
-    case "overview":
-      return <VscPieChart size={25} />;
-    case "syncronizers":
-      return <VscSync size={25} />;
-    case "jobs":
-      return <VscServerProcess size={25} />;
-    case "nodes":
-      return <MdWorkspacesOutline size={25} />;
-    case "settings":
-      return <VscSettingsGear size={25} />;
-    case "users":
-      return <VscOrganization size={25} />;
-    case "addresses":
-      return <VscBook size={25} />;
-  }
-
-  return <VscPieChart size={25} />;
-}
-
-export default function Sidebar() {
-  const [AboveToLg] = useMediaQuery("(min-width: 62em)");
+export function Sidebar() {
+  const [AboveToLg] = useMediaQuery("(min-width: 62rem)");
+  const [BelowToSm] = useMediaQuery("(max-width: 30rem)");
   const { pathname } = useLocation();
 
   return (
-    <VStack
-      spacing={"0px"}
-      minW={{
-        lg: "225px",
-      }}
+    <Flex
+      flexDirection={["row", "column"]}
+      minW={["full", "auto", "auto", 60]}
+      width={["full", "auto"]}
+      bottom={[0, "inherit"]}
+      position={["fixed", "inherit"]}
+      borderWidth={[1, 0]}
+      borderStyle={"solid"}
+      borderColor={["blackAlpha.200"]}
     >
-      <Box pt={"30px"} pb={"32px"}>
-        {AboveToLg ? <Image as={Logo} boxSize={"135px"} /> : <Image as={LogoSquare} boxSize={"55px"} />}
-      </Box>
+      {!BelowToSm ? (
+        <HStack pt={8} pb={8} justifyContent={"center"}>
+          {AboveToLg ? <Image as={LogoIcon} boxSize={"135px"} /> : <Image as={LogoSquareIcon} boxSize={"55px"} />}
+        </HStack>
+      ) : null}
 
-      <VStack width={"full"} alignItems={"stretch"}>
-        {items.map((item, index) => {
-          let active = false;
-          const isAdmin = pathname.includes("/admin");
-          if (isAdmin) {
-            const [, path] = pathname.split("/admin");
-            if (path === "") {
-              // overview
-              if (item.path === "overview") {
-                active = true;
-              }
-            } else if (path.includes(item.path)) {
-              active = true;
-            }
+      {Items.map((item, index) => {
+        let active = false;
+        for (const path of item.paths) {
+          if (pathname.includes(path)) {
+            active = true;
+            break;
           }
+        }
 
-          return (
-            <Link key={index} to={item.to}>
+        return (
+          <Box key={index} flex={1} width={"full"}>
+            <Link to={item.to}>
               <HStack
-                bg={active ? "pink.500" : "white"}
-                h={"56px"}
-                color={active ? "white" : "#A4A6B3"}
+                bg={active ? "pink.400" : "white"}
+                w={"full"}
+                h={14}
+                color={active ? "white" : "blackAlpha.500"}
                 _hover={{
-                  backgroundColor: "pink.500",
+                  backgroundColor: "pink.400",
                   color: "white",
                   cursor: "pointer",
                 }}
-                borderBottom={item.separator ? "1px" : "0px"}
-                borderBottomColor={"#E1E3E6"}
+                borderBottom={item.separator ? 1 : 0}
+                borderBottomColor={"blackAlpha.200"}
+                justifyContent={["center", "start"]}
               >
-                <Flex pl={"25px"} pr={"25px"} justifyContent={"center"} alignItems={"center"} alignContent="center">
-                  {getIconBySection(item.section)}
+                <Flex pl={6} pr={6} justifyContent={"center"} alignItems={"center"} alignContent="center">
+                  {GetIconBySection(item.icon)}
                 </Flex>
-                {AboveToLg ? <Text fontSize={"16px"}>{item.section}</Text> : null}
+                {AboveToLg ? <Text fontSize={"md"}>{item.section}</Text> : null}
               </HStack>
             </Link>
-          );
-        })}
-      </VStack>
-    </VStack>
+          </Box>
+        );
+      })}
+    </Flex>
   );
 }

@@ -1,15 +1,12 @@
-import type { GroupReport } from "~/routes/admin/index";
+import type { GroupReport } from "@routes/examples";
 
-export type ServiceInsigths = {
+type ServiceInsigths = {
   dateWorkingState: number[];
   totalInstances: number[];
   totalErrors: number[];
 };
 
-export function getServiceInsights(
-  serviceGroup: GroupReport[] | undefined,
-  dateArrayLen: number
-): ServiceInsigths {
+export const GetServiceInsights = (serviceGroup: GroupReport[] | undefined, dateArrayLen: number): ServiceInsigths => {
   // Declare errors
   let totalErrors: number[] = [];
   let totalInstances: number[] = [];
@@ -65,14 +62,14 @@ export function getServiceInsights(
     totalErrors,
     totalInstances,
   };
-}
+};
 
-export function getAllServicesInsight(
+export const GetAllServicesInsight = (
   periodArr: any[],
   syncServiceInfo: ServiceInsigths,
   jobsServiceInfo: ServiceInsigths,
   nodesServiceInfo: ServiceInsigths
-): number[] {
+): number[] => {
   const allServicesState: number[] = [];
 
   periodArr.forEach((_, index) => {
@@ -82,9 +79,7 @@ export function getAllServicesInsight(
       nodesServiceInfo.totalInstances[index];
 
     const totalErrors =
-      syncServiceInfo.totalErrors[index] +
-      jobsServiceInfo.totalErrors[index] +
-      nodesServiceInfo.totalErrors[index];
+      syncServiceInfo.totalErrors[index] + jobsServiceInfo.totalErrors[index] + nodesServiceInfo.totalErrors[index];
 
     const workingInstances = totalInstances - totalErrors;
 
@@ -94,4 +89,4 @@ export function getAllServicesInsight(
   });
 
   return allServicesState;
-}
+};

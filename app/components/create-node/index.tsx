@@ -2,8 +2,8 @@ import { Button, HStack, VStack, Text, Flex } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import type { Step } from "./steps";
 import StepsComponent from "./steps";
-import type { Network } from "../../types";
-import type { NodeFormData } from "../../pkg/node/types";
+import { type Network } from "darchlabs";
+import type { NodeFormData } from "@models/nodes/types";
 import StepNetwork from "./step-network";
 import StepBlockNumber from "./step-blocknumber";
 import StepConfirm from "./step-confirm";
@@ -31,11 +31,11 @@ const stepIndex: Record<number, StepEnum> = {
   0: StepEnum.Network,
   1: StepEnum.BlockNumber,
   2: StepEnum.Confirm,
-}
+};
 
 export default function Create({ setShowCreateNode }: any) {
   const [currentStep, setCurrentStep] = useState(StepEnum.Network);
-  const [network, setNetwork] = useState("none" as Network);
+  const [network, setNetwork] = useState("" as Network);
   const [blockNumber, setBlockNumber] = useState(0);
   const [isDisabled, setIsDisabled] = useState(true);
   const [formData, setFormData] = useState({} as NodeFormData);
@@ -59,21 +59,16 @@ export default function Create({ setShowCreateNode }: any) {
     setCurrentStep(currentStep - 1);
   }
 
-  function cancelOnClick() {
-    setShowCreateNode((prevState: boolean) => !prevState);
-  }
-
   // check field content for every step and validate next/back button
   useEffect(() => {
     let valid = false;
     switch (currentStep) {
       case StepEnum.Network: {
-        valid = network === "none" ? false : true;
+        valid = network === ("" as Network) ? false : true;
         break;
       }
       case StepEnum.BlockNumber: {
         valid = Number.isInteger(blockNumber) ? true : false;
-        console.log("blockNumber", blockNumber, valid)
         break;
       }
       case StepEnum.Confirm: {
@@ -95,7 +90,7 @@ export default function Create({ setShowCreateNode }: any) {
     if (blockNumber !== formData.fromBlockNumber) {
       setFormData({ ...formData, fromBlockNumber: blockNumber });
     }
-  }, [network, blockNumber,  setFormData]);
+  }, [network, blockNumber, formData, setFormData]);
 
   let section = null;
   switch (currentStep) {
@@ -106,7 +101,7 @@ export default function Create({ setShowCreateNode }: any) {
       section = StepBlockNumber(blockNumber, setBlockNumber);
       break;
     case StepEnum.Confirm:
-      section = StepConfirm(formData, confirm)
+      section = StepConfirm(formData.network, formData.fromBlockNumber);
       break;
   }
 
@@ -163,4 +158,3 @@ export default function Create({ setShowCreateNode }: any) {
     </VStack>
   );
 }
-

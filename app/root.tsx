@@ -2,17 +2,19 @@ import React, { useContext, useEffect } from "react";
 import { withEmotionCache } from "@emotion/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration } from "@remix-run/react";
-import type { MetaFunction, LinksFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import type { V2_MetaFunction, LinksFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import { metaV1 } from "@remix-run/v1-meta";
 
 import { ServerStyleContext, ClientStyleContext } from "./context";
-
 import theme from "./theme";
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "New Remix App",
-  viewport: "width=device-width,initial-scale=1",
-});
+export const meta: V2_MetaFunction = (args: any) => {
+  return metaV1(args, {
+    charset: "utf-8",
+    title: "New Remix App",
+    viewport: "width=device-width,initial-scale=1",
+  });
+};
 
 export let links: LinksFunction = () => {
   return [

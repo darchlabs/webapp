@@ -34,6 +34,7 @@ import {
   Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
+import { FormatNumber } from "@utils/format-number";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -67,13 +68,7 @@ export const MetricChart = ({
         beginAtZero: true,
         ticks: {
           callback: function (value: number) {
-            if (value >= 1000000) {
-              return (value / 1000000).toFixed(0) + "M";
-            } else if (value >= 1000) {
-              return (value / 1000).toFixed(0) + "K";
-            } else {
-              return value;
-            }
+            return FormatNumber(value, 1);
           },
         },
       },

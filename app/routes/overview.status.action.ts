@@ -28,10 +28,20 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
   // get data from synchronizers service
   try {
     const { data } = await SmartContracts.listSmartContracts({});
-    response.synchronizers.failed = data.reduce(
-      (sumSc, sc) => (sc.events.every((ev) => ev.status === "error") ? sumSc + 1 : sumSc),
-      0
-    );
+
+    response.synchronizers.failed = data.reduce((sumSc, sc) => {
+      const some = sc.events.some((ev) => ev.status === "error");
+      if (some) {
+        return sumSc + 1;
+      }
+
+      if (sc.status === "error" || sc.status === "quota_exceeded") {
+        return sumSc + 1;
+      }
+
+      return sumSc;
+    }, 0);
+
     response.synchronizers.working = data.length - response.synchronizers.failed;
   } catch (err: any) {
     response.synchronizers.error = err.mesage;

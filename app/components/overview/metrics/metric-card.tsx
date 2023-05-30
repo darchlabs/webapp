@@ -6,6 +6,7 @@ import { type Metric, type OverviewMetricActionData } from "@routes/overview.met
 import { FormatNumber } from "@utils/format-number";
 import { MetricStatusCard } from "../metric-status-card";
 import { useToast } from "@chakra-ui/react";
+import { FormatEVM } from "@utils/format-evm";
 
 export const MetricCard = ({
   text,
@@ -56,12 +57,18 @@ export const MetricCard = ({
             isClosable: true,
             position: "bottom-right",
           });
-        } else {
-          setValue(FormatNumber(actionData.value));
+
+          return;
         }
+
+        if (metric === "tvl") {
+          setValue(FormatEVM(contract.network, actionData.value, 2));
+          return;
+        }
+        setValue(FormatNumber(actionData.value));
       }
     }
-  }, [fetcher.state, fetcher.data, metric, toast]);
+  }, [fetcher.state, fetcher.data, metric, toast, contract.network]);
 
   // define interval for getting status every 10 seconds
   useInterval(() => {

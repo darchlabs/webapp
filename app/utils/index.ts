@@ -1,4 +1,5 @@
 export * from "./capitalize";
+export * from "./format-evm";
 export * from "./format-number";
 export * from "./get-abi-schema";
 export * from "./get-abi";

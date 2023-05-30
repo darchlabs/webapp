@@ -13,11 +13,12 @@ import {
   MenuItem,
   Badge,
   CircularProgress,
+  Tooltip,
 } from "@chakra-ui/react";
 import { Link, useLocation, useFetcher } from "@remix-run/react";
 
 import { RiMore2Fill } from "react-icons/ri";
-import { VscPieChart } from "react-icons/vsc";
+import { VscPieChart, VscDebugRestart } from "react-icons/vsc";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { BsTrash } from "react-icons/bs";
 
@@ -64,19 +65,19 @@ export function TableItem({ item }: { item: SmartContract }) {
     }
   }
 
-  // define map status
-  const mapStatus: { [key in EventStatus]: number } = {
-    error: 0,
-    synching: 0,
-    stopped: 0,
-    running: 0,
-  };
+  // // define map status
+  // const mapStatus: { [key in EventStatus]: number } = {
+  //   error: 0,
+  //   synching: 0,
+  //   stopped: 0,
+  //   running: 0,
+  // };
 
-  // count all event status of event
-  for (let i = 0; i < item.events.length; i++) {
-    const { status } = item.events[i];
-    mapStatus[status]++;
-  }
+  // // count all event status of event
+  // for (let i = 0; i < item.events.length; i++) {
+  //   const { status } = item.events[i];
+  //   mapStatus[status]++;
+  // }
 
   return (
     <Tr>
@@ -114,7 +115,12 @@ export function TableItem({ item }: { item: SmartContract }) {
         </VStack>
       </Td>
       <Td>
-        {isFetching ? (
+        <Tooltip label={item.error} placement="auto" isDisabled={item.error === ""} bg={"blackAlpha.800"}>
+          <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus(item.status)}>
+            {item.status}
+          </Badge>
+        </Tooltip>
+        {/* {isFetching ? (
           <VStack>
             <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus("stopped")}>
               {`Deleting`}
@@ -143,7 +149,7 @@ export function TableItem({ item }: { item: SmartContract }) {
               </Badge>
             ) : null}
           </VStack>
-        )}
+        )} */}
       </Td>
       <Td>
         <VStack alignItems={"start"}>
@@ -160,6 +166,11 @@ export function TableItem({ item }: { item: SmartContract }) {
             <Link to={`/events/${item.address}`} onClick={(e) => checkIsFetching(e)}>
               <MenuItem icon={<HiOutlineDocumentText />}>Events</MenuItem>
             </Link>
+            {item.error !== "" ? (
+              <MenuItem onClick={() => onClickHandler("restart")} icon={<VscDebugRestart />}>
+                Restart
+              </MenuItem>
+            ) : null}
             <MenuItem onClick={() => onClickHandler("delete")} icon={<BsTrash />}>
               Delete
             </MenuItem>

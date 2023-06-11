@@ -15,7 +15,7 @@ export function Create({
   children,
 }: {
   title: string;
-  steps: string[];
+  steps: readonly string[];
   baseTo: string;
   backTo?: string;
   nextTo?: string;

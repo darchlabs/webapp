@@ -23,7 +23,7 @@ export function Header({
   currentIndex,
 }: {
   title: string;
-  steps: string[];
+  steps: readonly string[];
   currentIndex: number;
 }): JSX.Element {
   return (

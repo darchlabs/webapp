@@ -63,10 +63,10 @@ export function NetworkSelectInput({
             <HStack>
               {GetNetworkAvatar(network, 7)}
               <Text textTransform={"capitalize"} ml={4} color={"blackAlpha.600"}>
-                {network}{" "}
-                {NetworkInfo[network as Network].baseNetwork !== network ? (
+                {NetworkInfo[network].name}{" "}
+                {!NetworkInfo[network].mainnet ? (
                   <Text as="span" textTransform={"capitalize"}>
-                    ({NetworkInfo[network as Network].baseNetwork})
+                    (Testnet)
                   </Text>
                 ) : null}
               </Text>
@@ -80,10 +80,10 @@ export function NetworkSelectInput({
               <MenuItem key={index} minH="48px" onClick={() => handleOnClick(network)}>
                 {GetNetworkAvatar(network, 7)}
                 <Text textTransform={"capitalize"} ml={4} color={"blackAlpha.800"}>
-                  {network}{" "}
-                  {info.baseNetwork !== network ? (
+                  {NetworkInfo[network].name}{" "}
+                  {!info.mainnet ? (
                     <Text as="span" textTransform={"capitalize"}>
-                      ({info.baseNetwork})
+                      (Testnet)
                     </Text>
                   ) : null}
                 </Text>

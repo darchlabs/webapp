@@ -5,9 +5,8 @@ import { useActionData, useLoaderData } from "@remix-run/react";
 import { Create, TemplateTitleDescriptionHint, NetworkSelectInput } from "@components/create";
 import { CreateSynchronizersNetworkAction, type NetworkActionData } from "./synchronizers.create.network.action";
 import { FormName, FormTitle, Steps } from "./synchronizers.create._index";
-import { CreateSynchronizersEvmLoader } from "./synchronizers.create.evm._index";
-import { type LoaderData } from "./synchronizers.create.evm._index";
-import { type SmartContractInput } from "darchlabs";
+import { type LoaderData, CreateSynchronizersEvmLoader } from "./synchronizers.create.evm._index";
+import { type SmartContractInput, SmartContractNetwoks } from "darchlabs";
 
 export const action: ActionFunction = CreateSynchronizersNetworkAction;
 export const loader: LoaderFunction = CreateSynchronizersEvmLoader;
@@ -23,6 +22,7 @@ export default function CreateSynchronizerNetwork() {
           value={loaderData?.smartcontract?.network}
           form={FormName}
           error={actionData?.network?.error}
+          networks={SmartContractNetwoks}
         />
       </>
 

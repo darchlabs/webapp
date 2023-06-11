@@ -1,7 +1,5 @@
 import { HStack } from "@chakra-ui/react";
 import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
-import type { SmartContract } from "darchlabs";
-
 import { Table } from "@components/table";
 import { EmptyTable, TableItem } from "@components/synchronizers/smartcontracts";
 import { BaseLayout } from "@components/layouts";
@@ -36,7 +34,7 @@ export default function App() {
           {...tableOptions}
         >
           {data.map((item, index) => (
-            <TableItem key={index} item={item as SmartContract} />
+            <TableItem key={index} item={item} />
           ))}
         </Table>
       </HStack>

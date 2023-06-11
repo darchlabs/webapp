@@ -1,5 +1,6 @@
 export * from "./avalanche-avatar";
 export * from "./base-avatar";
+export * from "./celo-avatar";
 export * from "./chainlink-avatar";
 export * from "./ethereum-avatar";
 export * from "./logo-square";

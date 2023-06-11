@@ -48,16 +48,16 @@ export const CreateJobsNodeAction = async function action({ request }: ActionArg
     return redirect("/jobs/create");
   }
 
-  // // check if nose url is valid client for the network
-  // try {
-  //   await ValidateClient(jobSession.network, form.nodeUrl);
-  // } catch (err: any) {
-  //   return {
-  //     nodeUrl: {
-  //       error: err.message,
-  //     },
-  //   } as NodeActionData;
-  // }
+  // check if nose url is valid client for the network
+  try {
+    await ValidateClient(jobSession.network, form.nodeUrl);
+  } catch (err: any) {
+    return {
+      nodeUrl: {
+        error: err.message,
+      },
+    } as NodeActionData;
+  }
 
   // save node url in session
   jobSession.nodeUrl = form.nodeUrl;

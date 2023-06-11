@@ -2,26 +2,16 @@ import type { ActionFunction } from "@remix-run/node";
 import { job } from "@models/jobs.server";
 import { redirect } from "@remix-run/node";
 
-type DeleteSmartContractForm = {
+type JobActionForm = {
   action: string;
   redirectURL: string;
   id: string;
 };
 
-const sleep = () => {
-  return new Promise((resolve: any) => {
-    setTimeout(() => {
-      resolve();
-    }, 3000);
-  });
-};
-
 export const action: ActionFunction = async ({ request }: { request: Request }) => {
   // get from data values
   const formData = await request.formData();
-  const { action, redirectURL, id } = Object.fromEntries(formData) as DeleteSmartContractForm;
-
-  await sleep();
+  const { action, redirectURL, id } = Object.fromEntries(formData) as JobActionForm;
 
   // execute action on jobs api
   if (action === "start") {

@@ -21,6 +21,10 @@ export function Table({
   pagination?: Pagination;
   children: JSX.Element[];
 }) {
+  if (!children) {
+    throw new Error("Children in table is not defined");
+  }
+
   if (!children.length && emptyTable) {
     return emptyTable;
   }

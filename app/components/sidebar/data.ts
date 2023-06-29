@@ -23,13 +23,13 @@ export const Items: {
     to: "/jobs",
     icon: "jobs",
   },
-  {
-    section: "Nodes",
-    paths: ["nodes"],
-    to: "/nodes",
-    icon: "nodes",
-    separator: true,
-  },
+  // {
+  //   section: "Nodes",
+  //   paths: ["nodes"],
+  //   to: "/nodes",
+  //   icon: "nodes",
+  //   separator: true,
+  // },
   // {
   //   section: "Settings",
   //   paths: ["settings"],

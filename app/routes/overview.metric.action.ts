@@ -1,6 +1,7 @@
 import { type ActionFunction, json } from "@remix-run/node";
 import Axios from "axios";
 import { type Pagination } from "darchlabs";
+import { Synchronizers } from "@models/synchronizers/synchronizers.server";
 import { isAddress } from "ethers";
 
 export type Metric =
@@ -11,7 +12,8 @@ export type Metric =
   | "tvl"
   | "total-value-transferred"
   | "total-gas-spent"
-  | "historical-gas-used";
+  | "historical-gas-used"
+  | "events";
 
 export type OverviewMetricForm = {
   metric: Metric;
@@ -50,7 +52,7 @@ type Transaction = {
   updatedAt: string;
 };
 
-export type ListTransactionsResponse = {
+export type ListResponse = {
   data: Transaction[];
   meta: {
     pagination: Pagination;
@@ -84,9 +86,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
           data: {
             meta: { pagination },
           },
-        } = await Axios.get<ListTransactionsResponse>(
-          `${synchronizersURL}/api/v1/metrics/transactions/${form.address}?limit=1`
-        );
+        } = await Axios.get<ListResponse>(`${synchronizersURL}/api/v1/metrics/transactions/${form.address}?limit=1`);
         response.value = pagination.totalElements;
         break;
       }
@@ -98,9 +98,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
               pagination: { totalElements: totalTxs },
             },
           },
-        } = await Axios.get<ListTransactionsResponse>(
-          `${synchronizersURL}/api/v1/metrics/transactions/${form.address}?limit=1`
-        );
+        } = await Axios.get<ListResponse>(`${synchronizersURL}/api/v1/metrics/transactions/${form.address}?limit=1`);
 
         // get failed txs
         const {
@@ -109,7 +107,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
               pagination: { totalElements: failedTxs },
             },
           },
-        } = await Axios.get<ListTransactionsResponse>(
+        } = await Axios.get<ListResponse>(
           `${synchronizersURL}/api/v1/metrics/transactions/${form.address}/failed?limit=1`
         );
 
@@ -121,7 +119,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
           data: {
             meta: { pagination },
           },
-        } = await Axios.get<ListTransactionsResponse>(
+        } = await Axios.get<ListResponse>(
           `${synchronizersURL}/api/v1/metrics/transactions/${form.address}/failed?limit=1`
         );
         response.value = pagination.totalElements;
@@ -132,9 +130,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
           data: {
             meta: { pagination },
           },
-        } = await Axios.get<ListTransactionsResponse>(
-          `${synchronizersURL}/api/v1/metrics/addresses/${form.address}?limit=1`
-        );
+        } = await Axios.get<ListResponse>(`${synchronizersURL}/api/v1/metrics/addresses/${form.address}?limit=1`);
         response.value = pagination.totalElements;
         break;
       }
@@ -157,6 +153,28 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
           data: { data: gasSpent },
         } = await Axios.get<{ data: number }>(`${synchronizersURL}/api/v1/metrics/gas/${form.address}/total`);
         response.value = gasSpent;
+        break;
+      }
+      case "events": {
+        const { data: events } = await Synchronizers.listEventsByAddress(form.address, {
+          page: 0,
+          limit: 999,
+        });
+
+        let count = 0;
+        for (let i = 0; i < events.length; i++) {
+          const event = events[i];
+          const eventName = event?.abi?.name;
+          const eventDatas = await Synchronizers.listEventData(form.address, eventName, {
+            page: 0,
+            limit: 1,
+          });
+
+          count += eventDatas?.meta?.pagination?.totalElements;
+        }
+
+        response.value = count;
+
         break;
       }
     }

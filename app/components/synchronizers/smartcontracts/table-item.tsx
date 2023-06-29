@@ -155,15 +155,15 @@ export function TableItem({ item }: { item: SmartContract }) {
         <Menu>
           <MenuButton as={IconButton} variant="ghost" icon={<Icon boxSize={5} color={"#C5C7CD"} as={RiMore2Fill} />} />
           <MenuList minW="0" w={"150px"}>
-            <MenuItem icon={<VscPieChart />}>Metrics</MenuItem>
-            <Link to={`/events/${item.address}`} onClick={(e) => checkIsFetching(e)}>
-              <MenuItem icon={<HiOutlineDocumentText />}>Events</MenuItem>
-            </Link>
-            {item.error !== "" ? (
+            {item.status === "error" || item.status === "quota_exceeded" ? (
               <MenuItem onClick={() => onClickHandler("restart")} icon={<VscDebugRestart />}>
                 Restart
               </MenuItem>
             ) : null}
+            <MenuItem icon={<VscPieChart />}>Metrics</MenuItem>
+            <Link to={`/events/${item.address}`} onClick={(e) => checkIsFetching(e)}>
+              <MenuItem icon={<HiOutlineDocumentText />}>Events</MenuItem>
+            </Link>
             <MenuItem onClick={() => onClickHandler("delete")} icon={<BsTrash />}>
               Delete
             </MenuItem>

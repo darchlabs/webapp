@@ -1,4 +1,4 @@
-import { Grid, VStack, Heading, HStack, Badge, Text, Flex } from "@chakra-ui/react";
+import { Grid, VStack, Heading, HStack, Badge } from "@chakra-ui/react";
 import { type SmartContract } from "darchlabs";
 import { MetricCard } from "./metrics/metric-card";
 import { MetricChart } from "./metrics/metric-chart";

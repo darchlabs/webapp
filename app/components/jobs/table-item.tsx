@@ -24,10 +24,10 @@ import { type Job } from "@models/jobs/types";
 import { CronjobValues } from "@utils/jobs-cron-utils";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 
-const timeDifference = (date: string): string => {
-  const difference = Date.now() - new Date(date).getDate();
-  return new Date(difference).toDateString();
-};
+// const timeDifference = (date: string): string => {
+//   const difference = Date.now() - new Date(date).getDate();
+//   return new Date(difference).toDateString();
+// };
 
 export function TableItem({ item, providerName }: { item: Job; providerName: string }) {
   // define hooks

@@ -1,8 +1,8 @@
 import type { ActionFunction } from "@remix-run/node";
-import { job } from "@models/jobs.server";
+import { Nodes } from "@models/nodes/nodes.server";
 import { redirect } from "@remix-run/node";
 
-type JobActionForm = {
+type NodesActionForm = {
   action: string;
   redirectURL: string;
   id: string;
@@ -11,15 +11,11 @@ type JobActionForm = {
 export const action: ActionFunction = async ({ request }: { request: Request }) => {
   // get from data values
   const formData = await request.formData();
-  const { action, redirectURL, id } = Object.fromEntries(formData) as JobActionForm;
+  const { action, redirectURL, id } = Object.fromEntries(formData) as NodesActionForm;
 
   // execute action on jobs api
-  if (action === "start") {
-    await job.StartJob(id);
-  } else if (action === "stop") {
-    await job.StopJob(id);
-  } else if (action === "delete") {
-    await job.DeleteJob(id);
+  if (action === "delete") {
+    await Nodes.deleteNodeById(id);
   }
 
   return redirect(redirectURL);

@@ -14,8 +14,6 @@ export default function CreateJobProvider() {
   const { providers, job } = useLoaderData() as LoaderData;
   const actionData = useActionData() as ProviderActionData;
 
-  console.log(providers, actionData, job);
-
   return (
     <Create title={FormTitle} form={FormName} steps={Steps} currentStep="Provider" baseTo="jobs" nextTo="network">
       <>

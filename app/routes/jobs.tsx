@@ -1,5 +1,5 @@
 import { HStack } from "@chakra-ui/react";
-import { Outlet, useLoaderData, useRouteError, isRouteErrorResponse } from "@remix-run/react";
+import { Outlet, useLoaderData } from "@remix-run/react";
 import { JobsLoader } from "./jobs.loader";
 import { type LoaderData } from "./jobs.loader";
 import { BaseLayout } from "@components/layouts";
@@ -7,21 +7,11 @@ import { Table } from "@components/table";
 import { EmptyTable } from "@components/jobs/empty-table";
 import { useLocation } from "@remix-run/react";
 import { TableItem } from "@components/jobs/table-item";
-import { type Job } from "@models/jobs/types";
 import { ToMap } from "@utils/to-map";
+import { BaseError } from "@errors/base";
 
 export const loader = JobsLoader;
-
-export function ErrorBoundary() {
-  const error = useRouteError();
-  if (isRouteErrorResponse(error)) {
-    console.log(`App Error(isRouteErrorResponse)=${error}`);
-  } else {
-    console.log(`App Error=${error}`);
-  }
-
-  return <>here in jobs error section</>;
-}
+export const ErrorBoundary = BaseError;
 
 export default function App() {
   // define hooks
@@ -44,7 +34,7 @@ export default function App() {
           {...tableOptions}
         >
           {jobs.map((item, index) => (
-            <TableItem key={index} item={item as Job} providerName={providerMap[item.providerId].name} />
+            <TableItem key={index} item={item} providerName={providerMap[item.providerId].name} />
           ))}
         </Table>
       </HStack>

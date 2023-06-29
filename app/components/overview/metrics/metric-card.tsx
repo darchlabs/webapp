@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { type SmartContract } from "darchlabs";
 import { useFetcher } from "@remix-run/react";
 import { useInterval } from "usehooks-ts";

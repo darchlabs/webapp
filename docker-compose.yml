@@ -1,12 +1,41 @@
-version: "3.9"
+version: "3"
 
 services:
-  redis:
-    image: redis:latest
+  # webapp:
+  #   image: darchlabs/webapp:dev-beta-v4
+  #   ports:
+  #     - 3000:3000
+  #   restart: on-failure
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - postgres
+  #     - redis
+
+  jobs:
+    image: darchlabs/jobs:1.1.7
     ports:
-      - "6379:6379"
+      - 3030:3030
+    restart: on-failure
+    env_file:
+      - .env.jobs
     volumes:
-      - ./data/redis:/redis
+      - ./data/jobs:/home/jobs/data:rw
+    depends_on:
+      - postgres
+      - redis
+
+  synchronizers:
+    image: darchlabs/synchronizer-v2:1.9.0
+    ports:
+      - 5555:5555
+    restart: always
+    env_file:
+      - .env.synchronizers
+    volumes:
+      - ./data/sync:/home/sync/data:rw
+    depends_on:
+      - redis
 
   postgres:
     image: postgres:latest
@@ -17,22 +46,9 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
 
-  synchronizers:
-    image: darchlabs/synchronizer-v2:1.8.0
+  redis:
+    image: redis:latest
     ports:
-      - 5555:5555
-    restart: on-failure
-    env_file:
-      - .env.synchronizers
+      - 6379:6379
     volumes:
-      - ./data/synchronizers:/home/synchronizers/data:rw
-
-  jobs:
-    image: darchlabs/jobs:1.1.7
-    ports:
-      - 7777:7777
-    restart: on-failure
-    env_file:
-      - .env.jobs
-    volumes:
-      - ./data/jobs:/home/jobs/data:rw
+      - ./data/redis:/redis

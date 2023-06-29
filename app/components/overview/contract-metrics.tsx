@@ -18,7 +18,8 @@ export const ContractMetrics = ({ contract }: { contract: SmartContract }) => {
 
       <Grid width={"full"} templateColumns={["repeat(4, 1fr)", "repeat(4, 1fr)", "repeat(6, 1fr)"]} gap={[3, 6]}>
         <MetricCard text="Active Wallets" metric="active-addresses" contract={contract} />
-        <MetricCard text="TVL" metric="tvl" contract={contract} />
+        {/* <MetricCard text="TVL" metric="tvl" contract={contract} /> */}
+        <MetricCard text="Events" metric="events" contract={contract} />
         <MetricCard text="Total Txs" metric="txs" contract={contract} />
         <MetricCard text="Success Txs" metric="success-txs" contract={contract} />
         <MetricCard text="Failed Txs" metric="failed-txs" contract={contract} isError={true} />

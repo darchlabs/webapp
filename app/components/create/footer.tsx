@@ -6,11 +6,13 @@ export function Footer({
   isFetching,
   baseTo,
   backTo,
+  omitTo,
 }: {
   buttonText: string;
   isFetching: boolean;
   baseTo: string;
   backTo?: string;
+  omitTo?: string;
 }) {
   return (
     <HStack pt={5}>
@@ -29,6 +31,14 @@ export function Footer({
         <Link to={backTo}>
           <Button disabled={isFetching} variant="outline" size={"sm"} colorScheme={"pink"}>
             BACK
+          </Button>
+        </Link>
+      ) : null}
+
+      {omitTo ? (
+        <Link to={omitTo}>
+          <Button disabled={isFetching} variant="outline" size={"sm"} colorScheme={"pink"}>
+            OMIT
           </Button>
         </Link>
       ) : null}

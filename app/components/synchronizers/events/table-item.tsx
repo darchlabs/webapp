@@ -33,8 +33,10 @@ export function TableItem({
     status,
     error,
   },
+  count,
 }: {
   item: Event;
+  count: number;
 }) {
   // define hooks
   const submit = useSubmit();
@@ -74,6 +76,7 @@ export function TableItem({
           </HStack>
         </HStack>
       </Td>
+      <Td>{count}</Td>
       <Td>
         <Tooltip label={error} placement="auto" isDisabled={error === ""} bg={"blackAlpha.800"}>
           <Badge textTransform={"uppercase"} colorScheme={GetColorSchemeByStatus(status)}>

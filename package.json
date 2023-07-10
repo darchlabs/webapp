@@ -1,7 +1,7 @@
 {
   "private": true,
   "sideEffects": false,
-  "version": "2.0.2-demoday",
+  "version": "2.0.3-demoday",
   "scripts": {
     "build": "remix build",
     "dev": "remix dev",

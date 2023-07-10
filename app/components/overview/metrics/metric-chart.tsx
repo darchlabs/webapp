@@ -42,10 +42,12 @@ export const MetricChart = ({
   text,
   metric,
   contract,
+  customInterval,
 }: {
   text: string;
   metric: HistoricalMetric;
   contract: SmartContract;
+  customInterval: Interval;
 }) => {
   // define hooks
   const fetcher = useFetcher();
@@ -53,7 +55,8 @@ export const MetricChart = ({
   const [isLoading, setIsLoading] = useState(true);
   const [labels, setLabels] = useState([] as string[]);
   const [points, setPoints] = useState([] as number[]);
-  const [interval, setInterval] = useState("7days" as Interval);
+  // TODO(ca): see what is the best approach for the UI in old and new contracts
+  const [interval, setInterval] = useState(customInterval as Interval);
 
   const options = {
     responsive: true,

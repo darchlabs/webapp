@@ -11,13 +11,18 @@ import theme from "./theme";
 export const meta: V2_MetaFunction = (args: any) => {
   return metaV1(args, {
     charset: "utf-8",
-    title: "New Remix App",
+    title: "DarchLabs",
     viewport: "width=device-width,initial-scale=1",
   });
 };
 
 export let links: LinksFunction = () => {
   return [
+    {
+      rel: "icon",
+      href: "/favicon.ico",
+      type: "image/x-icon",
+    },
     { rel: "preconnect", href: "https://fonts.googleapis.com" },
     { rel: "preconnect", href: "https://fonts.gstatic.com" },
     {

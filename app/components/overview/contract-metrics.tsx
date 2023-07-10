@@ -31,8 +31,20 @@ export const ContractMetrics = ({ contract }: { contract: SmartContract }) => {
         <MetricCard text="Failed Txs" metric="failed-txs" contract={contract} isError={true} />
         <MetricCard text="Total Gas Spent" metric="total-gas-spent" contract={contract} />
 
-        <MetricChart text="Gas Used" metric="historical-gas-used" contract={contract} customInterval={intervalLeft} />
-        <MetricChart text="Gas Used" metric="historical-gas-used" contract={contract} customInterval={intervalRight} />
+        <MetricChart
+          text="Gas Used"
+          metric="historical-gas-used"
+          type="line"
+          contract={contract}
+          customInterval={intervalLeft}
+        />
+        <MetricChart
+          text="Interactions"
+          metric="historical-gas-used"
+          type="bar"
+          contract={contract}
+          customInterval={intervalRight}
+        />
 
         {/* <MetricStatusCard text={"Total Value Transfered"} loading={isLoading} value={"3.1M"} />
             <MetricStatusCard text={"Total Gas Lost"} loading={isLoading} error={true} value={"1.1k"} /> */}

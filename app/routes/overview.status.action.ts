@@ -1,6 +1,8 @@
 import type { ActionFunction } from "@remix-run/node";
 import { SmartContracts } from "@models/synchronizers/smartcontracts.server";
 import { job } from "@models/jobs.server";
+import { Nodes } from "@models/nodes/nodes.server";
+import { da } from "date-fns/locale";
 
 export type Service = "synchronizers" | "jobs" | "nodes";
 
@@ -61,7 +63,13 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
     response.jobs.error = err.mesage;
   }
 
-  // TODO(ca): get data from nodes service
+  try {
+    const { data } = await Nodes.listNodes();
+    response.nodes.failed = data.reduce((sum, j) => (j.status === "error" ? sum + 1 : sum), 0);
+    response.nodes.working = data.length - response.nodes.failed;
+  } catch (err: any) {
+    response.nodes.error = err.mesage;
+  }
 
   response.updatedAt = new Date();
   return response;

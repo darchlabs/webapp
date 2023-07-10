@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   IconButton,
   Tr,
@@ -23,7 +23,7 @@ import { VscPieChart, VscDebugRestart } from "react-icons/vsc";
 import { HiOutlineDocumentText, HiOutlinePencil } from "react-icons/hi";
 import { BsTrash } from "react-icons/bs";
 
-import { type EventStatus, type SmartContract } from "darchlabs";
+import { type EventStatus, type SmartContract, NetworkInfo } from "darchlabs";
 
 import { ShortAddress } from "@utils/short-address";
 import { GetNetworkAvatar } from "@utils/get-network-avatar";
@@ -119,7 +119,7 @@ export function TableItem({ item }: { item: SmartContract }) {
               {item.network}
             </Text>
             <Text fontSize={"14px"} color={"#C5C7CD"}>
-              Mainnet
+              {NetworkInfo[item.network].mainnet ? "Mainnet" : "Testnet"}
             </Text>
           </VStack>
         </Td>

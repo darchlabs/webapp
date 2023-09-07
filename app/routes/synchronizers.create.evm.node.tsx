@@ -28,10 +28,10 @@ export default function CreateSynchronizerEVMNode() {
       <>
         <TextInput
           title={"Node URL"}
-          name={"nodeUrl"}
+          name={"nodeURL"}
           value={loaderData?.smartcontract?.nodeURL}
           form={FormName}
-          error={actionData?.nodeUrl.error}
+          error={actionData?.nodeURL.error}
           placeholder={"Insert the node url"}
         />
       </>

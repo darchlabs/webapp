@@ -2,43 +2,46 @@ import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
 import { type SmartContractInput } from "darchlabs";
 import { z } from "zod";
-import { ValidateClient } from "@utils/validate-client";
 
-type NodeActionForm = {
+type WebhookActionForm = {
   baseTo: string;
   nextTo: string;
-  nodeURL: string;
+  webhook: string;
 };
 
-export type NodeActionData = {
-  nodeURL: {
-    error?: string;
+export type WebhookActionData = {
+  webhook: {
+    error: string;
   };
 };
 
-export const CreateSynchronizersEvmNodeAction = async function action({ request }: ActionArgs) {
+export const CreateSynchronizersEvmWebhookAction = async function action({ request }: ActionArgs) {
   // parse form
   const formData = await request.formData();
-  const form = Object.fromEntries(formData) as NodeActionForm;
+  const form = Object.fromEntries(formData) as WebhookActionForm;
+
+  const urlRegex = /^(https?:\/\/)?(([\w.-]+\.[a-zA-Z]{2,})|localhost:\d+)(\/.*)?$/;
 
   // define schema
   const subscriberSchema = z.object({
-    baseTo: z.string(),
-    nextTo: z.string(),
-    nodeURL: z.string().min(1),
+    baseTo: z.string().min(1),
+    nextTo: z.string().min(1),
+    webhook: z
+      .string()
+      .refine((value) => urlRegex.test(value), { message: "The webhook entered is not valid. Please try again" }),
   });
 
   // validate with schema
   const result = subscriberSchema.safeParse(form);
   if (!result.success) {
     const [error] = result.error.errors;
-    const msgError = error ? error.message : "invalid error";
+    const msgError = error ? error.message : "The webhook entered is not valid. Please try again";
 
     return {
-      nodeURL: {
+      webhook: {
         error: msgError,
       },
-    } as NodeActionData;
+    } as WebhookActionData;
   }
 
   // get cookie session
@@ -48,19 +51,8 @@ export const CreateSynchronizersEvmNodeAction = async function action({ request 
     return redirect("/synchronizers/create");
   }
 
-  // check if node url is valid client for the network
-  try {
-    await ValidateClient(scSession.network, form.nodeURL);
-  } catch (err: any) {
-    return {
-      nodeURL: {
-        error: err.message,
-      },
-    } as NodeActionData;
-  }
-
-  // save node url in session
-  scSession.nodeURL = form.nodeURL;
+  // save webhook in session
+  scSession.webhook = form.webhook;
   session.set("scSession", scSession);
   const cookie = await commitSession(session);
 

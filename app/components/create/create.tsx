@@ -11,6 +11,7 @@ export function Create({
   baseTo,
   backTo,
   nextTo,
+  omitTo,
   form,
   children,
 }: {
@@ -20,6 +21,7 @@ export function Create({
   backTo?: string;
   nextTo?: string;
   currentStep: string;
+  omitTo?: string;
   form: string;
   children: JSX.Element[];
 }): JSX.Element {
@@ -78,7 +80,7 @@ export function Create({
         </Flex>
         <input type="hidden" name={"baseTo"} value={baseTo} form={form} />
         <input type="hidden" name={"nextTo"} value={nextTo} form={form} />
-        <Footer buttonText={buttonText} isFetching={isFetching} baseTo={baseTo} backTo={backTo} />
+        <Footer buttonText={buttonText} isFetching={isFetching} baseTo={baseTo} backTo={backTo} omitTo={omitTo} />
       </Form>
     </VStack>
   );

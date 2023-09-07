@@ -8,11 +8,11 @@ import { ValidateClient } from "@utils/validate-client";
 type NodeUrlActionForm = {
   baseTo: string;
   nextTo: string;
-  nodeUrl: string;
+  nodeURL: string;
 };
 
 export type NodeUrlActionData = {
-  nodeUrl: {
+  nodeURL: {
     error?: string;
   };
 };
@@ -26,7 +26,7 @@ export const CreateNodeUrlAction = async function action({ request }: ActionArgs
   const subscriberSchema = z.object({
     baseTo: z.string(),
     nextTo: z.string(),
-    nodeUrl: z.string().min(1),
+    nodeURL: z.string().min(1),
   });
 
   // validate with schema
@@ -36,7 +36,7 @@ export const CreateNodeUrlAction = async function action({ request }: ActionArgs
     const msgError = error ? error.message : "invalid error";
 
     return {
-      nodeUrl: {
+      nodeURL: {
         error: msgError,
       },
     } as NodeUrlActionData;
@@ -49,19 +49,19 @@ export const CreateNodeUrlAction = async function action({ request }: ActionArgs
     return redirect("/nodes/create");
   }
 
-  // check if nose url is valid client for the network
+  // check if node url is valid client for the network
   try {
-    await ValidateClient(nodeSession.network, form.nodeUrl, false);
+    await ValidateClient(nodeSession.network, form.nodeURL, false);
   } catch (err: any) {
     return {
-      nodeUrl: {
+      nodeURL: {
         error: err.message,
       },
     } as NodeUrlActionData;
   }
 
   // save password in session
-  nodeSession.input.envVars.ETH_URL = form.nodeUrl;
+  nodeSession.input.envVars.ETH_URL = form.nodeURL;
   session.set("nodeSession", nodeSession);
   const cookie = await commitSession(session);
 

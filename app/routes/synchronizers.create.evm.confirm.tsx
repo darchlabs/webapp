@@ -14,7 +14,7 @@ export const loader: LoaderFunction = CreateSynchronizersEvmConfirmLoader;
 
 export default function CreateSynchronizerEvmConfirm() {
   const {
-    smartcontract: { name, network, address, abi },
+    smartcontract: { name, network, address, abi, webhook },
   } = useLoaderData() as LoaderData<SmartContractInput>;
   const actionData = useActionData() as ConfirmActionData;
 
@@ -29,7 +29,7 @@ export default function CreateSynchronizerEvmConfirm() {
       steps={Steps}
       currentStep="Confirm"
       baseTo="synchronizers"
-      backTo="/synchronizers/create/evm/abi"
+      backTo="/synchronizers/create/evm/webhook"
     >
       <>
         <Text color={"blackAlpha.800"} fontSize={"lg"} fontWeight={"semibold"}>
@@ -61,6 +61,14 @@ export default function CreateSynchronizerEvmConfirm() {
             </Text>{" "}
             {events} events and {functions} functions
           </Text>
+          {webhook || webhook?.length ? (
+            <Text>
+              <Text as={"span"} fontWeight={"bold"}>
+                Webhook:{" "}
+              </Text>{" "}
+              {webhook}
+            </Text>
+          ) : null}
         </VStack>
 
         {actionData?.confirm?.error ? <Text color={"red.500"}>{actionData?.confirm?.error}</Text> : null}

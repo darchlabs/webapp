@@ -26,10 +26,10 @@ export default function CreateJobNode() {
       <>
         <TextInput
           title={"Node URL"}
-          name={"nodeUrl"}
+          name={"nodeURL"}
           value={loaderData?.input?.envVars?.ETH_URL}
           form={FormName}
-          error={actionData?.nodeUrl.error}
+          error={actionData?.nodeURL.error}
           placeholder={"Insert the node url"}
         />
       </>

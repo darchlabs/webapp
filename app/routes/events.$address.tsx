@@ -16,6 +16,7 @@ export default function App() {
       data,
       meta: { pagination },
     },
+    eventsCounts,
     address,
   } = useLoaderData<EventsLoaderData>();
 
@@ -24,12 +25,12 @@ export default function App() {
       <HStack justifyContent={"center"} w={"full"}>
         <Table
           title="events"
-          columns={["event details", "status", "last updated", ""]}
+          columns={["event details", "event count", "status", "last updated", ""]}
           emptyMsg={"You do not have any registered event."}
           pagination={pagination}
         >
           {data.map((item, index) => (
-            <TableItem key={index} item={item} />
+            <TableItem key={index} item={item} count={eventsCounts[item?.abi?.name]} />
           ))}
         </Table>
       </HStack>

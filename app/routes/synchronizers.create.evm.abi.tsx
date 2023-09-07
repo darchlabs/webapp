@@ -27,7 +27,7 @@ export default function CreateSynchronizerEvmAbi() {
       steps={Steps}
       currentStep="Configure"
       baseTo="synchronizers"
-      backTo="/synchronizers/create/evm/address"
+      backTo="/synchronizers/create/evm/webhook"
       nextTo="confirm"
     >
       <>

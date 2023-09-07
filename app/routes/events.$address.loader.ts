@@ -5,9 +5,12 @@ import { Synchronizers } from "@models/synchronizers/synchronizers.server";
 import { redirect } from "react-router-dom";
 import { withPagination } from "@middlewares/with-pagination";
 
+export type EventsCounts = { [eventName: string]: number };
+
 export type EventsLoaderData = {
   events: ListEventsResponse;
   address: string;
+  eventsCounts: EventsCounts;
 };
 
 export const EventsLoader: LoaderFunction = withPagination(async ({ params, context }: LoaderArgs) => {
@@ -26,5 +29,17 @@ export const EventsLoader: LoaderFunction = withPagination(async ({ params, cont
     return redirect("/synchronizers");
   }
 
-  return json<EventsLoaderData>({ events, address });
+  const eventsCounts: { [eventName: string]: number } = {};
+  for (let i = 0; i < events.data.length; i++) {
+    const event = events.data[i];
+    const eventName = event?.abi?.name;
+    const eventDatas = await Synchronizers.listEventData(address, eventName, {
+      page: 0,
+      limit: 1,
+    });
+
+    eventsCounts[eventName] = eventDatas?.meta?.pagination?.totalElements;
+  }
+
+  return json<EventsLoaderData>({ events, eventsCounts, address });
 });

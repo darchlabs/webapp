@@ -48,7 +48,7 @@ export const CreateJobsNodeAction = async function action({ request }: ActionArg
     return redirect("/jobs/create");
   }
 
-  // check if nose url is valid client for the network
+  // check if node url is valid client for the network
   try {
     await ValidateClient(jobSession.network, form.nodeUrl);
   } catch (err: any) {

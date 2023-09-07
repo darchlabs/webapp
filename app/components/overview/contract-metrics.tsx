@@ -3,8 +3,14 @@ import { type SmartContract } from "darchlabs";
 import { MetricCard } from "./metrics/metric-card";
 import { MetricChart } from "./metrics/metric-chart";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
+import { type Interval } from "@utils/intervals";
 
 export const ContractMetrics = ({ contract }: { contract: SmartContract }) => {
+  const intervalLeft: Interval =
+    contract.address === "0xcd8c193b1B2b5cf36F26b94ff42118B5C6cA4bef" ? "1year" : "6months";
+  const intervalRight: Interval =
+    contract.address === "0xcd8c193b1B2b5cf36F26b94ff42118B5C6cA4bef" ? "6months" : "1month";
+
   return (
     <VStack borderRadius={"8px"} w={"full"} alignItems={"start"} spacing={5}>
       <HStack justifyContent={"start"} alignItems={"center"}>
@@ -25,7 +31,20 @@ export const ContractMetrics = ({ contract }: { contract: SmartContract }) => {
         <MetricCard text="Failed Txs" metric="failed-txs" contract={contract} isError={true} />
         <MetricCard text="Total Gas Spent" metric="total-gas-spent" contract={contract} />
 
-        <MetricChart text="Gas Used" metric="historical-gas-used" contract={contract} />
+        <MetricChart
+          text="Gas Used"
+          metric="historical-gas-used"
+          type="line"
+          contract={contract}
+          customInterval={intervalLeft}
+        />
+        <MetricChart
+          text="Interactions"
+          metric="historical-gas-used"
+          type="bar"
+          contract={contract}
+          customInterval={intervalRight}
+        />
 
         {/* <MetricStatusCard text={"Total Value Transfered"} loading={isLoading} value={"3.1M"} />
             <MetricStatusCard text={"Total Gas Lost"} loading={isLoading} error={true} value={"1.1k"} /> */}

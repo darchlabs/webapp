@@ -5,7 +5,6 @@ export * from "./get-abi-schema";
 export * from "./get-abi";
 export * from "./get-color-scheme-by-status";
 export * from "./get-network-avatar";
-export * from "./get-report-group";
 export * from "./get-service-insigths";
 export * from "./intervals";
 export * from "./get-provider-avatar";

@@ -28,24 +28,29 @@ import {
   CategoryScale,
   LinearScale,
   PointElement,
+  BarElement,
   LineElement,
   Title,
   Tooltip,
   Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import { FormatNumber } from "@utils/format-number";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend);
 
 export const MetricChart = ({
   text,
   metric,
   contract,
+  customInterval,
+  type,
 }: {
   text: string;
   metric: HistoricalMetric;
   contract: SmartContract;
+  customInterval: Interval;
+  type: "line" | "bar";
 }) => {
   // define hooks
   const fetcher = useFetcher();
@@ -53,7 +58,8 @@ export const MetricChart = ({
   const [isLoading, setIsLoading] = useState(true);
   const [labels, setLabels] = useState([] as string[]);
   const [points, setPoints] = useState([] as number[]);
-  const [interval, setInterval] = useState("7days" as Interval);
+  // TODO(ca): see what is the best approach for the UI in old and new contracts
+  const [interval, setInterval] = useState(customInterval as Interval);
 
   const options = {
     responsive: true,
@@ -87,14 +93,23 @@ export const MetricChart = ({
     labels,
     datasets: [
       {
-        label: "Gast Spent",
+        label: text,
         labels: labels,
         data: points,
         borderColor: "#ED64A6",
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
+        backgroundColor: "#ED64A6",
       },
     ],
   };
+
+  let chart;
+  if (type === "line") {
+    chart = <Line options={options as any} data={data} />;
+  } else if (type === "bar") {
+    chart = <Bar options={options as any} data={data} />;
+  } else {
+    throw new Error(`invalid type_chart=${type}`);
+  }
 
   // fetch for getting status at the first time
   useEffect(() => {
@@ -213,7 +228,7 @@ export const MetricChart = ({
           <CircularProgress isIndeterminate color="pink.400" size={"25px"} />
         </HStack>
       ) : (
-        <Line options={options as any} data={data} />
+        chart
       )}
     </GridItem>
   );

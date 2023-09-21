@@ -1,23 +1,26 @@
 import { HStack, VStack } from "@chakra-ui/react";
 import { Sidebar } from "@components/sidebar";
 import { Header } from "@components/header";
+import { AuthData } from "@middlewares/with-auth";
 
 export const BaseLayout = ({
   title,
   subtitle,
   linkTo,
   linkFrom,
+  auth,
   children,
 }: {
   title: string;
   subtitle?: string;
   linkTo?: string;
   linkFrom?: string;
+  auth: AuthData;
   children: JSX.Element | JSX.Element[];
 }): JSX.Element => {
   return (
     <HStack alignItems={"start"} spacing={0} h={"100vh"}>
-      <Sidebar />
+      <Sidebar auth={auth} />
       <VStack
         as={"section"}
         bg={"gray.50"}

@@ -4,6 +4,7 @@ import type { ListEventsResponse, Pagination } from "darchlabs";
 import { Synchronizers } from "@models/synchronizers/synchronizers.server";
 import { redirect } from "react-router-dom";
 import { withPagination } from "@middlewares/with-pagination";
+import { AuthData, withAuth } from "@middlewares/with-auth";
 
 export type EventsCounts = { [eventName: string]: number };
 
@@ -11,9 +12,10 @@ export type EventsLoaderData = {
   events: ListEventsResponse;
   address: string;
   eventsCounts: EventsCounts;
+  auth: AuthData;
 };
 
-export const EventsLoader: LoaderFunction = withPagination(async ({ params, context }: LoaderArgs) => {
+export const EventsLoader: LoaderFunction = withAuth(withPagination(async ({ params, context }: LoaderArgs) => {
   // get address path param
   const { address } = params;
   if (!address || address === "") {
@@ -41,5 +43,8 @@ export const EventsLoader: LoaderFunction = withPagination(async ({ params, cont
     eventsCounts[eventName] = eventDatas?.meta?.pagination?.totalElements;
   }
 
-  return json<EventsLoaderData>({ events, eventsCounts, address });
-});
+  // get auth context from middleware
+  const auth = context.auth as AuthData;
+
+  return json<EventsLoaderData>({ events, eventsCounts, address, auth });
+}));

@@ -18,10 +18,11 @@ export default function App() {
     },
     eventsCounts,
     address,
+    auth,
   } = useLoaderData<EventsLoaderData>();
 
   return (
-    <BaseLayout title="Events" subtitle={address} linkFrom={"/synchronizers"}>
+    <BaseLayout title="Events" subtitle={address} linkFrom={"/synchronizers"} auth={auth}>
       <HStack justifyContent={"center"} w={"full"}>
         <Table
           title="events"

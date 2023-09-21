@@ -8,6 +8,8 @@ export const GetScanInfo = (network: Network): [ok: boolean, url: string, apiKey
       return [true, "https://api.etherscan.io/api", ETHERSCAN_API_KEY!];
     case "polygon":
       return [true, "https://api.polygonscan.com/api", POLYGONSCAN_API_KEY!];
+    case "mumbai":
+      return [true, "https://api-testnet.polygonscan.com/api", POLYGONSCAN_API_KEY!]
   }
 
   return [false, "", ""];

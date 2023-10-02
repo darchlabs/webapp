@@ -36,10 +36,8 @@ export const ErrorBoundary = () => {
 
 export default function App() {
   const {
-    smartcontracts: {
-      data,
-      meta: { pagination },
-    },
+    contracts,
+    pagination,
     auth,
   } = useLoaderData() as SmartContractsLoaderData;
 
@@ -60,7 +58,7 @@ export default function App() {
           emptyMsg={"You do not have any registered smart contracts."}
           {...tableOptions}
         >
-          {data.map((item, index) => (
+          {contracts.map((item, index) => (
             <TableItem key={index} item={item} />
           ))}
         </Table>

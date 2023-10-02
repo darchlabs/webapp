@@ -6,13 +6,13 @@ import { FormName, FormTitle, Steps } from "./synchronizers.create._index";
 import { CreateSynchronizersEvmLoader } from "./synchronizers.create.evm._index";
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { type LoaderData } from "./synchronizers.create.evm._index";
-import { type SmartContractInput } from "darchlabs";
+import { synchronizers } from "darchlabs";
 
 export const action: ActionFunction = CreateSynchronizersEvmNameAction;
 export const loader: LoaderFunction = CreateSynchronizersEvmLoader;
 
 export default function CreateSynchronizerEvmName() {
-  const loaderData = useLoaderData() as LoaderData<SmartContractInput>;
+  const loaderData = useLoaderData() as LoaderData;
   const actionData = useActionData() as NameActionData;
 
   return (
@@ -29,7 +29,7 @@ export default function CreateSynchronizerEvmName() {
         <TextInput
           title={"Contract Name"}
           name={"name"}
-          value={loaderData?.smartcontract?.name}
+          value={loaderData?.contract?.name}
           form={FormName}
           error={actionData?.name.error}
           placeholder={"Name"}

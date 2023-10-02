@@ -1,15 +1,15 @@
 import { type Cookie, withCookie } from "@middlewares/with-cookie";
 import { type LoaderArgs, type LoaderFunction, json, redirect } from "@remix-run/node";
-import { type Network, type SmartContractInput } from "darchlabs";
+import { network, synchronizers } from "darchlabs";
 import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
 
-export const CreateSynchronizersEvmConfirmLoader: LoaderFunction = withCookie<SmartContractInput>(
+export const CreateSynchronizersEvmConfirmLoader: LoaderFunction = withCookie<synchronizers.ContractInput>(
   "scSession",
   getSession,
   commitSession,
   async ({ context }: LoaderArgs) => {
     // get smartcontract session
-    const scSession = context["scSession"] as Cookie<SmartContractInput>;
+    const scSession = context["scSession"] as Cookie<synchronizers.ContractInput>;
 
     // define options to use in json or in redirect
     const opts = {
@@ -19,7 +19,7 @@ export const CreateSynchronizersEvmConfirmLoader: LoaderFunction = withCookie<Sm
     };
 
     // check if any attribute are empty in smartcontract session
-    if (!scSession.data.network || scSession.data.network === ("" as Network)) {
+    if (!scSession.data.network || scSession.data.network === ("" as network.Network)) {
       // redirect to network step
       return redirect("/synchronizers/create", opts);
     } else if (!scSession.data.name || scSession.data.name === "") {

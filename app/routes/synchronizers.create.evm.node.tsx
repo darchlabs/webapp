@@ -6,13 +6,12 @@ import { FormName, FormTitle, Steps } from "./synchronizers.create._index";
 import { CreateSynchronizersEvmLoader } from "./synchronizers.create.evm._index";
 import { useLoaderData, useActionData } from "@remix-run/react";
 import { type LoaderData } from "./synchronizers.create.evm._index";
-import { type SmartContractInput } from "darchlabs";
 
 export const action: ActionFunction = CreateSynchronizersEvmNodeAction;
 export const loader: LoaderFunction = CreateSynchronizersEvmLoader;
 
 export default function CreateSynchronizerEVMNode() {
-  const loaderData = useLoaderData() as LoaderData<SmartContractInput>;
+  const loaderData = useLoaderData() as LoaderData;
   const actionData = useActionData() as NodeActionData;
 
   return (
@@ -29,7 +28,7 @@ export default function CreateSynchronizerEVMNode() {
         <TextInput
           title={"Node URL"}
           name={"nodeURL"}
-          value={loaderData?.smartcontract?.nodeURL}
+          value={loaderData?.contract?.nodeURL}
           form={FormName}
           error={actionData?.nodeURL.error}
           placeholder={"Insert the node url"}

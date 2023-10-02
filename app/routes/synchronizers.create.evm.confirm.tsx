@@ -4,7 +4,7 @@ import { Create, TemplateTitleDescriptionHint } from "@components/create";
 import { CreateSynchronizersEvmConfirmAction, type ConfirmActionData } from "./synchronizers.create.evm.confirm.action";
 import { FormName, FormTitle, Steps } from "./synchronizers.create._index";
 import { useLoaderData, useActionData } from "@remix-run/react";
-import { type SmartContractInput } from "darchlabs";
+import { synchronizers } from "darchlabs";
 import { type LoaderData } from "./synchronizers.create.evm._index";
 import { ShortAddress } from "@utils/short-address";
 import { CreateSynchronizersEvmConfirmLoader } from "./synchronizers.create.evm.confirm.loader";
@@ -14,8 +14,8 @@ export const loader: LoaderFunction = CreateSynchronizersEvmConfirmLoader;
 
 export default function CreateSynchronizerEvmConfirm() {
   const {
-    smartcontract: { name, network, address, abi, webhook },
-  } = useLoaderData() as LoaderData<SmartContractInput>;
+    contract: { name, network, address, abi, webhook },
+  } = useLoaderData() as LoaderData;
   const actionData = useActionData() as ConfirmActionData;
 
   // get event and function counters

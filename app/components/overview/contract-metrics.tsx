@@ -1,15 +1,13 @@
 import { Grid, VStack, Heading, HStack, Badge } from "@chakra-ui/react";
-import { type SmartContract } from "darchlabs";
+import { synchronizers } from "darchlabs";
 import { MetricCard } from "./metrics/metric-card";
 import { MetricChart } from "./metrics/metric-chart";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 import { type Interval } from "@utils/intervals";
 
-export const ContractMetrics = ({ contract }: { contract: SmartContract }) => {
-  const intervalLeft: Interval =
-    contract.address === "0xcd8c193b1B2b5cf36F26b94ff42118B5C6cA4bef" ? "1year" : "6months";
-  const intervalRight: Interval =
-    contract.address === "0xcd8c193b1B2b5cf36F26b94ff42118B5C6cA4bef" ? "6months" : "1month";
+export const ContractMetrics = ({ contract }: { contract: synchronizers.Contract }) => {
+  const intervalLeft: Interval = "6months";
+  const intervalRight: Interval = "1month";
 
   return (
     <VStack borderRadius={"8px"} w={"full"} alignItems={"start"} spacing={5}>

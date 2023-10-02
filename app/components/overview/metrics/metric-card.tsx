@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type SmartContract } from "darchlabs";
+import { synchronizers } from "darchlabs";
 import { useFetcher } from "@remix-run/react";
 import { useInterval } from "usehooks-ts";
 import { type Metric, type OverviewMetricActionData } from "@routes/overview.metric.action";
@@ -17,7 +17,7 @@ export const MetricCard = ({
   text: string;
   metric: Metric;
   isError?: boolean;
-  contract: SmartContract;
+  contract: synchronizers.Contract;
 }) => {
   // define hooks
   const fetcher = useFetcher();

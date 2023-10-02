@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { type SmartContract } from "darchlabs";
+import { synchronizers } from "darchlabs";
 import { useFetcher } from "@remix-run/react";
 import { useInterval } from "usehooks-ts";
 import {
@@ -48,7 +48,7 @@ export const MetricChart = ({
 }: {
   text: string;
   metric: HistoricalMetric;
-  contract: SmartContract;
+  contract: synchronizers.Contract;
   customInterval: Interval;
   type: "line" | "bar";
 }) => {

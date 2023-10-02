@@ -1,8 +1,9 @@
 import { Button, Menu, MenuButton, MenuItem, MenuList, Text, HStack } from "@chakra-ui/react";
-import { type Network, NetworkInfo } from "darchlabs";
+import { synchronizers, network } from "darchlabs";
 import { BsChevronDown } from "react-icons/bs";
 import { GetNetworkAvatar } from "@utils/get-network-avatar";
 import { useState } from "react";
+import { NetworkInfo } from "darchlabs/dist/utils";
 
 export function NetworkSelectInput({
   form,
@@ -13,28 +14,28 @@ export function NetworkSelectInput({
   form: string;
   value: string;
   error?: string;
-  networks?: Network[];
+  networks?: network.Network[]
 }): JSX.Element {
   if (networks && !Array.isArray(networks)) {
     throw new Error("networks array is not valid");
   }
 
   // define hooks
-  const [network, setNetwork] = useState(value as Network);
+  const [currentNetwork, setCurrentNetwork] = useState(value as network.Network);
 
   // define values
-  const ns = networks ? networks : (Object.keys(NetworkInfo) as Network[]);
+  const ns = networks ? networks : (Object.keys(NetworkInfo) as network.Network[]);
   const textColor = error ? "red.500" : "blackAlpha.500";
   const borderColor = error ? "red.500" : "blackAlpha.200";
 
   // define handlers
-  function handleOnClick(n: Network) {
-    setNetwork(n);
+  function handleOnClick(n: network.Network) {
+    setCurrentNetwork(n);
   }
 
   return (
     <>
-      <input type="hidden" name={"network"} value={network} form={form} />
+      <input type="hidden" name={"network"} value={currentNetwork} form={form} />
       <Text color={textColor} fontWeight={"semibold"} fontSize={"md"}>
         Network
       </Text>
@@ -57,14 +58,14 @@ export function NetworkSelectInput({
           justifyContent={"start"}
           alignItems={"center"}
         >
-          {!network || network === ("" as Network) ? (
+          {!network || currentNetwork === ("" as synchronizers.Network) ? (
             <Text as={"span"}>Select a network</Text>
           ) : (
             <HStack>
-              {GetNetworkAvatar(network, 7)}
+              {GetNetworkAvatar(currentNetwork, 7)}
               <Text textTransform={"capitalize"} ml={4} color={"blackAlpha.600"}>
-                {NetworkInfo[network].name}{" "}
-                {!NetworkInfo[network].mainnet ? (
+                {network.NetworkInfo[currentNetwork].name}{" "}
+                {!network.NetworkInfo[currentNetwork].mainnet ? (
                   <Text as="span" textTransform={"capitalize"}>
                     (Testnet)
                   </Text>
@@ -74,13 +75,14 @@ export function NetworkSelectInput({
           )}
         </MenuButton>
         <MenuList>
-          {ns.map((network, index) => {
-            const info = NetworkInfo[network];
+          {ns.map((n, index) => {
+            const info = network.NetworkInfo[n];
+
             return (
-              <MenuItem key={index} minH="48px" onClick={() => handleOnClick(network)}>
-                {GetNetworkAvatar(network, 7)}
+              <MenuItem key={index} minH="48px" onClick={() => handleOnClick(n)}>
+                {GetNetworkAvatar(n, 7)}
                 <Text textTransform={"capitalize"} ml={4} color={"blackAlpha.800"}>
-                  {NetworkInfo[network].name}{" "}
+                  {network.NetworkInfo[n].name}{" "}
                   {!info.mainnet ? (
                     <Text as="span" textTransform={"capitalize"}>
                       (Testnet)

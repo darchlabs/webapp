@@ -1,7 +1,6 @@
 import { Grid, VStack, Text } from "@chakra-ui/react";
 import { ServiceStatusCard } from "./service-status-card";
 
-import { useMediaQuery, theme } from "@chakra-ui/react";
 import { useFetcher } from "@remix-run/react";
 import { useInterval } from "usehooks-ts";
 import { useEffect, useState } from "react";
@@ -13,7 +12,6 @@ export const StatusServices = () => {
   const fetcher = useFetcher();
   const [updatedAt, setUpdatedAt] = useState("" as string);
   const [isLoading, setIsLoading] = useState(true);
-  const [BelowToSm] = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   // define values
   const actionData = fetcher.data as OverviewStatusActionData;
@@ -21,9 +19,9 @@ export const StatusServices = () => {
     ? "0"
     : `${actionData.synchronizers.working} / ${actionData.synchronizers.working + actionData.synchronizers.failed}`;
   const jobs = !actionData ? "0" : `${actionData.jobs.working} / ${actionData.jobs.working + actionData.jobs.failed}`;
-  const nodes = !actionData
-    ? "0"
-    : `${actionData.nodes.working} / ${actionData.nodes.working + actionData.nodes.failed}`;
+  // const nodes = !actionData
+  //   ? "0"
+  //   : `${actionData.nodes.working} / ${actionData.nodes.working + actionData.nodes.failed}`;
   const error = !actionData
     ? "0"
     : `${actionData.synchronizers.failed + actionData.jobs.failed + actionData.nodes.failed}`;
@@ -61,10 +59,10 @@ export const StatusServices = () => {
 
   return (
     <VStack borderRadius={"8px"} w={"full"}>
-      <Grid width={"full"} templateColumns={["repeat(2, 1fr)", "repeat(4, 1fr)"]} gap={[3, 6]}>
-        <ServiceStatusCard text={BelowToSm ? "Synchs" : "Synchronizers"} loading={isLoading} value={synchronizers} />
+      <Grid width={"full"} templateColumns={["repeat(1, 1fr)", "repeat(3, 1fr)"]} gap={[3, 6]}>
+        <ServiceStatusCard text="Synchronizers" loading={isLoading} value={synchronizers} />
         <ServiceStatusCard text="Jobs" loading={isLoading} value={jobs} />
-        <ServiceStatusCard text="Nodes" loading={isLoading} value={nodes} />
+        {/* <ServiceStatusCard text="Nodes" loading={isLoading} value={nodes} /> */}
         <ServiceStatusCard text="Errors" loading={isLoading} isError={true} value={error} />
       </Grid>
       <VStack alignItems={"end"} width={"full"} pt={1}>

@@ -2,7 +2,7 @@ import { VStack, Text, Tr, Td } from "@chakra-ui/react";
 
 import { Body } from "./body";
 import { Header } from "./header";
-import type { Pagination } from "darchlabs";
+import { pagination } from "darchlabs";
 
 export function Table({
   title,
@@ -18,7 +18,7 @@ export function Table({
   subHeader?: JSX.Element;
   emptyMsg: string;
   emptyTable?: JSX.Element;
-  pagination?: Pagination;
+  pagination?: pagination.Pagination;
   children: JSX.Element[];
 }) {
   if (!children) {

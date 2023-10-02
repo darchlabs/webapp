@@ -13,16 +13,16 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState, useEffect, useCallback } from "react";
-import { type SmartContract } from "darchlabs";
+import { synchronizers } from "darchlabs";
 import { useFetcher, useLocation } from "@remix-run/react";
-import { type EditSmartContractActionData } from "@routes/synchronizers.edit.action";
+import { type EditSmartContractActionData } from "@routes/synchronizers/synchronizers.edit.action";
 
 export function EditSmartContractModal({
   smartcontract,
   isOpen,
   onClose,
 }: {
-  smartcontract: SmartContract;
+  smartcontract: synchronizers.Contract;
   isOpen: boolean;
   onClose: () => void;
 }): JSX.Element {

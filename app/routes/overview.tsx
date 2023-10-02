@@ -9,15 +9,15 @@ import { ContractMetrics } from "@components/overview/contract-metrics";
 export const loader = OverviewLoader;
 
 export default function App() {
-  const { smartcontracts, auth } = useLoaderData<LoaderData>();
+  const { contracts, auth } = useLoaderData<LoaderData>();
 
   return (
     <BaseLayout title="Overview" auth={auth}>
       <VStack w={"full"} maxW={"1000px"} alignItems={"center"} spacing={10} pb={"24!"}>
-        <StatusServices />
-
-        {smartcontracts.length > 0 ? (
-          smartcontracts.map((sc, index) => <ContractMetrics key={index} contract={sc} />)
+         <StatusServices />
+        
+        {contracts.length > 0 ? (
+          contracts.map((sc, index) => <ContractMetrics key={index} contract={sc} />)
         ) : (
           <VStack
             py={8}

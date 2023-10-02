@@ -1,5 +1,6 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, commitSession } from "@models/backoffice/backoffice-cookie.server";
+import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import {Backoffice} from "@models/backoffice/backoffice.server"
 import { AuthData } from "@middlewares/with-auth";
 import { z } from 'zod';
@@ -79,6 +80,9 @@ export const LoginAction = async function action({ request, params }: ActionArgs
   // set token value in cookie
   session.set("backofficeSession", data);
   const cookie = await commitSession(session);
+
+  // set token in darchlabs client
+  Darchlabs.updateApiKey(token)
 
   // redirect
   return redirect(redirectTo, {

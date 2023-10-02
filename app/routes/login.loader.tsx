@@ -7,11 +7,5 @@ export const LoginLoader: LoaderFunction = withAuth(async ({context, request}: L
     return redirect("/overview")
   }
 
-  // redis.get()
-
-  // mysql.get()
-
-  // ms.get()
-
   return json({});
 })

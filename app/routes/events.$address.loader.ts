@@ -1,7 +1,7 @@
 import type { LoaderFunction, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import type { ListEventsResponse, Pagination } from "darchlabs";
-import { Synchronizers } from "@models/synchronizers/synchronizers.server";
+import { pagination, synchronizers } from "darchlabs";
+import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import { redirect } from "react-router-dom";
 import { withPagination } from "@middlewares/with-pagination";
 import { AuthData, withAuth } from "@middlewares/with-auth";
@@ -9,7 +9,7 @@ import { AuthData, withAuth } from "@middlewares/with-auth";
 export type EventsCounts = { [eventName: string]: number };
 
 export type EventsLoaderData = {
-  events: ListEventsResponse;
+  events: synchronizers.Event[];
   address: string;
   eventsCounts: EventsCounts;
   auth: AuthData;
@@ -23,24 +23,24 @@ export const EventsLoader: LoaderFunction = withAuth(withPagination(async ({ par
   }
 
   // get pagination context for middleware
-  const pagination = context.pagination as Pagination | {};
+  const pagination = context.pagination as pagination.Pagination | {};
 
   // get events
-  const events = await Synchronizers.listEventsByAddress(address!, pagination);
-  if (!events.data.length) {
+  const { events } = await Darchlabs.synchronizers.events.listEventsByAddress(address!, pagination);
+  if (!events.length) {
     return redirect("/synchronizers");
   }
 
   const eventsCounts: { [eventName: string]: number } = {};
-  for (let i = 0; i < events.data.length; i++) {
-    const event = events.data[i];
+  for (let i = 0; i < events.length; i++) {
+    const event = events[i];
     const eventName = event?.abi?.name;
-    const eventDatas = await Synchronizers.listEventData(address, eventName, {
+    const { pagination } = await Darchlabs.synchronizers.events.listEventData(address, eventName, {
       page: 0,
       limit: 1,
     });
 
-    eventsCounts[eventName] = eventDatas?.meta?.pagination?.totalElements;
+    eventsCounts[eventName] = pagination?.totalElements;
   }
 
   // get auth context from middleware

@@ -1,5 +1,5 @@
 import type { ActionFunction } from "@remix-run/node";
-import { SmartContracts } from "@models/synchronizers/smartcontracts.server";
+import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import { job } from "@models/jobs.server";
 import { Nodes } from "@models/nodes/nodes.server";
 import { da } from "date-fns/locale";
@@ -29,9 +29,9 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
 
   // get data from synchronizers service
   try {
-    const { data } = await SmartContracts.listSmartContracts({});
+    const { contracts } = await Darchlabs.synchronizers.contracts.listContracts({});
 
-    response.synchronizers.failed = data.reduce((sumSc, sc) => {
+    response.synchronizers.failed = contracts.reduce((sumSc, sc) => {
       const some = sc.events.some((ev) => ev.status === "error");
       if (some) {
         return sumSc + 1;
@@ -44,7 +44,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
       return sumSc;
     }, 0);
 
-    response.synchronizers.working = data.length - response.synchronizers.failed;
+    response.synchronizers.working = contracts.length - response.synchronizers.failed;
   } catch (err: any) {
     response.synchronizers.error = err.mesage;
   }

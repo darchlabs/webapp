@@ -4,14 +4,14 @@ import { Create, TemplateTitleDescriptionHint } from "@components/create";
 import { CreateNodeConfirmAction, type ConfirmActionData } from "./nodes.create.$network.confirm.action";
 import { FormName, FormTitle, Steps } from "./nodes.create._index";
 import { CreateNodeConfirmLoader } from "./nodes.create.$network.confirm.loader";
-import { type NodesNetworkEnvironment, type NodeInput, type NodesCeloNE, NetworkInfo, type Info } from "darchlabs";
+import { type NodesNetworkEnvironment, type NodeInput, type NodesCeloNE, network } from "darchlabs";
 import { type LoaderData } from "./nodes.create.$network.loader";
 import { useActionData, useLoaderData } from "@remix-run/react";
 
 export const action: ActionFunction = CreateNodeConfirmAction;
 export const loader: LoaderFunction = CreateNodeConfirmLoader;
 
-function GetCeloNodeConfirmInfo({ node, info }: { node: NodeInput<NodesNetworkEnvironment>; info: Info }): JSX.Element {
+function GetCeloNodeConfirmInfo({ node, info }: { node: NodeInput<NodesNetworkEnvironment>; info: network.Info }): JSX.Element {
   return (
     <VStack spacing={1} alignItems={"start"} color={"gray.500"}>
       <Text>
@@ -40,7 +40,7 @@ function GetCeloNodeConfirmInfo({ node, info }: { node: NodeInput<NodesNetworkEn
 export default function CreateJobConfirm() {
   const loaderData = useLoaderData() as LoaderData<NodesCeloNE>;
   const actionData = useActionData() as ConfirmActionData;
-  const info = NetworkInfo[loaderData.network];
+  const info = network.NetworkInfo[loaderData.network];
 
   return (
     <Create

@@ -27,8 +27,6 @@ export const CreateSynchronizersEvmConfirmAction = async function action({ reque
     return redirect("/synchronizers/create");
   }
 
-  console.log("HERE IN CONFIRM VIEW", scSession)
-
   // create synchronizer in api
   try {
     await Darchlabs.synchronizers.contracts.createContract(scSession);

@@ -1,7 +1,8 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, destroySession } from "@models/synchronizers/create-synchronizers-cookie.server";
-import { type SmartContractInput } from "darchlabs";
-import { SmartContracts } from "@models/synchronizers/smartcontracts.server";
+import { synchronizers } from "darchlabs";
+import { Darchlabs } from "@models/darchlabs/darchlabs.server";
+import { AxiosError, isAxiosError } from "axios";
 
 type ConfirmActionForm = {
   baseTo: string;
@@ -21,18 +22,23 @@ export const CreateSynchronizersEvmConfirmAction = async function action({ reque
 
   // get cookie session
   const session = await getSession(request.headers.get("Cookie"));
-  const scSession: SmartContractInput = session.get("scSession");
+  const scSession: synchronizers.ContractInput = session.get("scSession");
   if (!scSession) {
     return redirect("/synchronizers/create");
   }
 
   // create synchronizer in api
   try {
-    await SmartContracts.insertSmartContract(scSession);
-  } catch (err: any) {
+    await Darchlabs.synchronizers.contracts.createContract(scSession);
+  } catch (err: AxiosError | unknown) {
+    let error = "Sorry, something went wrong on the server, please try again later";
+    if (isAxiosError(err)) {
+      error = (err?.response?.data?.error) ? `${error} (${err?.response?.data?.error})` : error
+    }
+
     return {
       confirm: {
-        error: "Sorry, something went wrong on the server, please try again later",
+        error,
       },
     };
   }

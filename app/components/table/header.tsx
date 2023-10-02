@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import { HStack, VStack, Text, Button, Icon } from "@chakra-ui/react";
 import { RiSortAsc, RiSortDesc } from "react-icons/ri";
 import { Link } from "@remix-run/react";
-import { type Pagination } from "darchlabs";
+import { pagination } from "darchlabs";
 
 export function Header({
   title,
@@ -13,7 +13,7 @@ export function Header({
   title: string;
   length: number;
   subHeader?: JSX.Element;
-  pagination?: Pagination;
+  pagination?: pagination.Pagination;
 }) {
   // define hooks
   const { pathname, search } = useLocation();

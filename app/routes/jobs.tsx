@@ -15,7 +15,7 @@ export const ErrorBoundary = BaseError;
 
 export default function App() {
   // define hooks
-  const { jobs, providers } = useLoaderData() as LoaderData;
+  const { jobs, providers, auth } = useLoaderData() as LoaderData;
   const { pathname } = useLocation();
 
   const providerMap = ToMap(providers);
@@ -23,7 +23,7 @@ export default function App() {
   const tableOptions = pathname.includes("/create") ? {} : { emptyTable: <EmptyTable createLink={linkTo} /> };
 
   return (
-    <BaseLayout title="Jobs" linkTo={linkTo}>
+    <BaseLayout title="Jobs" linkTo={linkTo} auth={auth}>
       <Outlet />
 
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>

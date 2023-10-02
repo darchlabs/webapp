@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { type Network, type Abi } from "darchlabs";
+import { network, abi } from "darchlabs";
 import { GetScanInfo } from "./get-scan-info";
 
 type Response = {
@@ -8,7 +8,7 @@ type Response = {
   result: string;
 };
 
-export const GetABI = async (network: Network, address: string): Promise<Abi[]> => {
+export const GetABI = async (network: network.Network, address: string): Promise<abi.Abi[]> => {
   const [ok, baseUrl, apiKey] = GetScanInfo(network);
   if (!ok) {
     throw new Error(`No scan found for the entered network=${network}`);

@@ -23,14 +23,14 @@ import { VscPieChart, VscDebugRestart } from "react-icons/vsc";
 import { HiOutlineDocumentText, HiOutlinePencil } from "react-icons/hi";
 import { BsTrash } from "react-icons/bs";
 
-import { type EventStatus, type SmartContract, NetworkInfo } from "darchlabs";
+import { synchronizers, network } from "darchlabs";
 
 import { ShortAddress } from "@utils/short-address";
 import { GetNetworkAvatar } from "@utils/get-network-avatar";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 import { EditSmartContractModal } from "./edit-smart-contract-modal";
 
-export function TableItem({ item }: { item: SmartContract }) {
+export function TableItem({ item }: { item: synchronizers.Contract }) {
   // define hooks
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { pathname, search } = useLocation();
@@ -74,7 +74,7 @@ export function TableItem({ item }: { item: SmartContract }) {
   }
 
   // define map status
-  const mapStatus: { [key in EventStatus]: number } = {
+  const mapStatus: { [key in synchronizers.EventStatus]: number } = {
     error: 0,
     synching: 0,
     stopped: 0,
@@ -119,7 +119,7 @@ export function TableItem({ item }: { item: SmartContract }) {
               {item.network}
             </Text>
             <Text fontSize={"14px"} color={"#C5C7CD"}>
-              {NetworkInfo[item.network].mainnet ? "Mainnet" : "Testnet"}
+              {network.NetworkInfo[item.network].mainnet ? "Mainnet" : "Testnet"}
             </Text>
           </VStack>
         </Td>

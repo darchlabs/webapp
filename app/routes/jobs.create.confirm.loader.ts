@@ -1,6 +1,6 @@
 import { type Cookie, withCookie } from "@middlewares/with-cookie";
 import { type LoaderArgs, type LoaderFunction, json, redirect } from "@remix-run/node";
-import { type Network } from "darchlabs";
+import { type network } from "darchlabs";
 import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
 import { type JobInput } from "@models/jobs/types";
 import { job } from "@models/jobs.server";
@@ -27,7 +27,7 @@ export const CreateJobConfirmLoader: LoaderFunction = withCookie<JobInput>(
     } else if (!jobSession.data.name || jobSession.data.name === "") {
       // redirect to name step
       return redirect("/jobs/create/name", opts);
-    } else if (!jobSession.data.network || jobSession.data.network === ("" as Network)) {
+    } else if (!jobSession.data.network || jobSession.data.network === ("" as network.Network)) {
       // redirect to network step
       return redirect("/jobs/create/network", opts);
     } else if (!jobSession.data.name || jobSession.data.name === "") {

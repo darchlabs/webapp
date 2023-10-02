@@ -1,11 +1,11 @@
 import type { LoaderArgs, LoaderFunction } from "@remix-run/node";
-import type { Sort } from "darchlabs";
+import { pagination } from "darchlabs";
 
 export function withPagination(fn: LoaderFunction): LoaderFunction {
   return async (args: LoaderArgs) => {
     // get sort query param
     const url = new URL(args.request.url);
-    let sort = url.searchParams.get("sort") as Sort;
+    let sort = url.searchParams.get("sort") as pagination.Sort;
     if (!sort) {
       sort = "desc";
     }

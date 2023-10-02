@@ -14,14 +14,14 @@ export const ErrorBoundary = BaseError;
 
 export default function App() {
   // define hooks
-  const { nodes, origin } = useLoaderData() as LoaderData;
+  const { nodes, origin, auth } = useLoaderData() as LoaderData;
   const { pathname } = useLocation();
 
   const linkTo = "/nodes/create";
   const tableOptions = pathname.includes("/create") ? {} : { emptyTable: <EmptyTable createLink={linkTo} /> };
 
   return (
-    <BaseLayout title="Nodes" linkTo={linkTo}>
+    <BaseLayout title="Nodes" linkTo={linkTo} auth={auth}>
       <Outlet />
 
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>

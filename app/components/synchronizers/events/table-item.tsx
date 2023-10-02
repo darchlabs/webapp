@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useLocation, useSubmit } from "@remix-run/react";
 
-import type { Event } from "darchlabs";
+import { synchronizers } from "darchlabs";
 
 import { RiMore2Fill } from "react-icons/ri";
 import { VscDebugRestart } from "react-icons/vsc";
@@ -35,7 +35,7 @@ export function TableItem({
   },
   count,
 }: {
-  item: Event;
+  item: synchronizers.Event;
   count: number;
 }) {
   // define hooks

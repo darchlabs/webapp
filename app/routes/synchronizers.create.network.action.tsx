@@ -1,12 +1,12 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
-import { type Network, Networks, NetworkInfo, type SmartContractInput } from "darchlabs";
+import { network, synchronizers } from "darchlabs";
 import { z } from "zod";
 
 type NetworkActionForm = {
   baseTo: string;
   nextTo: string;
-  network: Network;
+  network: network.Network;
 };
 
 export type NetworkActionData = {
@@ -24,8 +24,8 @@ export const CreateSynchronizersNetworkAction = async function action({ request 
   const subscriberSchema = z.object({
     baseTo: z.string(),
     nextTo: z.string(),
-    network: z.string().refine((network) => {
-      return Networks.includes(network as Network);
+    network: z.string().refine((n) => {
+      return network.Networks.includes(n as network.Network);
     }),
   });
 
@@ -43,11 +43,11 @@ export const CreateSynchronizersNetworkAction = async function action({ request 
   }
 
   // get network info
-  const info = NetworkInfo[form.network as Network];
-
+  const info = network.NetworkInfo[form.network as network.Network];
+  
   // upsert to create synchronizer cookie
   const session = await getSession(request.headers.get("Cookie"));
-  const scInput: SmartContractInput = session.get("scSession");
+  const scInput: synchronizers.ContractInput = session.get("scSession");
 
   // set nework value in cookie
   scInput.network = form.network;

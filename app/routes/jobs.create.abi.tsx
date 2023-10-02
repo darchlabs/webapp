@@ -2,15 +2,22 @@ import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { Create, TemplateTitleDescriptionHint, TextArea } from "@components/create";
 import { CreateJobAbiAction, type AbiActionData } from "./jobs.create.abi.action";
 import { useLoaderData, useActionData } from "@remix-run/react";
-import { CreateJobLoader, type LoaderData } from "./jobs.create.loader";
+import { type LoaderData } from "./jobs.create.loader";
 import { FormName, FormTitle, Steps } from "./jobs.create._index";
+import { CreateJobAbiLoader } from "./jobs.create.abi.loader"
 
 export const action: ActionFunction = CreateJobAbiAction;
-export const loader: LoaderFunction = CreateJobLoader;
+export const loader: LoaderFunction = CreateJobAbiLoader;
 
 export default function CreateJobAbi() {
   const loaderData = useLoaderData() as LoaderData;
   const actionData = useActionData() as AbiActionData;
+
+  // parse abi json object to string
+  let abi = "";
+  if (loaderData?.job?.abi) {
+    abi = JSON.stringify(loaderData?.job?.abi);
+  }
 
   return (
     <Create

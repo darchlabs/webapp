@@ -1,18 +1,23 @@
 import { withPagination } from "@middlewares/with-pagination";
 import { type LoaderFunction, json, type LoaderArgs } from "@remix-run/node";
-import { type Pagination, type SmartContract } from "darchlabs";
-import { SmartContracts } from "@models/synchronizers/smartcontracts.server";
+import { pagination, synchronizers } from "darchlabs";
+import { Darchlabs } from "@models/darchlabs/darchlabs.server";
+import { AuthData, withAuth } from "@middlewares/with-auth";
 
 export type LoaderData = {
-  smartcontracts: SmartContract[];
+  contracts: synchronizers.Contract[];
+  auth: AuthData;
 };
 
-export const OverviewLoader: LoaderFunction = withPagination(async ({ context }: LoaderArgs) => {
-  // get pagination context for middleware
-  const pagination = context.pagination as Pagination | {};
+export const OverviewLoader: LoaderFunction = withAuth(withPagination(async ({ context }: LoaderArgs) => {
+  // get pagination context from middleware
+  const pagination = context.pagination as pagination.Pagination | {};
+
+  // get auth context from middleware
+  const auth = context.auth as AuthData;
 
   // get smart contracts
-  const { data } = await SmartContracts.listSmartContracts(pagination);
+  const { contracts, } = await Darchlabs.synchronizers.contracts.listContracts(pagination);
 
-  return json<LoaderData>({ smartcontracts: data });
-});
+  return json<LoaderData>({ contracts, auth });
+}));

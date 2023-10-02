@@ -6,23 +6,23 @@ import { Create, TemplateTitleDescriptionHint, NetworkSelectInput } from "@compo
 import { CreateSynchronizersNetworkAction, type NetworkActionData } from "./synchronizers.create.network.action";
 import { FormName, FormTitle, Steps } from "./synchronizers.create._index";
 import { type LoaderData, CreateSynchronizersEvmLoader } from "./synchronizers.create.evm._index";
-import { type SmartContractInput, SmartContractNetwoks } from "darchlabs";
+import { synchronizers, server } from "darchlabs";
 
 export const action: ActionFunction = CreateSynchronizersNetworkAction;
 export const loader: LoaderFunction = CreateSynchronizersEvmLoader;
 
 export default function CreateSynchronizerNetwork() {
-  const loaderData = useLoaderData() as LoaderData<SmartContractInput>;
+  const loaderData = useLoaderData() as LoaderData;
   const actionData = useActionData() as NetworkActionData;
 
   return (
     <Create title={FormTitle} form={FormName} steps={Steps} currentStep="Network" baseTo="synchronizers" nextTo="name">
       <>
         <NetworkSelectInput
-          value={loaderData?.smartcontract?.network}
+          value={loaderData?.contract?.network}
           form={FormName}
           error={actionData?.network?.error}
-          networks={SmartContractNetwoks}
+          networks={synchronizers.Networks}
         />
       </>
 

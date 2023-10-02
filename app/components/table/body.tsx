@@ -13,7 +13,7 @@ import {
   Select,
   Icon,
 } from "@chakra-ui/react";
-import type { Pagination } from "darchlabs";
+import { pagination } from "darchlabs";
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 
 export function Body({
@@ -22,7 +22,7 @@ export function Body({
   children,
 }: {
   columns: string[];
-  pagination?: Pagination;
+  pagination?: pagination.Pagination;
   children: JSX.Element[] | JSX.Element;
 }) {
   // define hooks

@@ -50,7 +50,7 @@ export default function CreateJobAddress() {
             value={loaderData?.job?.privateKey}
             form={FormName}
             error={actionData?.privateKey.error}
-            placeholder={"0x123456789..."}
+            placeholder={"123456789..."}
           />
         </>
 

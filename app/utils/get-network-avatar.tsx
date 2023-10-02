@@ -1,14 +1,13 @@
-import type { Network } from "darchlabs";
+import { network } from "darchlabs";
 
 import {
   PolygonAvatarIcon,
   EthereumAvatarIcon,
-  AvalancheAvatarIcon,
   CeloAvatarIcon,
   ChainlinkAvatarIcon,
 } from "@components/icon";
 
-export const GetNetworkAvatar = (network: Network, size: number = 12) => {
+export const GetNetworkAvatar = (network: network.Network, size: number = 12) => {
   switch (network) {
     case "ethereum":
     case "rinkeby":
@@ -18,8 +17,6 @@ export const GetNetworkAvatar = (network: Network, size: number = 12) => {
     case "polygon":
     case "mumbai":
       return { ...(<PolygonAvatarIcon boxSize={size} />) };
-    // case "avalanche":
-    // return { ...(<AvalancheAvatarIcon boxSize={size} />) };
     case "celo":
     case "alfajores":
       return { ...(<CeloAvatarIcon boxSize={size} />) };

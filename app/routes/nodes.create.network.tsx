@@ -6,7 +6,7 @@ import { Create, TemplateTitleDescriptionHint, NetworkSelectInput } from "@compo
 import { CreateNodeNetworkAction, type NetworkActionData } from "./nodes.create.network.action";
 import { FormName, FormTitle, Steps } from "./nodes.create._index";
 import { CreateNodeLoader, type LoaderData } from "./nodes.create.loader";
-import { type Network, NetworksEnvironments } from "darchlabs";
+import { network, NetworksEnvironments } from "darchlabs";
 
 export const action: ActionFunction = CreateNodeNetworkAction;
 export const loader: LoaderFunction = CreateNodeLoader;
@@ -15,7 +15,7 @@ export default function CreateNodeNetwork() {
   const loaderData = useLoaderData() as LoaderData;
   const actionData = useActionData() as NetworkActionData;
 
-  const networks = Object.keys(NetworksEnvironments) as Network[];
+  const networks = Object.keys(NetworksEnvironments) as network.Network[];
 
   return (
     <Create title={FormTitle} form={FormName} steps={Steps} currentStep="Network" baseTo="nodes">

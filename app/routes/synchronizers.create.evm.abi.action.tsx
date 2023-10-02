@@ -1,6 +1,6 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
-import { type SmartContractInput } from "darchlabs";
+import { synchronizers } from "darchlabs";
 import { z } from "zod";
 import { GetAbiEventSchema } from "@utils/get-abi-schema";
 
@@ -60,7 +60,7 @@ export const CreateSynchronizersEvmAbiAction = async function action({ request }
 
   // get cookie session
   const session = await getSession(request.headers.get("Cookie"));
-  const scSession: SmartContractInput = session.get("scSession");
+  const scSession: synchronizers.ContractInput = session.get("scSession");
   if (!scSession) {
     return redirect("/synchronizers/create");
   }

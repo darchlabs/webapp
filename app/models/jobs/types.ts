@@ -1,4 +1,4 @@
-import { type Network } from "darchlabs";
+import { network } from "darchlabs";
 
 export type JobStatus = "idle" | "running" | "stopped" | "autoStopped" | "error";
 
@@ -7,7 +7,7 @@ export type Job = {
   name: string;
   providerId: string;
   status: JobStatus;
-  network: Network;
+  network: network.Network;
   address: string;
   abi: string;
   nodeUrl: string;
@@ -25,12 +25,12 @@ export type Job = {
 export type Provider = {
   id: string;
   name: string;
-  networks: Network[];
+  networks: network.Network[];
 };
 
 export type JobsForm = {
   providerId: string;
-  network: Network;
+  network: network.Network;
   address: string;
   abi: string;
   cronjob: string;
@@ -60,7 +60,7 @@ export type JobsRequest = {
 export type JobInput = {
   name: string;
   providerId: string;
-  network: Network;
+  network: network.Network;
   address: string;
   nodeUrl: string;
   privateKey: string;

@@ -1,9 +1,9 @@
-import { GetNetworkId, type Network } from "darchlabs";
+import { utils, network } from "darchlabs";
 import { ethers } from "ethers";
 
-export const ValidatePrivateKey = (network: Network, pk: string) => {
+export const ValidatePrivateKey = (network: network.Network, pk: string) => {
   // define provider
-  const chainId = GetNetworkId(network);
+  const chainId = utils.GetNetworkId(network);
   const provider = ethers.getDefaultProvider(chainId);
 
   try {

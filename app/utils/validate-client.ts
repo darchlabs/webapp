@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
-import { type Network, GetNetworkId } from "darchlabs";
+import { network, utils } from "darchlabs";
 
-export const ValidateClient = async (network: Network, url: string, isHttp: boolean = true): Promise<void> => {
+export const ValidateClient = async (network: network.Network, url: string, isHttp: boolean = true): Promise<void> => {
   // get client
   let chainId = 0;
   try {
@@ -14,7 +14,7 @@ export const ValidateClient = async (network: Network, url: string, isHttp: bool
   }
 
   // validate client network
-  if (chainId !== GetNetworkId(network)) {
+  if (chainId !== utils.GetNetworkId(network)) {
     throw new Error("Client network doesn't match the given network, change node url or network");
   }
 };

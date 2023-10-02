@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
-import { type Network, GetNetworkId } from "darchlabs";
+import { network, utils } from "darchlabs";
 
-export const ValidateAddressContractInNetwork = async (network: Network, address: string): Promise<void> => {
+export const ValidateAddressContractInNetwork = async (network: network.Network, address: string): Promise<void> => {
   // define provider and get code
-  const chainId = GetNetworkId(network);
+  const chainId = utils.GetNetworkId(network);
   const provider = ethers.getDefaultProvider(chainId);
   const code = await provider.getCode(address);
 

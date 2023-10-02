@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
-import { type Network, GetNetworkId } from "darchlabs";
+import { network, utils } from "darchlabs";
 
-export const ValidateContractAbi = async (network: Network, address: string, abi: string) => {
+export const ValidateContractAbi = async (network: network.Network, address: string, abi: string) => {
   // define provider
-  const chainId = GetNetworkId(network);
+  const chainId = utils.GetNetworkId(network);
   const provider = ethers.getDefaultProvider(chainId);
 
   // check if the contract abi format is correct by instancing it

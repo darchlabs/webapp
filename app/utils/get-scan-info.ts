@@ -1,8 +1,8 @@
-import { type Network } from "darchlabs";
+import { network } from "darchlabs";
 
 const { ETHERSCAN_API_KEY, POLYGONSCAN_API_KEY } = process.env;
 
-export const GetScanInfo = (network: Network): [ok: boolean, url: string, apiKey: string] => {
+export const GetScanInfo = (network: network.Network): [ok: boolean, url: string, apiKey: string] => {
   switch (network) {
     case "ethereum":
       return [true, "https://api.etherscan.io/api", ETHERSCAN_API_KEY!];

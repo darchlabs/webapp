@@ -3,7 +3,6 @@ import { synchronizers, network } from "darchlabs";
 import { BsChevronDown } from "react-icons/bs";
 import { GetNetworkAvatar } from "@utils/get-network-avatar";
 import { useState } from "react";
-import { NetworkInfo } from "darchlabs/dist/utils";
 
 export function NetworkSelectInput({
   form,
@@ -24,7 +23,7 @@ export function NetworkSelectInput({
   const [currentNetwork, setCurrentNetwork] = useState(value as network.Network);
 
   // define values
-  const ns = networks ? networks : (Object.keys(NetworkInfo) as network.Network[]);
+  const ns = networks ? networks : (Object.keys(network.NetworkInfo) as network.Network[]);
   const textColor = error ? "red.500" : "blackAlpha.500";
   const borderColor = error ? "red.500" : "blackAlpha.200";
 

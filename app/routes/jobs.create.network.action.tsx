@@ -1,13 +1,13 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
-import { type Network, Networks } from "darchlabs";
+import { network } from "darchlabs";
 import { z } from "zod";
 import { type JobInput } from "@models/jobs/types";
 
 type NetworkActionForm = {
   baseTo: string;
   nextTo: string;
-  network: Network;
+  network: network.Network;
 };
 
 export type NetworkActionData = {
@@ -25,8 +25,8 @@ export const CreateJobNetworkAction = async function action({ request }: ActionA
   const subscriberSchema = z.object({
     baseTo: z.string(),
     nextTo: z.string(),
-    network: z.string().refine((network) => {
-      return Networks.includes(network as Network);
+    network: z.string().refine((n) => {
+      return network.Networks.includes(n as network.Network);
     }),
   });
 

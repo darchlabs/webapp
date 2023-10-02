@@ -6,7 +6,7 @@ import { CreateJobMethodsAction, type MethodsActionData } from "./jobs.create.me
 import { FormName, FormTitle, Steps } from "./jobs.create._index";
 import { CreateJobLoader, type LoaderData } from "./jobs.create.loader";
 import { useLoaderData, useActionData } from "@remix-run/react";
-import { type Abi } from "darchlabs";
+import { type abi } from "darchlabs";
 
 export const action: ActionFunction = CreateJobMethodsAction;
 export const loader: LoaderFunction = CreateJobLoader;
@@ -16,7 +16,7 @@ export default function CreateJobMethods() {
   const actionData = useActionData() as MethodsActionData;
 
   // // TODO(ca): validate abi is defined in loader
-  const abi = JSON.parse(loaderData.job.abi) as Abi[];
+  const abi = JSON.parse(loaderData.job.abi) as abi.Abi[];
 
   const [viewsMethods, actionsMethods] = abi.reduce(
     (methods, item) => {

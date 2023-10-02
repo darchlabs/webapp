@@ -28,7 +28,7 @@
     "chart": "^0.1.2",
     "chart.js": "^4.3.0",
     "cron-validate": "^1.4.5",
-    "darchlabs": "^4.1.0",
+    "darchlabs": "6.0.0",
     "date-fns": "^2.30.0",
     "ethers": "^6.3.0",
     "framer-motion": "^6.5.1",

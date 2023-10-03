@@ -23,7 +23,6 @@ export default function CreateJobNetwork() {
       currentStep="Configure"
       baseTo="jobs"
       nextTo="name"
-      backTo="/jobs/create/provider"
     >
       <>
         <NetworkSelectInput value={loaderData?.job?.network} form={FormName} error={actionData?.network?.error} networks={JobNetwoks} />

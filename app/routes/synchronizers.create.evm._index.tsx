@@ -20,7 +20,7 @@ export const CreateSynchronizersEvmLoader: LoaderFunction = withCookie<synchroni
   getSession,
   commitSession,
   async ({ context }: LoaderArgs) => {
-    // get smartcontract session
+    // get contract session
     const scSession = context["scSession"] as Cookie<synchronizers.ContractInput>;
 
     return json(

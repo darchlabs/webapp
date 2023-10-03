@@ -4,7 +4,7 @@ import { redirect } from "@remix-run/node";
 import { network } from "darchlabs";
 import { ValidateClient } from "@utils/validate-client";
 
-type EditSmartContractForm = {
+type EditContractForm = {
   redirectURL: string;
   network: network.Network;
   address: string;
@@ -13,7 +13,7 @@ type EditSmartContractForm = {
   webhook: string;
 };
 
-export type EditSmartContractActionData = {
+export type EditContractActionData = {
   error: string;
 };
 
@@ -22,7 +22,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
   const formData = await request.formData();
   const { redirectURL, network, address, name, nodeURL, webhook } = Object.fromEntries(
     formData
-  ) as EditSmartContractForm;
+  ) as EditContractForm;
 
   // check if node url is valid client for the network
   try {
@@ -30,7 +30,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
   } catch (err: any) {
     return {
       error: err.message,
-    } as EditSmartContractActionData;
+    } as EditContractActionData;
   }
 
   // edit smart contract using form data values
@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
     const errMsg = err?.response?.data?.error?.length > 0 ? err.response.data.error : err.error;
     return {
       error: errMsg,
-    } as EditSmartContractActionData;
+    } as EditContractActionData;
   }
 
   return redirect(redirectURL);

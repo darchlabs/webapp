@@ -15,22 +15,22 @@ import {
 import { useState, useEffect, useCallback } from "react";
 import { synchronizers } from "darchlabs";
 import { useFetcher, useLocation } from "@remix-run/react";
-import { type EditSmartContractActionData } from "@routes/synchronizers/synchronizers.edit.action";
+import { type EditContractActionData } from "@routes/synchronizers.edit.action";
 
-export function EditSmartContractModal({
-  smartcontract,
+export function EditContractModal({
+  contract,
   isOpen,
   onClose,
 }: {
-  smartcontract: synchronizers.Contract;
+  contract: synchronizers.Contract;
   isOpen: boolean;
   onClose: () => void;
 }): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [name, setName] = useState(smartcontract.name);
-  const [nodeURL, setNodeURL] = useState(smartcontract.nodeURL);
-  const [webhook, setWebhoook] = useState(smartcontract.webhook || "");
+  const [name, setName] = useState(contract.name);
+  const [nodeURL, setNodeURL] = useState(contract.nodeURL);
+  const [webhook, setWebhoook] = useState(contract.webhook || "");
   const [error, setError] = useState("");
 
   const { pathname, search } = useLocation();
@@ -44,8 +44,8 @@ export function EditSmartContractModal({
     // prepare data to send in the form
     const formData = new FormData();
     formData.append("redirectURL", `${pathname}${search}`);
-    formData.append("network", smartcontract.network);
-    formData.append("address", smartcontract.address);
+    formData.append("network", contract.network);
+    formData.append("address", contract.address);
     formData.append("name", name);
     formData.append("nodeURL", nodeURL);
     formData.append("webhook", webhook);
@@ -62,18 +62,18 @@ export function EditSmartContractModal({
   }
 
   const handleOnClose = useCallback(() => {
-    setName(smartcontract.name);
-    setNodeURL(smartcontract.nodeURL);
-    setWebhoook(smartcontract.webhook || "");
+    setName(contract.name);
+    setNodeURL(contract.nodeURL);
+    setWebhoook(contract.webhook || "");
     setError("");
     setIsLoading(false);
     onClose();
-  }, [smartcontract.name, smartcontract.nodeURL, smartcontract.webhook, onClose]);
+  }, [contract.name, contract.nodeURL, contract.webhook, onClose]);
 
   // check if fetched is resolved and has data
   useEffect(() => {
     if (fetcher.state === "loading") {
-      const actionData = fetcher.data as EditSmartContractActionData;
+      const actionData = fetcher.data as EditContractActionData;
       // check if action data has error
       if (actionData?.error) {
         setIsLoading(false);
@@ -91,7 +91,7 @@ export function EditSmartContractModal({
     <Modal isOpen={isOpen} onClose={handleOnClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Edit SmartContract</ModalHeader>
+        <ModalHeader>Edit Contract</ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <FormControl colorScheme="pink">

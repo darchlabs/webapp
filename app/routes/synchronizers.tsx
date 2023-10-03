@@ -1,12 +1,12 @@
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import { Outlet, isRouteErrorResponse, useLoaderData, useLocation, useRouteError } from "@remix-run/react";
 import { Table } from "@components/table";
-import { EmptyTable, TableItem } from "@components/synchronizers/smartcontracts";
+import { EmptyTable, TableItem } from "@components/synchronizers/contracts";
 import { BaseLayout } from "@components/layouts";
 import { BaseError } from "@errors/base";
-import { SmartContractsLoader, type SmartContractsLoaderData } from "./synchronizers.loader";
+import { ContractsLoader, type ContractsLoaderData } from "./synchronizers.loader";
 
-export const loader = SmartContractsLoader;
+export const loader = ContractsLoader;
 // export const ErrorBoundary = BaseError;
 
 export const ErrorBoundary = () => {
@@ -39,7 +39,7 @@ export default function App() {
     contracts,
     pagination,
     auth,
-  } = useLoaderData() as SmartContractsLoaderData;
+  } = useLoaderData() as ContractsLoaderData;
 
   const { pathname } = useLocation();
 

@@ -7,7 +7,6 @@ import { Table } from "@components/table";
 import { EmptyTable } from "@components/jobs/empty-table";
 import { useLocation } from "@remix-run/react";
 import { TableItem } from "@components/jobs/table-item";
-import { ToMap } from "@utils/to-map";
 import { BaseError } from "@errors/base";
 
 export const loader = JobsLoader;
@@ -15,10 +14,9 @@ export const ErrorBoundary = BaseError;
 
 export default function App() {
   // define hooks
-  const { jobs, providers, auth } = useLoaderData() as LoaderData;
+  const { jobs, auth } = useLoaderData() as LoaderData;
   const { pathname } = useLocation();
 
-  const providerMap = ToMap(providers);
   const linkTo = "/jobs/create";
   const tableOptions = pathname.includes("/create") ? {} : { emptyTable: <EmptyTable createLink={linkTo} /> };
 
@@ -34,7 +32,7 @@ export default function App() {
           {...tableOptions}
         >
           {jobs.map((item, index) => (
-            <TableItem key={index} item={item} providerName={providerMap[item.providerId].name} />
+            <TableItem key={index} item={item} />
           ))}
         </Table>
       </HStack>

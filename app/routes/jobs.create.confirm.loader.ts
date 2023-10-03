@@ -21,10 +21,7 @@ export const CreateJobConfirmLoader: LoaderFunction = withCookie<JobInput>(
     };
 
     // check if any attribute are empty in job session
-    if (!jobSession.data.providerId || jobSession.data.providerId === "") {
-      // redirect to network step
-      return redirect("/jobs/create", opts);
-    } else if (!jobSession.data.name || jobSession.data.name === "") {
+    if (!jobSession.data.name || jobSession.data.name === "") {
       // redirect to name step
       return redirect("/jobs/create/name", opts);
     } else if (!jobSession.data.network || jobSession.data.network === ("" as network.Network)) {
@@ -33,10 +30,13 @@ export const CreateJobConfirmLoader: LoaderFunction = withCookie<JobInput>(
     } else if (!jobSession.data.name || jobSession.data.name === "") {
       // redirect to name step
       return redirect("/jobs/create/name", opts);
-    } else if (!jobSession.data.nodeUrl || jobSession.data.nodeUrl === "") {
-      // redidect to node url step
-      return redirect("/jobs/create/node", opts);
-    } else if (!jobSession.data.address || jobSession.data.address == "") {
+    }
+    // TODO(ca): remove validation because the node_url is setted in backend
+    // else if (!jobSession.data.nodeUrl || jobSession.data.nodeUrl === "") {
+    //   // redidect to node url step
+    //   return redirect("/jobs/create/node", opts);
+    // } 
+    else if (!jobSession.data.address || jobSession.data.address == "") {
       // redirect to address step
       return redirect("/jobs/create/address", opts);
     } else if (!jobSession.data.abi) {

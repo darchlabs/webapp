@@ -23,7 +23,7 @@ export default function CreateSynchronizerEvmName() {
       currentStep="Configure"
       baseTo="synchronizers"
       backTo="/synchronizers/create"
-      nextTo="node"
+      nextTo="address"
     >
       <>
         <TextInput
@@ -39,7 +39,7 @@ export default function CreateSynchronizerEvmName() {
       <>
         <TemplateTitleDescriptionHint
           title="Enter the name of the contract"
-          description="The name of smartcontract that will serve as a reference for identification purposes"
+          description="The name of contract that will serve as a reference for identification purposes"
           hint={
             "Hint: Make sure to enter a address that is compatible with either the Ethereum or Polygon network, depending on the network you selected earlier"
           }

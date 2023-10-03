@@ -28,7 +28,7 @@ import { synchronizers, network } from "darchlabs";
 import { ShortAddress } from "@utils/short-address";
 import { GetNetworkAvatar } from "@utils/get-network-avatar";
 import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
-import { EditSmartContractModal } from "./edit-smart-contract-modal";
+import { EditContractModal } from "./edit-smart-contract-modal";
 
 export function TableItem({ item }: { item: synchronizers.Contract }) {
   // define hooks
@@ -182,7 +182,7 @@ export function TableItem({ item }: { item: synchronizers.Contract }) {
         </Td>
       </Tr>
 
-      <EditSmartContractModal isOpen={isOpen} onClose={onClose} smartcontract={item} />
+      <EditContractModal isOpen={isOpen} onClose={onClose} contract={item} />
     </>
   );
 }

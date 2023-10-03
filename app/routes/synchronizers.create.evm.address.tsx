@@ -22,7 +22,7 @@ export default function CreateSynchronizerEVMAddress() {
       steps={Steps}
       currentStep="Configure"
       baseTo="synchronizers"
-      backTo="/synchronizers/create/evm/node"
+      backTo="/synchronizers/create/evm/name"
       nextTo="webhook"
     >
       <>

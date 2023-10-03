@@ -29,7 +29,7 @@ import { GetColorSchemeByStatus } from "@utils/get-color-scheme-by-status";
 //   return new Date(difference).toDateString();
 // };
 
-export function TableItem({ item, providerName }: { item: Job; providerName: string }) {
+export function TableItem({ item }: { item: Job }) {
   // define hooks
   const { pathname, search } = useLocation();
   const [isFetching, setIsFetching] = useState(false);
@@ -90,16 +90,6 @@ export function TableItem({ item, providerName }: { item: Job; providerName: str
             </VStack>
           </HStack>
         </HStack>
-      </Td>
-      <Td>
-        <VStack alignItems={"start"}>
-          <Text fontWeight={"medium"} fontSize={"16px"} color={"#252733"} textTransform={"capitalize"}>
-            {providerName}
-          </Text>
-          <Text fontSize={"14px"} color={"#C5C7CD"}>
-            {item.network}
-          </Text>
-        </VStack>
       </Td>
       <Td>
         <VStack alignItems={"start"}>

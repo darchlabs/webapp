@@ -20,7 +20,7 @@ export default function CreateJobAddress() {
       steps={Steps}
       currentStep="Configure"
       baseTo="jobs"
-      backTo="/jobs/create/node"
+      backTo="/jobs/create/name"
       nextTo="abi"
     >
       <>

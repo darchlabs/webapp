@@ -8,7 +8,7 @@ export const CreateSynchronizersEvmConfirmLoader: LoaderFunction = withCookie<sy
   getSession,
   commitSession,
   async ({ context }: LoaderArgs) => {
-    // get smartcontract session
+    // get contract session
     const scSession = context["scSession"] as Cookie<synchronizers.ContractInput>;
 
     // define options to use in json or in redirect
@@ -18,17 +18,20 @@ export const CreateSynchronizersEvmConfirmLoader: LoaderFunction = withCookie<sy
       },
     };
 
-    // check if any attribute are empty in smartcontract session
+    // check if any attribute are empty in contract session
     if (!scSession.data.network || scSession.data.network === ("" as network.Network)) {
       // redirect to network step
       return redirect("/synchronizers/create", opts);
     } else if (!scSession.data.name || scSession.data.name === "") {
       // redirect to name step
       return redirect("/synchronizers/create/evm/name", opts);
-    } else if (!scSession.data.nodeURL || scSession.data.nodeURL === "") {
-      // redidect to node url step
-      return redirect("/synchronizers/create/evm/node", opts);
-    } else if (!scSession.data.address || scSession.data.address == "") {
+    }
+    // TODO(ca): remove validation because the node_url is setted in backend
+    // else if (!scSession.data.nodeURL || scSession.data.nodeURL === "") {
+    //   // redidect to node url step
+    //   return redirect("/synchronizers/create/evm/node", opts);
+    // } 
+    else if (!scSession.data.address || scSession.data.address == "") {
       // redirect to address step
       return redirect("/synchronizers/create/evm/address", opts);
     } else if (!scSession.data.abi || !Array.isArray(scSession.data.abi) || !scSession.data.abi.length) {
@@ -38,7 +41,7 @@ export const CreateSynchronizersEvmConfirmLoader: LoaderFunction = withCookie<sy
 
     return json(
       {
-        smartcontract: scSession.data,
+        contract: scSession.data,
       },
       {
         headers: {

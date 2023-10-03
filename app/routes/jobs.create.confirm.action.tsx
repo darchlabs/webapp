@@ -2,6 +2,7 @@ import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, destroySession } from "@models/jobs/create-job-cookie.server";
 import { job } from "@models/jobs.server";
 import { type JobInput } from "@models/jobs/types";
+import { GetNodeUrlByNetwork } from "@utils/get-nodeurl-by-network";
 
 type ConfirmActionForm = {
   baseTo: string;
@@ -25,6 +26,14 @@ export const CreateJobConfirmAction = async function action({ request }: ActionA
   if (!jobSession) {
     return redirect("/jobs/create");
   }
+
+  // TODO(ca): implement this in backend 
+  jobSession.providerId = "1";
+  const nodeUrl = GetNodeUrlByNetwork(jobSession.network)
+  if (!nodeUrl) {
+    return redirect("/jobs/create")
+  }
+  jobSession.nodeUrl = nodeUrl;
 
   // create job in api
   try {

@@ -8,15 +8,13 @@ import { type LoaderData } from "./jobs.create.loader";
 import { ShortAddress } from "@utils/short-address";
 import { CreateJobConfirmLoader } from "./jobs.create.confirm.loader";
 import { CronjobValues } from "@utils/jobs-cron-utils";
-import { ToMap } from "@utils/to-map";
 
 export const action: ActionFunction = CreateJobConfirmAction;
 export const loader: LoaderFunction = CreateJobConfirmLoader;
 
 export default function CreateJobConfirm() {
   const {
-    job: { name, providerId, network, address, cronjob, checkMethod, actionMethod },
-    providers,
+    job: { name, network, address, cronjob, checkMethod, actionMethod },
   } = useLoaderData() as LoaderData;
   const actionData = useActionData() as ConfirmActionData;
 
@@ -26,8 +24,6 @@ export default function CreateJobConfirm() {
   if (cronTemplate) {
     cron = cronTemplate.text;
   }
-
-  const providerName = ToMap(providers)[providerId].name;
 
   return (
     <Create
@@ -49,12 +45,6 @@ export default function CreateJobConfirm() {
               Name:
             </Text>{" "}
             {name}
-          </Text>
-          <Text>
-            <Text as={"span"} fontWeight={"bold"}>
-              Provider:
-            </Text>{" "}
-            {providerName}
           </Text>
           <Text>
             <Text as={"span"} fontWeight={"bold"}>

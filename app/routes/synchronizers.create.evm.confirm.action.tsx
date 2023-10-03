@@ -3,6 +3,7 @@ import { getSession, destroySession } from "@models/synchronizers/create-synchro
 import { synchronizers } from "darchlabs";
 import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import { AxiosError, isAxiosError } from "axios";
+import { GetNodeUrlByNetwork } from "@utils/get-nodeurl-by-network";
 
 type ConfirmActionForm = {
   baseTo: string;
@@ -26,6 +27,13 @@ export const CreateSynchronizersEvmConfirmAction = async function action({ reque
   if (!scSession) {
     return redirect("/synchronizers/create");
   }
+
+  // TODO(ca): implement this in backend 
+  const nodeUrl = GetNodeUrlByNetwork(scSession.network)
+  if (!nodeUrl) {
+    return redirect("/synchronizers/create")
+  }
+  scSession.nodeURL = nodeUrl;
 
   // create synchronizer in api
   try {

@@ -42,7 +42,7 @@ export default function CreateSynchronizerEvmName() {
           title="Enter the webhook URL"
           description="The URL of the webhook endpoint that will receive the data and notifications"
           hint={
-            "Hint: The webhook URL is optional. You can leave it blank for now and modify it later by editing the smartcontract"
+            "Hint: The webhook URL is optional. You can leave it blank for now and modify it later by editing the contract"
           }
         />
       </>

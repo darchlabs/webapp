@@ -2,7 +2,7 @@ import type { ActionFunction } from "@remix-run/node";
 import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import { redirect } from "@remix-run/node";
 
-type DeleteSmartContractForm = {
+type DeleteContractForm = {
   redirectURL: string;
   address: string;
 };
@@ -10,7 +10,7 @@ type DeleteSmartContractForm = {
 export const action: ActionFunction = async ({ request }: { request: Request }) => {
   // get from data values
   const formData = await request.formData();
-  const { redirectURL, address } = Object.fromEntries(formData) as DeleteSmartContractForm;
+  const { redirectURL, address } = Object.fromEntries(formData) as DeleteContractForm;
 
   // delete smart contract using form data values
   await Darchlabs.synchronizers.contracts.deleteContractByAddress(address);

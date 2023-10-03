@@ -4,7 +4,7 @@ import { type Cookie, withCookie } from "@middlewares/with-cookie";
 import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
 import { GetABI } from "@utils/get-abi";
 
-export type SmartContractsLoaderData = {
+export type ContractsLoaderData = {
   contracts: synchronizers.Contract[];
 };
 
@@ -13,7 +13,7 @@ export const CreateSynchronizersEvmAbiLoader: LoaderFunction = withCookie<synchr
   getSession,
   commitSession,
   async ({ context, request }: LoaderArgs) => {
-    // get smartcontract session
+    // get contract session
     let scSession = context["scSession"] as Cookie<synchronizers.ContractInput>;
     const { network, address } = scSession.data;
 
@@ -31,7 +31,7 @@ export const CreateSynchronizersEvmAbiLoader: LoaderFunction = withCookie<synchr
 
     return json(
       {
-        smartcontract: scSession.data,
+        contract: scSession.data,
       },
       {
         headers: {

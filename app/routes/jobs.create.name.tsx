@@ -21,7 +21,7 @@ export default function CreateJobName() {
       currentStep="Configure"
       baseTo="jobs"
       backTo="/jobs/create/network"
-      nextTo="node"
+      nextTo="address"
     >
       <>
         <TextInput

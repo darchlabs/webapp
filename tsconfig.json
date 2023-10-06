@@ -19,8 +19,7 @@
       "@routes/*": ["./app/routes/*"],
       "@utils/*": ["./app/utils/*"],
       "@middlewares/*": ["./app/middlewares/*"],
-      "@pkg/*": ["./app/pkg/*"],
-      "@contexts/*": ["./app/contexts/*"]
+      "@pkg/*": ["./app/pkg/*"]
     },
 
     // Remix takes care of building everything in `remix build`.

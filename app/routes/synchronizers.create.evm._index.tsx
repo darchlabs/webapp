@@ -1,7 +1,7 @@
 import { type Cookie, withCookie } from "@middlewares/with-cookie";
 import { json, type LoaderArgs, type LoaderFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
-import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-synchronizers-cookie.server";
 import { synchronizers } from "darchlabs";
 
 export type Step = "Network" | "Node" | "Address" | "ABI" | "Confirm";

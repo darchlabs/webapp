@@ -1,17 +1,15 @@
 import { type Cookie, withCookie } from "@middlewares/with-cookie";
 import { type LoaderArgs, type LoaderFunction, json, redirect } from "@remix-run/node";
-import { type network } from "darchlabs";
-import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
-import { type JobInput } from "@models/jobs/types";
-import { job } from "@models/jobs.server";
+import { network, jobs } from "darchlabs";
+import { getSession, commitSession } from "@models/darchlabs/create-job-cookie.server";
 
-export const CreateJobConfirmLoader: LoaderFunction = withCookie<JobInput>(
+export const CreateJobConfirmLoader: LoaderFunction = withCookie<jobs.JobInput>(
   "jobSession",
   getSession,
   commitSession,
   async ({ context }: LoaderArgs) => {
     // get session
-    const jobSession = context["jobSession"] as Cookie<JobInput>;
+    const jobSession = context["jobSession"] as Cookie<jobs.JobInput>;
 
     // define options to use in json or in redirect
     const opts = {
@@ -62,12 +60,9 @@ export const CreateJobConfirmLoader: LoaderFunction = withCookie<JobInput>(
       return redirect("/jobs/create/account", opts);
     }
 
-    const { data } = await job.ListProviders();
-
     return json(
       {
         job: jobSession.data,
-        providers: data,
       },
       {
         headers: {

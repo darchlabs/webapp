@@ -1,7 +1,7 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
-import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-job-cookie.server";
 import { z } from "zod";
-import { type JobInput } from "@models/jobs/types";
+import { jobs } from "darchlabs";
 
 type NameActionForm = {
   baseTo: string;
@@ -42,7 +42,7 @@ export const CreateJobNameAction = async function action({ request }: ActionArgs
 
   // get cookie session
   const session = await getSession(request.headers.get("Cookie"));
-  const jobSession: JobInput = session.get("jobSession");
+  const jobSession: jobs.JobInput = session.get("jobSession");
   if (!jobSession) {
     return redirect("/jobs/create");
   }

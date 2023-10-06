@@ -1,19 +1,19 @@
 import { type Cookie, withCookie } from "@middlewares/with-cookie";
-import { type JobInput } from "@models/jobs/types";
+import { jobs } from "darchlabs";
 import { type LoaderArgs, type LoaderFunction, json } from "@remix-run/node";
-import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-job-cookie.server";
 
 export type LoaderData = {
-  job: JobInput;
+  job: jobs.JobInput;
 };
 
-export const CreateJobLoader: LoaderFunction = withCookie<JobInput>(
+export const CreateJobLoader: LoaderFunction = withCookie<jobs.JobInput>(
   "jobSession",
   getSession,
   commitSession,
   async ({ context }: LoaderArgs) => {
     // get job session
-    const jobSession = context["jobSession"] as Cookie<JobInput>;
+    const jobSession = context["jobSession"] as Cookie<jobs.JobInput>;
 
     return json(
       {

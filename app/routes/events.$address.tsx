@@ -12,13 +12,11 @@ export const loader: LoaderFunction = EventsLoader;
 
 export default function App() {
   const {
-    events: {
-      data,
-      meta: { pagination },
-    },
+    events,
     eventsCounts,
     address,
     auth,
+    pagination,
   } = useLoaderData<EventsLoaderData>();
 
   return (
@@ -30,8 +28,8 @@ export default function App() {
           emptyMsg={"You do not have any registered event."}
           pagination={pagination}
         >
-          {data.map((item, index) => (
-            <TableItem key={index} item={item} count={eventsCounts[item?.abi?.name]} />
+          {events.map((event, index) => (
+            <TableItem key={index} item={event} count={eventsCounts[event?.abi?.name]} />
           ))}
         </Table>
       </HStack>

@@ -1,9 +1,8 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
-import { getSession, destroySession } from "@models/synchronizers/create-synchronizers-cookie.server";
+import { getSession, destroySession } from "@models/darchlabs/create-synchronizers-cookie.server";
 import { synchronizers } from "darchlabs";
-import { Darchlabs } from "@models/darchlabs/darchlabs.server";
-import { AxiosError, isAxiosError } from "axios";
 import { GetNodeUrlByNetwork } from "@utils/get-nodeurl-by-network";
+import { GetDarchlabsClient } from "@utils/get-darchlabs-client.server";
 
 type ConfirmActionForm = {
   baseTo: string;
@@ -37,16 +36,12 @@ export const CreateSynchronizersEvmConfirmAction = async function action({ reque
 
   // create synchronizer in api
   try {
-    await Darchlabs.synchronizers.contracts.createContract(scSession);
-  } catch (err: AxiosError | unknown) {
-    let error = "Sorry, something went wrong on the server, please try again later";
-    if (isAxiosError(err)) {
-      error = (err?.response?.data?.error) ? `${error} (${err?.response?.data?.error})` : error
-    }
-
+    const client = await GetDarchlabsClient(request);
+    await client.synchronizers.contracts.createContract(scSession);
+  } catch (err: any) {
     return {
       confirm: {
-        error,
+        error: `Sorry, something went wrong on the server, please try again later (${err.message})`,
       },
     };
   }

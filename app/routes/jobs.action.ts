@@ -1,6 +1,6 @@
 import type { ActionFunction } from "@remix-run/node";
-import { job } from "@models/jobs.server";
 import { redirect } from "@remix-run/node";
+import { GetDarchlabsClient } from "@utils/get-darchlabs-client.server";
 
 type JobActionForm = {
   action: string;
@@ -13,13 +13,20 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
   const formData = await request.formData();
   const { action, redirectURL, id } = Object.fromEntries(formData) as JobActionForm;
 
-  // execute action on jobs api
-  if (action === "start") {
-    await job.StartJob(id);
-  } else if (action === "stop") {
-    await job.StopJob(id);
-  } else if (action === "delete") {
-    await job.DeleteJob(id);
+  try {
+    // get darchlabs client
+    const client = await GetDarchlabsClient(request);
+
+    // execute action on jobs api
+    if (action === "start") {
+      await client.jobs.startJob(id);
+    } else if (action === "stop") {
+      await client.jobs.stopJob(id);
+    } else if (action === "delete") {
+      await client.jobs.deleteJob(id);
+    }
+  } catch (err) {
+    throw err
   }
 
   return redirect(redirectURL);

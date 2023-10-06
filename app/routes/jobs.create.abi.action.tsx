@@ -1,8 +1,8 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
-import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-job-cookie.server";
 import { z } from "zod";
 import { GetAbiSchema } from "@utils/get-abi-schema";
-import { type JobInput } from "@models/jobs/types";
+import { jobs } from "darchlabs";
 import { ValidateContractAbi } from "@utils/validate-contract-abi";
 
 type AbiActionForm = {
@@ -61,7 +61,7 @@ export const CreateJobAbiAction = async function action({ request }: ActionArgs)
 
   // get cookie session
   const session = await getSession(request.headers.get("Cookie"));
-  const jobSession: JobInput = session.get("jobSession");
+  const jobSession: jobs.JobInput = session.get("jobSession");
   if (!jobSession) {
     return redirect("/jobs/create");
   }

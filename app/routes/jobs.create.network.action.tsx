@@ -1,8 +1,8 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
-import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-job-cookie.server";
 import { network } from "darchlabs";
 import { z } from "zod";
-import { type JobInput } from "@models/jobs/types";
+import { jobs } from "darchlabs";
 
 type NetworkActionForm = {
   baseTo: string;
@@ -45,7 +45,7 @@ export const CreateJobNetworkAction = async function action({ request }: ActionA
 
   // upsert to create cookie
   const session = await getSession(request.headers.get("Cookie"));
-  const scInput: JobInput = session.get("jobSession");
+  const scInput: jobs.JobInput = session.get("jobSession");
 
   // set nework value in cookie
   scInput.network = form.network;

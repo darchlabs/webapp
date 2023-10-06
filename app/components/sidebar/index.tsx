@@ -19,7 +19,7 @@ export function Sidebar({ auth }: { auth: AuthData }) {
   const fetcher = useFetcher();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const logoutHandler = () => {
+  const logoutHandler = () => {    
     fetcher.submit(null, {
       method: "post",
       action: `/logout/action`,

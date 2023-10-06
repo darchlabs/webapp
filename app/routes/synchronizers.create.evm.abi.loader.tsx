@@ -1,7 +1,7 @@
 import { json, redirect, type LoaderArgs, type LoaderFunction } from "@remix-run/node";
 import { synchronizers} from "darchlabs";
 import { type Cookie, withCookie } from "@middlewares/with-cookie";
-import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-synchronizers-cookie.server";
 import { GetABI } from "@utils/get-abi";
 
 export type ContractsLoaderData = {

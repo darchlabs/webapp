@@ -22,7 +22,7 @@ export function withAuth(fn: LoaderFunction): LoaderFunction {
 		const excludedRoutes = ["/login", "/signup"];
 		const { url } = args.request
 		const isExcludedRoute = excludedRoutes.some(route => url.includes(route));
-		
+
 		// return to login if dont have valid auth info
 		if (!data?.token && !isExcludedRoute) {
 			return redirect("/login");

@@ -1,7 +1,7 @@
 import { type ActionFunction, json } from "@remix-run/node";
+import { GetDarchlabsClient } from "@utils/get-darchlabs-client.server";
 import Axios from "axios";
 import { pagination } from "darchlabs";
-import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import { isAddress } from "ethers";
 
 export type Metric =
@@ -156,7 +156,8 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
         break;
       }
       case "events": {
-        const { events } = await Darchlabs.synchronizers.events.listEventsByAddress(form.address, {
+        const client = await GetDarchlabsClient(request);
+        const { events } = await client.synchronizers.events.listEventsByAddress(form.address, {
           page: 0,
           limit: 999,
         });
@@ -165,7 +166,7 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
         for (let i = 0; i < events.length; i++) {
           const event = events[i];
           const eventName = event?.abi?.name;
-          const { pagination } = await Darchlabs.synchronizers.events.listEventData(form.address, eventName, {
+          const { pagination } = await client.synchronizers.events.listEventData(form.address, eventName, {
             page: 0,
             limit: 1,
           });

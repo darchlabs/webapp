@@ -1,8 +1,8 @@
 import type { ActionFunction } from "@remix-run/node";
-import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import { redirect } from "@remix-run/node";
 import { network } from "darchlabs";
 import { ValidateClient } from "@utils/validate-client";
+import { GetDarchlabsClient } from "@utils/get-darchlabs-client.server";
 
 type EditContractForm = {
   redirectURL: string;
@@ -35,7 +35,8 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
 
   // edit smart contract using form data values
   try {
-    await Darchlabs.synchronizers.contracts.updateContract(address, { name, nodeURL, webhook });
+    const client = await GetDarchlabsClient(request);
+    await client.synchronizers.contracts.updateContract(address, { name, nodeURL, webhook });
   } catch (err: any) {
     const errMsg = err?.response?.data?.error?.length > 0 ? err.response.data.error : err.error;
     return {

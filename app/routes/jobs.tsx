@@ -27,7 +27,7 @@ export default function App() {
       <HStack justifyContent={"center"} w={"full"} pt={"20px"}>
         <Table
           title="jobs"
-          columns={["Jobs Details", "Provider", "Event", "Methods", "Status", ""]}
+          columns={["Jobs Details", "Event", "Methods", "Status", ""]}
           emptyMsg={"You do not have any registered jobs."}
           {...tableOptions}
         >

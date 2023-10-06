@@ -1,9 +1,9 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
 import { getSession, commitSession } from "@models/backoffice/backoffice-cookie.server";
-import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import {Backoffice} from "@models/backoffice/backoffice.server"
 import { AuthData } from "@middlewares/with-auth";
 import { z } from 'zod';
+import { GetDarchlabsClient } from "@utils/get-darchlabs-client.server";
 
 type LoginActionForm = {
   email: string;
@@ -16,7 +16,7 @@ export type LoginActionData = {
   error?: string
 };
 
-export const LoginAction = async function action({ request, params }: ActionArgs) {
+export const LoginAction = async function action({ request }: ActionArgs) {
   // parse form
   const formData = await request.formData();
   const form = Object.fromEntries(formData) as LoginActionForm;
@@ -75,14 +75,11 @@ export const LoginAction = async function action({ request, params }: ActionArgs
   const session = await getSession(request.headers.get("Cookie"));
   const data: AuthData = session.get("backofficeSession") || {} as AuthData;
   data.token = token
-  data.email = form.email
-  
+  data.email = form.email  
+
   // set token value in cookie
   session.set("backofficeSession", data);
   const cookie = await commitSession(session);
-
-  // set token in darchlabs client
-  Darchlabs.updateApiKey(token)
 
   // redirect
   return redirect(redirectTo, {

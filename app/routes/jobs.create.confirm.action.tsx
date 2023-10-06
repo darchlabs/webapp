@@ -1,8 +1,8 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
-import { getSession, destroySession } from "@models/jobs/create-job-cookie.server";
-import { job } from "@models/jobs.server";
-import { type JobInput } from "@models/jobs/types";
+import { getSession, destroySession } from "@models/darchlabs/create-job-cookie.server";
+import { jobs } from "darchlabs";
 import { GetNodeUrlByNetwork } from "@utils/get-nodeurl-by-network";
+import { GetDarchlabsClient } from "@utils/get-darchlabs-client.server";
 
 type ConfirmActionForm = {
   baseTo: string;
@@ -22,7 +22,7 @@ export const CreateJobConfirmAction = async function action({ request }: ActionA
 
   // get cookie session
   const session = await getSession(request.headers.get("Cookie"));
-  const jobSession: JobInput = session.get("jobSession");
+  const jobSession: jobs.JobInput = session.get("jobSession");
   if (!jobSession) {
     return redirect("/jobs/create");
   }
@@ -34,18 +34,12 @@ export const CreateJobConfirmAction = async function action({ request }: ActionA
     return redirect("/jobs/create")
   }
   jobSession.nodeUrl = nodeUrl;
+  jobSession.type = "cronjob";
 
   // create job in api
   try {
-    jobSession.type = "cronjob";
-    const response = await job.CreateJob(jobSession);
-    if (response.meta === 400) {
-      return {
-        confirm: {
-          error: response.data,
-        },
-      } as ConfirmActionData;
-    }
+    const client = await GetDarchlabsClient(request);
+    await client.jobs.createJob(jobSession);
   } catch (err: any) {
     return {
       confirm: {

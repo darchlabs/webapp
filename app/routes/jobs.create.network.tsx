@@ -6,7 +6,7 @@ import { Create, TemplateTitleDescriptionHint, NetworkSelectInput } from "@compo
 import { CreateJobNetworkAction, type NetworkActionData } from "./jobs.create.network.action";
 import { CreateJobLoader, type LoaderData } from "./jobs.create.loader";
 import { FormTitle, FormName, Steps } from "./jobs.create._index";
-import { JobNetwoks } from "darchlabs";
+import { jobs } from "darchlabs";
 
 export const action: ActionFunction = CreateJobNetworkAction;
 export const loader: LoaderFunction = CreateJobLoader;
@@ -25,7 +25,7 @@ export default function CreateJobNetwork() {
       nextTo="name"
     >
       <>
-        <NetworkSelectInput value={loaderData?.job?.network} form={FormName} error={actionData?.network?.error} networks={JobNetwoks} />
+        <NetworkSelectInput value={loaderData?.job?.network} form={FormName} error={actionData?.network?.error} networks={jobs.Networks} />
       </>
 
       <>

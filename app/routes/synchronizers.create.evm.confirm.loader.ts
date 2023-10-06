@@ -1,7 +1,7 @@
 import { type Cookie, withCookie } from "@middlewares/with-cookie";
 import { type LoaderArgs, type LoaderFunction, json, redirect } from "@remix-run/node";
 import { network, synchronizers } from "darchlabs";
-import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-synchronizers-cookie.server";
 
 export const CreateSynchronizersEvmConfirmLoader: LoaderFunction = withCookie<synchronizers.ContractInput>(
   "scSession",

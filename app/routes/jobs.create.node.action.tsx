@@ -1,8 +1,8 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
-import { getSession, commitSession } from "@models/jobs/create-job-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-job-cookie.server";
 import { z } from "zod";
 import { ValidateClient } from "@utils/validate-client";
-import { type JobInput } from "@models/jobs/types";
+import { jobs } from "darchlabs";
 
 type NodeActionForm = {
   baseTo: string;
@@ -43,7 +43,7 @@ export const CreateJobsNodeAction = async function action({ request }: ActionArg
 
   // get cookie session
   const session = await getSession(request.headers.get("Cookie"));
-  const jobSession: JobInput = session.get("jobSession");
+  const jobSession: jobs.JobInput = session.get("jobSession");
   if (!jobSession) {
     return redirect("/jobs/create");
   }

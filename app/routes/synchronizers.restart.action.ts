@@ -1,6 +1,6 @@
 import type { ActionFunction } from "@remix-run/node";
-import { Darchlabs } from "@models/darchlabs/darchlabs.server";
 import { redirect } from "@remix-run/node";
+import { GetDarchlabsClient } from "@utils/get-darchlabs-client.server";
 
 type RestartContractForm = {
   redirectURL: string;
@@ -13,7 +13,12 @@ export const action: ActionFunction = async ({ request }: { request: Request }) 
   const { redirectURL, address } = Object.fromEntries(formData) as RestartContractForm;
 
   // restart contract using form data values
-  await Darchlabs.synchronizers.contracts.restartContractByAddress(address);
+  try {
+    const client = await GetDarchlabsClient(request);
+    await client.synchronizers.contracts.restartContractByAddress(address);
+  } catch (err: any) {
+    throw err;
+  }
 
   return redirect(redirectURL);
 };

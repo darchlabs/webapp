@@ -1,5 +1,5 @@
 import { type ActionArgs, redirect } from "@remix-run/node";
-import { getSession, commitSession } from "@models/synchronizers/create-synchronizers-cookie.server";
+import { getSession, commitSession } from "@models/darchlabs/create-synchronizers-cookie.server";
 import { network, synchronizers } from "darchlabs";
 import { z } from "zod";
 
